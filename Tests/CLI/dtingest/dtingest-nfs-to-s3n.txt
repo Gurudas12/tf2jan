@@ -1,0 +1,48 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${S3N_D}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_D}
+
+*** Test Cases ***
+N2S_Copy_At_Non-Existent_Location
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1gb.file    ${S3N_D}/nfs-to-s3n/${TEST_NAME}/non/existent/path/${TEST_NAME}
+
+N2S_Copy_5GB_File
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/5gb.file    ${S3N_D}/nfs-to-s3n/${TEST_NAME}
+
+N2S_Copy_0KB_File
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/0kb.file    ${S3N_D}/nfs-to-s3n/${TEST_NAME}
+
+N2S_Copy_Blank_Dir
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/blank-dir    ${S3N_D}/nfs-to-s3n/${TEST_NAME}
+
+N2S_Copy_Dir_500-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-500-depth/    ${S3N_D}/nfs-to-s3n/${TEST_NAME}
+
+N2S_Copy_2_File_2_Dir_Sources
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/generic.file1 ${NFS}${BASEDIR}/ing-source-data/generic.file2 ${NFS}${BASEDIR}/ing-source-data/same-dir-str1 ${NFS}${BASEDIR}/ing-source-data/same-dir-str2    ${S3N_D}/nfs-to-s3n/${TEST_NAME}
+
+N2S_Copy_2_Dir_With_Same_Name
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-same-name1/COMMON-NAME ${NFS}${BASEDIR}/ing-source-data/dir-with-same-name2/COMMON-NAME    ${S3N_D}/nfs-to-s3n/${TEST_NAME}
+
+N2S_Copy_Dir_With_Large_Num_Of_Small_Files
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files/    ${S3N_D}/nfs-to-s3n/${TEST_NAME}
+
+N2S_Copy_Dir_With_Recursive_Random_Str
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str/   ${S3N_D}/nfs-to-s3n/${TEST_NAME} 
+
+N2S_Copy_Dir_With_Symlink
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-symlink    ${S3N_D}/nfs-to-s3n/${TEST_NAME}
+

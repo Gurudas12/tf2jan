@@ -1,0 +1,45 @@
+*** Settings ***
+Suite Setup       Dtcli Setup
+Resource          PiDemoAppData-Rand-resources.txt
+
+*** Test Cases ***
+Test PiDemoAppData rand minvalue
+    [Template]    Run Parameter Test
+    dt.application.PiDemoAppData.operator.rand.minvalue    0
+    dt.application.PiDemoAppData.operator.rand.minvalue    1000
+    dt.application.PiDemoAppData.operator.rand.minvalue    30000
+
+Test PiDemoAppData rand minvalue Negative
+    [Template]    Run Parameter Test Negative
+    dt.application.PiDemoAppData.operator.rand.minvalue    ONE    0 != ONE
+    dt.application.PiDemoAppData.operator.rand.minvalue    ${EMPTY}    0 != ${EMPTY}
+
+Test PiDemoAppData rand maxvalue
+    [Template]    Run Parameter Test
+    dt.application.PiDemoAppData.operator.rand.maxvalue    0
+    dt.application.PiDemoAppData.operator.rand.maxvalue    1234
+    dt.application.PiDemoAppData.operator.rand.maxvalue    30000
+
+Test PiDemoAppData rand maxvalue Negative
+    [Template]    Run Parameter Test Negative
+    dt.application.PiDemoAppData.operator.rand.minvalue    ONE    0 != ONE
+
+Test PiDemoAppData rand name
+    [Template]    Run Parameter Test
+    dt.application.PiDemoAppData.operator.rand.name    R
+    dt.application.PiDemoAppData.operator.rand.name    RANDOM
+    dt.application.PiDemoAppData.operator.rand.name    RANDOM-GENERATOR-OPERATOR
+
+Test PiDemoAppData rand tuplesBlast
+    [Template]    Run Parameter Test
+    dt.application.PiDemoAppData.operator.rand.tuplesBlast    1
+    dt.application.PiDemoAppData.operator.rand.tuplesBlast    1000
+    #Test PiDemoAppData rand tuplesBlast Negative
+    #    [Template]    Run Parameter Test Negative
+    #    dt.application.PiDemoAppData.operator.rand.tuplesBlast    0    must be greater than or equal to 1
+    #    dt.application.PiDemoAppData.operator.rand.tuplesBlast    -1    must be greater than or equal to 1
+    #    dt.application.PiDemoAppData.operator.rand.tuplesBlast    ONE    must be greater than or equal to 1
+    #    dt.application.PiDemoAppData.operator.rand.tuplesBlast    ${EMPTY}    must be greater than or equal to 1
+
+Sample Testcase
+    Log    Hello there! It's a sample testcase!!!

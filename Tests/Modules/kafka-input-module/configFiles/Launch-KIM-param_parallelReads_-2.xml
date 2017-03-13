@@ -1,0 +1,19 @@
+<configuration>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.topic</name>
+     <value>Launch-KIM-param_parallelReads_-2</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.broker</name>
+     <value>node35.morado.com:9092</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.zookeeper</name>
+     <value>node35.morado.com:2181</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.parallelReads</name>
+     <value>-2</value>
+  </property>
+
+</configuration>

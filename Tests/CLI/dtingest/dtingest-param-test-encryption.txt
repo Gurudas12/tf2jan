@@ -1,0 +1,197 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${enc_pki_pub_key_4096}    MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAzSOFpInRu1k6cOh/WhBHkS3hYLO6BVRggCwGZbFz4ySnCENsn2mAtHcQF+bZ3IzT8WS6Pr3y05OchGherTIA/u5JVJEGwLEBCSwe3mDICHrZD/3RvsWmzgqIqpT346fOrHsJKphljmm6gKn7NCdYs+M1R7/75iT6FxUXMhTajGpVGaKLwUC/gRphXN+T2zQ9ivFWUBhUXWy8jiivDqXAWxofF8A8prnaBedRQJCSno8w9X3Mroeiab87hW6QFVGH6YwwSIptNmBSa6zGQJvhFw7seWhu7mjR8u9lSWqecoCvbyFgY0kO5qg7/gZCz7tjdkLGkITQOUzqkNWF4XeYYsvjlfhO+xhC8HLREbcyn0NN2dnhqow967Mx+ay+yVq0mlcxEu/XZufCS9DoTPMkZB0ASlgBrNxjBQDlUuCcCpbNkPqrDMx3KAPOOVlBh/EAFMxzohMR/zr9Q2Kp+S0LsRRCVIfXD0jqrKkCC/LswH4mUQs6C4sL/NT8fgqfCabGGcagLGvmnxdELfsTW046fcvzyGh8QllXOdoFYbNRAHI8Roze01wyo8PdKdB3Lr1fu9l2k7RiVHvMVbzFjtFMs5Pw2A/JDwLFHGA0R0orF4fpJvq/NjtyF8Vt6mCB47YRQgjAveqC0X1FZg1nXrwlmMKf/S4fXd+lxW2xkxy+N48CAwEAAQ==
+${enc_pki_pri_key_4096}    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
+${enc_pki_pub_key_2048}    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAugoc1jp5NP9AS7eK4fIbrIkv1N41TukgJiB0ckqLfC2frcaZwISNcLqemBzGvQCvgK06vF9yY6EnU70lx3184xlrwBQMUPT9Yo9PLx1fB0cypHT5K+0tsm4XPqRDqfxQYlKoYl89aV2U6/EudN/St1HJry421NEf/KO+Bg4a4wpLll4QThOdr03m7VMyWbbAKv/YOP+s1wj2WC9RE7+r/vSKQkZ4aFFPp0ID7tZH3+BE2Na9/hB113uw39rLdbz97lrWW0nnLsSS11HXdfwbvaaiqN9VVerqz41Do2Jz7lQ1H2kPOqWCmOsTIjsZgb8VzSfYOf4433LR07XMfvw9mQIDAQAB
+${enc_pki_pri_key_2048}    MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC6ChzWOnk0/0BLt4rh8husiS/U3jVO6SAmIHRySot8LZ+txpnAhI1wup6YHMa9AK+ArTq8X3JjoSdTvSXHfXzjGWvAFAxQ9P1ij08vHV8HRzKkdPkr7S2ybhc+pEOp/FBiUqhiXz1pXZTr8S5039K3UcmvLjbU0R/8o74GDhrjCkuWXhBOE52vTebtUzJZtsAq/9g4/6zXCPZYL1ETv6v+9IpCRnhoUU+nQgPu1kff4ETY1r3+EHXXe7Df2st1vP3uWtZbSecuxJLXUdd1/Bu9pqKo31VV6urPjUOjYnPuVDUfaQ86pYKY6xMiOxmBvxXNJ9g5/jjfctHTtcx+/D2ZAgMBAAECggEAV6c4Gv+F6CBzjLk3qGlH/KzOan8fosRYL16PPuI8gg+E8n1mJ7zMX1auLoEwahCOoBP+Xo6h+KsPOncd+7X2R5HMoL1RaDtlvzBCYLJ3+ZfkFnQ+iiG/rBgOv6bpcoe83/aN+3tgFerPpbMG7m4ee9z/J5igoPi/F2uWtoeix2FeTlmuX0gJsSlaPp87OiXKoIrN14CYwpfVOJKeGQ63cvgZhijJcq14s7PO2B5W52jZL87QUjWGgnvzfyFjQKKSc1S5Es0PEGaStsxZ4S9uh7bYzBqfgl7+nvt2pkd9JPmBBqZ5lZ9QiyMSJx63oSoz1htWglgf60q/QuPfibD+GQKBgQDpM1iJ505f2sSiRfzJpavU4WsJVw8Nk9zXJjvpBVJvfQcA8hOJa3jPCDuC0x51UoWsOsLdCy1dhB157Lc0P7fD7WvirseG44azdzPCWlUXWoPN60i1LW4n/pQZCkDtqkEavP3kEqZsHrTskGy0h7/tFjEwaTQ1ZjxjvbEkeLjgJwKBgQDMOmW1JykvoGmJTQGprJ9Q6Xa1sWLQ4W/PARH6G55lXd36nJp4kV/HTENz9bhk84fKxU8n9Ven/JgEe8/ieUal0Q2fwmmFksbb1Q6junVCPi5qy1KULZtYbioEqX7h6EqRWsdb8BfXqdHjkAZZs8JlhB2AJ9HN/J1UWs4RHvLMPwKBgEYLkyuQ25y1FFz9kqlq5ssBjmn2yWG1qR7CsDoUzCcKseDZ1X5wVpAxE9b+3OY2jEooOEG2ysCNH2Fw9bJu9R6XoNEs2GeuzdX4FwbopShnmrFuW5937t96ezduOgRpIDcMz2IDLBPLwWJRGyW6pK5s/QdigjkL5VW8M4oV7Mn/AoGAX/Oj63utrxG34+lJObW/2F0ICA+CdM8mH+TJ1G97ePakH2XKcZEjpdhf7LBq5QtCJnOTYBu2Blf3+EtPfYErPya8Nu45c6dlRM2SJjypcOkUF9rVPoc68E458ZzM30irGCXFep2QJiREV51ITobVc6qhzZ9nxFbGeGZ9YK/gtTMCgYA7UzbWkwHNl24gF4MOsT/4zjUitgW44J6OXfbhPBgsssUsqrxiFFHbv8aT1/lLS6Haq+md6hTLB4xkBh7nxosqJ52BlTs2eUlEiWPDeXinV6wDTB3f/DlAMRpY0CS4pGqI8wcQxtFyF8d+snWShbPivQP7wd36gQ3bU0juV2IrWg==
+${enc_pki_pub_key_1024}    MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDwXjyUtHbjRn+7jSV9BXPPveVABtDc2IJDMbzCEnSlunmMCw3i9HDhGJMjDyoYb5Rj7hW3HslzvjyL+vycScr2AaxLipTAb3NInCgrPI3/bMQ9drJ+6sbW87qpM7e0dh50LbIfufY/TLAvN0/SRAL0G20171CyVMsjZaU5ThhG4wIDAQAB
+${enc_pki_pri_key_1024}    MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAPBePJS0duNGf7uNJX0Fc8+95UAG0NzYgkMxvMISdKW6eYwLDeL0cOEYkyMPKhhvlGPuFbceyXO+PIv6/JxJyvYBrEuKlMBvc0icKCs8jf9sxD12sn7qxtbzuqkzt7R2HnQtsh+59j9MsC83T9JEAvQbbTXvULJUyyNlpTlOGEbjAgMBAAECgYEA7z38sk4E3yX2UOil3ZAluynZGicukAH3dYX1yHyyGZpHDHqcMb728zSQjp6zWWsFmYkJmCBOhqNchD8mWzCfjto3g4ASvpjmCpVfESHUwD3+LdJXTkJ3sd2r3DEhYb6wT3XmFa1Xecs+xe12/pbW/lg7s01klpLBz4qXzLKmouECQQD7KOPDn54n7ylIqLMa72vIG7Syx8RE8wU9K4Z/P+tOkETszCzNccPR2or8h71zcxEkRQ+DMgHOQwYV5IC7841pAkEA9QAbHbyeDdKFjkgVbLx7UNXrMw5yvhriUwx2pdCyjnkl9ZRf10fx+8Mu/mj/GscDrQd/2+5y5YVFnYZXf6lMawJADJbXG9YjYlMNmbPDDoWTvHsPCqsSvnYD/DXzTuuQSubWXZw6Xq3mJ92xe8j+CQxqfovrpCLcjk8zveMvRLyHiQJAduIjRk21QC3MYts1kjrvd60l4PN82CSBeB0PIazgR+QfeEgULYmasTjn/8mBKEQz021VLKpLFHaT7jk3EhpbmwJAOHcOS5HnA1Ago2gXvsYR7YXrMzjgqH63Xuz7bKlcBZUNztbLF0HhBe1xv5S/eoC40n2rPTWQEVe0iAoU5YTajg==
+${enc_pki_pub_key_512}    MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAND0r9mbqETxL8jhaYxCQE+gU5qxtVY8V392ufrpOj3SwSbTdZNhqgeDbhLTCDoaBAQlJkXjzrn9XHUIzw/z/U0CAwEAAQ==
+${enc_pki_pri_key_512}    MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEA0PSv2ZuoRPEvyOFpjEJAT6BTmrG1VjxXf3a5+uk6PdLBJtN1k2GqB4NuEtMIOhoEBCUmRePOuf1cdQjPD/P9TQIDAQABAkA1fb4and9orrmF2jaT4k3mVGuymTWLuuzHQ5R+p//x3TCKxhdxu4m5E/PyxtX+x8cHumfDLmgWrfd+T343wjNhAiEA6bvzfiBpWVXGmrwOU5ulpoAnKaesZksfhpazzmS1/vUCIQDk3HfloRkhXeT4tlqdAQAj91vSctE6ysksD/BwFhBd+QIhALSk4YR6UlGMHKncbAosQnOTmjD0eSa6KsxfTupWJd69AiB/UXNWCQA9Aso93tycGZFlcNfhRMTHS0cNPzTIdk3WqQIgDRiMkARiLnZ9xCVI95s0MQ/ybWxl5/7vLYzsLgr0pX4=
+${enc_pki_invalid_key}    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAugoc1jp5NP9AS7eK4fIbrIkv1N41TukgJiB0ckqLfC2frcaZwISNcLqemBzGvQCvgK06vF9yY6EnU70lx3184xlrwBQMUPT9Yo9PLx1fB0cypHT5K
+${enc_aes_128b_key}    DatatorrentPsWD1
+${enc_aes_192b_key}    Datat0rrentIndiaPa55WorD
+${enc_aes_256b_key}    Datat0rr6nt1ndiaRealPunePa55w0rd
+${enc_aes_256b_sch}    ~`!@#$%^&*()_+-={[]}|\:;"'<>?,./
+${enc_aes_invalid_key}    Not128or192or256Bits
+
+*** Test Cases ***
+ENC_File_PKI-512
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_512}    dec_key=${enc_pki_pri_key_512}
+
+ENC_Dir_PKI-512
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_512}    dec_key=${enc_pki_pri_key_512}
+
+ENC_File_PKI-1024
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_1024}    dec_key=${enc_pki_pri_key_1024}
+
+ENC_Dir_PKI-1024
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_1024}    dec_key=${enc_pki_pri_key_1024}
+
+ENC_File_PKI-4096
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_4096}    dec_key=${enc_pki_pri_key_4096}
+
+ENC_Dir_PKI-4096
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_4096}    dec_key=${enc_pki_pri_key_4096}
+
+ENC_File_AES-128b
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_128b_key}
+
+ENC_Dir_AES-128b
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_128b_key}
+
+ENC_File_AES-192b
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_192b_key}
+
+ENC_Dir_AES-192b
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_192b_key}
+
+ENC_File_PKI-2048
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_File_PKI_Wrong_Decrypt_Key
+    [Tags]    sanity
+    Run Keyword And Expect Error    *DICTIONARIES DO NOT MATCH*    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}
+    ...    dec_key=${enc_pki_pri_key_1024}
+
+ENC_File_Invalid_PKI_Key
+    [Tags]    sanity
+    Run Keyword And Expect Error    *java.security.InvalidKeyException:*    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_invalid_key}
+    ...    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_Dir_With_Diff_File_Types
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/encryption-data    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_Dir_With_5-Depth
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-5-depth    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_Dir_With_500-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-500-depth    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_Dir_With_Rec_Random_Str
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}    timeout=60
+
+ENC_PKI-2048_Dir_With_Large_Num_Of_Small_Files
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_Dir_With_One_Blank_Dir
+    Run Keyword And Expect Error    Following keys missing from second dictionary: /dir-with-one-blank-dir/blank-dir    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-one-blank-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}
+    ...    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_Dir_With_Symlink
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-symlink    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_Dir_With_Already_Encrypted_Data
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/encrypted-data/dir-with-5-depth    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_Existing_Dir_At_dest-AS-IS
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-dir-at-destination    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}/    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_3-File_Sources
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file ${HDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic.file3    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_PKI-2048_1-File_And_2-Dir_Sources
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir ${HDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic-dir3    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_2048}    dec_key=${enc_pki_pri_key_2048}
+
+ENC_File_AES-256b
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_File_AES_Wrong_Decrypt_Key
+    [Tags]    sanity
+    Run Keyword And Expect Error    *DICTIONARIES DO NOT MATCH !!*Following keys have different values*    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+    ...    dec_key=${enc_aes_192b_key}
+
+ENC_File_Invalid_AES_Key
+    [Tags]    sanity
+    Run Keyword And Expect Error    *java.security.InvalidKeyException: For AES encryption please provide key of size 128, 192 or 256 bits*    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_invalid_key}
+
+ENC_AES-256b_Dir_With_Diff_File_Types
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/encryption-data    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Dir_With_5-Depth
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-5-depth    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Dir_With_500-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-500-depth    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Dir_With_Rec_Random_Str
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}    timeout=60
+
+ENC_AES-256b_Dir_With_Large_Num_Of_Small_Files
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Dir_With_One_Blank_Dir
+    Run Keyword And Expect Error    Following keys missing from second dictionary: /dir-with-one-blank-dir/blank-dir    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-one-blank-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Dir_With_Symlink
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-symlink    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Dir_With_Already_Encrypted_Data
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/encrypted-data/dir-with-5-depth    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Existing_Dir_At_dest-AS-IS
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-dir-at-destination    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_3-File_Sources
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file ${HDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic.file3    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_1-File_2-Dir_Sources
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir ${HDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic-dir3    ${oHDFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_Dummy_Test
+    [Tags]    sanity
+    Comment    This is just a placeholder
+
+ENC_File_PKI-1024_N2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1gb.file    ${FTP}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_1024}    dec_key=${enc_pki_pri_key_1024}
+
+ENC_File_PKI-1024_F2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/1gb.file    ${S3N_D}/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_1024}    dec_key=${enc_pki_pri_key_1024}
+
+ENC_File_PKI-1024_S2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/1gb.file    ${NFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-pki    enc_key=${enc_pki_pub_key_1024}    dec_key=${enc_pki_pri_key_1024}
+
+ENC_AES-256b_Dir_With_5-Depth_N2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-5-depth    ${FTP}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Dir_With_5-Depth_F2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/dir-with-5-depth    ${S3N_D}/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+ENC_AES-256b_Dir_With_5-Depth_S2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/dir-with-5-depth    ${NFS}${BASEDIR}/ing-dest-data/Encryption/${TEST_NAME}    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+

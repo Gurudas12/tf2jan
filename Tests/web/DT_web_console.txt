@@ -1,0 +1,136 @@
+*** Settings ***
+Suite Setup       SetupBrowsingEnv
+Suite Teardown    DestroyBrowsingEnv
+Resource          ../../../lib/web/WebLib.txt
+Resource          ../../../lib/web/Ingestion/Ingestion_Config_UI.txt
+
+*** Variables ***
+${url}            http://node35.morado.com:9090
+${app_pkg_loc}    /var/dt/tf/Tests/data/app_pkgs/DTApp-pi-demo-1.0-SNAPSHOT.jar
+${dt_version}     3.4.0
+${apex_version}    3.4.0
+
+*** Test Cases ***
+Run_Demo_App_Test
+    [Documentation]    Test case details: http://vito.morado.com/bz/tr_show_case.cgi?case_id=1683
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    Pi Demo
+    Launch The app    Pi Demo    PiDemo
+    Click Element    //t[contains(text(),"Application ID")]/../a    #Navigate to the launched app monitor page through the link on success message
+    sleep    15s
+    ${state}    Get Text    //span[@dt-status='data.state']/span
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    PiDemo application is not started, current state is ${state}
+    [Teardown]    Close Browser
+
+Run_Non_Existing_Application_Test
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    DataTorrent Pi Demo
+    Launch The app    DataTorrent Pi Demo    NonExistsDemo
+    [Teardown]    Close Browser
+
+Run_New_Application_Test
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    Pi Demo    #/full/path/which/is/correct
+    Launch The app    Pi Demo    PiDemo
+    [Teardown]    Close Browser
+
+Verify_License_Details
+    Connect_To_DT_Console    ${url}
+    ${test}=    License_Info_Details
+    Log Dictionary    ${test}
+    [Teardown]    Close Browser
+
+Import_New_License_Test
+    Connect_To_DT_Console    ${url}
+    Import_License_File    /home/corect/path/here/DT_Certification/dt-20150504212046-j6u0k2fe
+
+Verify_Gateway_Info_Details
+    Connect_To_DT_Console    ${url}
+    ${test}=    System_Gw_Info_Details
+    Log Dictionary    ${test}
+    ${version_string}=    convert to string    3.1.0-SNAPSHOT
+    log    ${version_string}
+    dictionary should contain item    ${test}    version    ${version_string}
+    [Teardown]    Close Browser
+
+Verify_Hadoop_Info_Details
+    Connect_To_DT_Console    ${url}
+    ${test}=    Hadoop_Info_Details
+    [Teardown]    Close Browser
+
+Application_Shutdown_Test
+    [Documentation]    Test case details: http://vito.morado.com/bz/tr_show_case.cgi?case_id=1687
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    Pi Demo
+    Launch The app    Pi Demo    PiDemo
+    Click Element    //t[contains(text(),"Application ID")]/../a    #Navigate to the launched app monitor page through the link on success message
+    sleep    15s
+    ${state}    Get Text    //span[@dt-status='data.state']/span
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    PiDemo application is not started, current state is ${state}
+    sleep    10s
+    Click Element    //span[text()='shutdown']/..    #Shutdown the launched app
+    Wait Until Page Contains Element    //h3[text()="End this application?"]    #timeout=10s
+    Click Element    //button[contains(@class,'btn-danger')]
+    sleep    10s
+    Wait Until Page Contains Element    //span[text()='FINISHED']/..
+    [Teardown]    Close Browser
+
+Application_Kill_Test
+    [Documentation]    Test case details: \ http://vito.morado.com/bz/tr_show_case.cgi?case_id=1688
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    Pi Demo
+    Launch The app    Pi Demo    PiDemo
+    Click Element    //t[contains(text(),"Application ID")]/../a    #Navigate to the launched app monitor page through the link on success message
+    sleep    15s
+    ${state}    Get Text    //span[@dt-status='data.state']/span
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    PiDemo application is not started, current state is ${state}
+    sleep    10s
+    Click Element    //span[text()='kill']/..    #Shutdown the launched app
+    Wait Until Page Contains Element    //h3[text()="End this application?"]    #timeout=10s
+    Click Element    //button[contains(@class,'btn-danger')]
+    sleep    10s
+    Wait Until Page Contains Element    //span[text()='KILLED']/..
+    [Teardown]    Close Browser
+
+RTS_APEX_Version_Check
+    Connect_To_DT_Console    ${url}
+    ${config_info}=    System_Gw_Info_Details
+    Log Dictionary    ${config_info}
+    Comment    ${version_string}=    convert to string    3.4.0
+    Comment    log    ${version_string}
+    Comment    Verify Apex version string
+    ${apex_version_dict}=    Get From Dictionary    ${config_info}    version
+    ${apex_version_dict}=    Convert To String    ${apex_version_dict}
+    Log    ${apex_version_dict}
+    ${apex_version_str}=    Convert To String    ${apex_version}
+    List Should Contain Value    ${apex_version_dict}    ${apex_version_str}
+    ${rts_version_dict}    Get From Dictionary    ${config_info}    rtsVersion
+    ${rts_version_dict}    Convert To String    ${rts_version_dict}
+    Log    ${rts_version_dict}
+    ${rts_version_str}=    Convert To String    ${dt_version}
+    List Should Contain Value    ${rts_version_dict}    ${rts_version_str}
+    [Teardown]    Close Browser
+
+Operator_Kill_Test
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    Pi Demo
+    Launch The app    Pi Demo    PiDemo
+    Click Element    //t[contains(text(),"Application ID")]/../a    #Navigate to the launched app monitor page through the link on success message
+    Sleep    20s    #Delay in response due to remote connection
+    Click Element    //span[text()='physical']/..
+    sleep    5s
+    ${before_kill_Container_ID}    Get Text    //a[text()='rand']/../../..//a[@dt-page-href="Container"]
+    Click Element    //a[text()='rand']/../../..//a[@dt-page-href="Container"]    #Retrieve container ID for rand operator
+    Page Should Contain Element    //h2[contains(text(),'container')]
+    Click Element    //tr[@class='even']//input    #Select a container
+    Click Element    //t[text()='kill']/..
+    Reload Page
+    sleep    10s    #Delay in response due to remote connection
+    Page Should Contain Element    //span[@ng-if='dtStatus' and text()='KILLED']
+    Click Element    //a[@ng-bind="breadcrumb.label" and contains(@ng-href,"apps")]    #Navigate to application monitor page
+    Sleep    5s
+    ${after_kill_Container_ID}    Get Text    //a[text()='rand']/../../..//a[@dt-page-href="Container"]
+    Should Not Be Equal As Strings    ${before_kill_Container_ID}    ${after_kill_Container_ID}
+    [Teardown]    Close Browser
+
+*** Keywords ***

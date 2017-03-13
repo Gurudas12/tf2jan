@@ -1,0 +1,33 @@
+*** Settings ***
+Library           Selenium2Library
+Library           ../helpers.py
+Library           Operating System
+
+*** Keywords ***
+Go_To_Page
+    [Arguments]    ${link_disp_name}    ${str_on_page_to_verify}
+    ${Go_To_Page_Link}    Set Variable    //span[text()='${link_disp_name}']/..
+    Click Element    xpath=${Go_To_Page_Link}
+    Wait Until Page Contains    ${str_on_page_to_verify}
+
+Connect_To_DT_Console
+    [Arguments]    ${url}
+    Open Browser    ${url}    
+    Maximize Browser Window
+    Wait Until Page Contains    Cluster Overview
+
+
+DestroyBrowsingEnv
+    Close Browser
+    Terminate PID    ${xvfbPID}
+    Remove Directory    /tmp/ffprofiles/${displayid}    recursive=True
+
+SetupBrowsingEnv
+    [Arguments]    ${width}=1920    ${height}=1080    ${colordepth}=24
+    ${displayid}    ${xvfbpid}=    Setup XVFB    ${width}    ${height}    ${colordepth}
+    Set Environment Variable    DISPLAY    :${displayid}
+    Create Directory    /tmp/ffprofiles/
+    Copy Directory    /var/dt/tf/etc/browsers/ffblankprofile    /tmp/ffprofiles/${displayid}
+    Set Suite Variable    ${displayid}    ${displayid}
+    Set Suite Variable    ${xvfbpid}    ${xvfbpid}
+

@@ -1,0 +1,51 @@
+{
+    "name": "Unnamed FW", 
+    "launches": [
+        {
+            "fworker": {
+                "category": "", 
+                "query": "{\"$or\": [{\"spec._fworker\": {\"$exists\": false}}, {\"spec._fworker\": null}, {\"spec._fworker\": \"Automatically generated Worker\"}]}", 
+                "name": "Automatically generated Worker", 
+                "env": {}
+            }, 
+            "trackers": [], 
+            "ip": "127.0.1.1", 
+            "fw_id": 2061, 
+            "state": "RUNNING", 
+            "host": "vito", 
+            "launch_dir": "/var/dt/tf/lib/integration/launcher_2016-04-19-10-41-49-432716", 
+            "action": null, 
+            "launch_id": 2015, 
+            "state_history": [
+                {
+                    "updated_on": "2016-04-19T10:41:49.440571", 
+                    "state": "RUNNING", 
+                    "created_on": "2016-04-19T10:41:49.440565"
+                }
+            ]
+        }
+    ], 
+    "fw_id": 2061, 
+    "state": "RUNNING", 
+    "created_on": "2016-04-19T10:41:49.370538", 
+    "updated_on": "2016-04-19T10:41:49.441946", 
+    "spec": {
+        "_tasks": [
+            {
+                "args": [
+                    245, 
+                    3, 
+                    20, 
+                    20, 
+                    "bvt", 
+                    "/var/dt/tf/etc/environments/bvt.py", 
+                    "REST API Ping", 
+                    "3.3.1-dt20160316", 
+                    "3.3.1-dt20160316"
+                ], 
+                "_fw_name": "PyTask", 
+                "func": "HookFW.runCase"
+            }
+        ]
+    }
+}

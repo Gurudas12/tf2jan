@@ -1,0 +1,61 @@
+*** Settings ***
+Library           String
+Library           BuiltIn
+Library           OperatingSystem
+Library           ../../../lib/CLI/HDFSLibrary.py    ${namenode}    ${webhdfsport}
+Library           ../../../lib/CLI/KafkaLibrary.py    ${broker}    ${zookeeper}
+Resource          ../../CLI/dtcli/dtcli_resources.txt
+Resource          ../../CLI/cli_resources.txt
+Resource          ../module_resources.txt
+
+*** Keywords ***
+Launch Validator App
+    [Arguments]    ${config}    ${wait}=-1    ${killc}=${False}
+    ${exactMatch}=    Set Variable    KafkaInputModuleValidationApp
+    ${app_id}    ${cmd_stdout}=    Dtcli Launch App And Exit    ${pkg_kafka_input_demo}    -exactMatch -conf ${config} ${exactMatch}    ${exactMatch}
+    Run Keyword If    '${wait}'==-1    Return From Keyword    ${app_id}
+    Run Keyword If    '${killc}'=='${True}'    Kill Container Using OpName    app_id=${app_id}    op_name=KafkaValidator_KafkaReader_MessageReader    wait=1m
+    Terminate App    ${app_id}    ${wait}
+    ${log_file}=    Set Variable    ${APP_DIR_PATH}${/}${app_id}${/}Error.log
+    ${data}=    Search String In Hdfs File    ${log_file}    Error
+    Should Be Equal    ${data}    ${EMPTY}
+
+Launch Validator App Manual
+    [Arguments]    ${config}    ${wait}=-1    ${killc}=${False}
+    ${exactMatch}=    Set Variable    KafkaInputModuleValidationApp
+    ${app_id}    ${cmd_stdout}=    Dtcli Launch App And Exit    ${pkg_kafka_input_demo}    -exactMatch -conf ${config} ${exactMatch}    ${exactMatch}
+    Run Keyword If    '${wait}'==-1    Return From Keyword    ${app_id}
+    Run Keyword If    '${killc}'=='${True}'    Kill Container Using OpName    app_id=${app_id}    op_name=KafkaValidator_KafkaReader_MessageReader    wait=1m
+    Send Messages To Kafka    ${TEST_NAME}    num_msgs=10
+    Terminate App    ${app_id}    1m
+    Comment    ${log_file}=    Set Variable    ${APP_DIR_PATH}${/}${app_id}${/}Error.log
+    Comment    ${data}=    Search String In Hdfs File    ${log_file}    Error
+    Comment    Should Be Equal    ${data}    ${EMPTY}
+
+Launch Negative Test
+    [Arguments]    ${config}    ${error}=${EMPTY}
+    ${exactMatch}=    Set Variable    KafkaBenchmarkApp
+    ${app_id}    ${cmd_stdout}=    Dtcli Launch App And Expect Error    ${pkg_kafka_input_demo}    -exactMatch -conf ${config} ${exactMatch}    ${error}
+
+Kafka Input Module Test Setup
+    [Arguments]    ${topic_name}    ${partitions}=1    ${rep_factor}=1
+    Create Kafka Topic    topic_name=${topic_name}    zookeeper=${zookeeper}    partitions=${partitions}    rep_factor=${rep_factor}
+
+Kafka Input Module Test Teardown
+    [Arguments]    ${topic_name}
+    Run Keyword If Test Passed    Delete Kafka Topic    topic_name=${topic_name}    zookeeper=${zookeeper}
+
+Kafka Input Module Suite Setup
+    Login Server    ${dtserver}    ${sshuser}    ${sshkey}
+    Add To PATH    ${dtbin}
+    Create File    ${module_logs}    content="KAFKA INPUT MODULE LOGS ::" ${\n}
+
+Create Kafka Topic
+    [Arguments]    ${topic_name}    ${zookeeper}    ${partitions}=1    ${rep_factor}=1
+    ${cmd}=    Set Variable    kafka-topics --create --zookeeper ${zookeeper} --replication-factor ${rep_factor} --partitions ${partitions} --topic ${topic_name}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}
+
+Delete Kafka Topic
+    [Arguments]    ${topic_name}    ${zookeeper}
+    ${cmd}=    Set Variable    kafka-topics --delete --zookeeper ${zookeeper} --topic ${topic_name}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}

@@ -1,0 +1,66 @@
+*** Settings ***
+Library           SSHLibrary
+Library           Selenium2Library      20     20 
+
+*** Variables ***
+${config_continue_xpath}    //button[contains(@class,'btn')]
+${add_hadoop_executable_path_xpath}    //input[@name='hadoopLocation']
+${add_dfs_location_xpath}    //input[@name='dfsLocation']
+${license_confirm_xpath}    //h1//span[text()='DataTorrent RTS License Confirmation']
+${license_id}     ${EMPTY}
+${license_id_xpath}    //h4/../p
+${configure_complete_xpath}    //h1[text()='Configuration Complete']
+${nextButton_xpath}    //span[text()='continue']/..[contains(@class,'nextButton')]
+${Page_header}    //h1
+${alert_success_xpath}    //p[contains(@class,'alert-success')]
+${success_btn_xpath}    //a[contains(@class,'btn-success')]
+${trial_enterprise_edition_xpath}    //div[@class="license-choice enterprise selected"]
+${config_success_xpath}    //p[contains(text(),"This collection of interactive tutorial")]
+
+*** Keywords ***
+Login
+    [Arguments]    ${NODE_IP}    ${USername}    ${User_Key}
+    [Documentation]    Login to specified Host using specified public key, also verifies with user id to confirm successful login
+    Open Connection    ${NODE_IP}
+    ${out}=    Login With Public Key    ${Username}    ${User_Key}
+    ${out}=    Execute Command    id    return_out=True
+    Should Contain    ${out}    ${Username}
+
+Download_DT_Build
+    [Arguments]    ${download_link}    ${installer}
+    [Documentation]    Download the Datatorrent RTS build from specified location in ${download_link} variable. Saves the downloaded file as 'datatorrent-rts.bin'
+    #${rc}=    Execute Command    curl -LSO \ datatorrent-rts.bin \ ${download_link}    return_out=True
+    ${rc}=    Execute Command    curl -LSO \ ${download_link}    return_out=True
+    Should Contain    0    ${rc}
+    SSHLibrary.File Should Exist    ./${installer}
+    Execute Command    chmod +x \ ${installer}
+
+Configure_DT
+    [Arguments]    ${url}    ${Hadoop_Executable_Location}    ${DFS_Location}
+    [Documentation]    Configure the DT platform through Installation wizard (web console)
+    open Browser    ${url}    #ff_profile_dir=/home/correct_path_here/Automation/DT_Automation/Tests/ff_proxy
+    Maximize Browser Window
+    Wait Until Page Contains    Welcome to DataTorrent RTS!
+    Click Button    xpath=${config_continue_xpath}
+    Wait Until Page Contains    Hadoop location
+    Input text    xpath=${add_hadoop_executable_path_xpath}    ${Hadoop_Executable_Location}
+    Input Text    xpath=${add_dfs_location_xpath}    ${DFS_Location}
+    Click Button    xpath=${nextButton_xpath}
+    Comment    Wait Until Page Contains    License Selection    #Work prior to 3.3
+    Comment    Wait Until Page Contains Element    ${trial_enterprise_edition_xpath}     #Work prior to 3.3
+    Comment    Click Button    xpath=${nextButton_xpath}    #Work prior to 3.3
+    Comment    ${license_id}=    Get Text    ${license_id_xpath}
+    Comment    Click Button    xpath=${nextButton_xpath}
+    #Wait Until Page Contains    Configuration Complete
+    #Wait Until Page Contains    Summary    #"Wizard" Work prior to 3.3
+    #Sleep     10s
+    #Click Button    xpath=${nextButton_xpath}
+    #Wait Until Page Contains Element    ${config_success_xpath}
+    Comment    Element Should Be Visible    xpath=${alert_success_xpath}
+    Comment    Page Should Not Contain    Identified Issues
+    Comment    Wait Until Element Is Visible    xpath=${success_btn_xpath}
+    Comment    Click Element    xpath=${success_btn_xpath}
+    Comment    Wait Until Page Contains    DataTorrent
+    sleep   10s
+    Wait Until Page Contains    Configuration Complete
+    #[Teardown]    Close Browser

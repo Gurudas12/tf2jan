@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20160526 10:08:47.709" generator="Robot 2.8.7 (Python 2.7.6 on linux2)">
+<suite source="/var/dt/tf/Tests/deployment/install/Build_Verification_Tests.txt" id="s1" name="Build Verification Tests">
+<kw type="setup" name="Common_resources.SetupBrowsingEnv">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${displayid}, ${xvfbpid} = helpers.Setup XVFB">
+<doc>Sets up xvfb display, returns the display id and pid</doc>
+<arguments>
+<arg>${width}</arg>
+<arg>${height}</arg>
+<arg>${colordepth}</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.120" level="INFO">[]
+no ls
+0
+locks:
+0
+0
+xvfb pid is: 18330
+fluxbox pid is: 18331
+display id is: 0</msg>
+<msg timestamp="20160526 10:08:48.121" level="INFO">${displayid} = 0</msg>
+<msg timestamp="20160526 10:08:48.121" level="INFO">${xvfbpid} = 18330</msg>
+<status status="PASS" endtime="20160526 10:08:48.121" starttime="20160526 10:08:48.107"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Set Environment Variable">
+<doc>Sets an environment variable to a specified value.</doc>
+<arguments>
+<arg>DISPLAY</arg>
+<arg>:${displayid}</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.122" level="INFO">Environment variable 'DISPLAY' set to value ':0'</msg>
+<status status="PASS" endtime="20160526 10:08:48.122" starttime="20160526 10:08:48.122"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Create Directory">
+<doc>Creates the specified directory.</doc>
+<arguments>
+<arg>/tmp/ffprofiles/</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.125" html="yes" level="INFO">Directory '&lt;a href="file:///tmp/ffprofiles"&gt;/tmp/ffprofiles&lt;/a&gt;' already exists</msg>
+<status status="PASS" endtime="20160526 10:08:48.125" starttime="20160526 10:08:48.123"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Copy Directory">
+<doc>Copies the source directory into the destination.</doc>
+<arguments>
+<arg>/var/dt/tf/etc/browsers/ffblankprofile</arg>
+<arg>/tmp/ffprofiles/${displayid}</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.131" html="yes" level="INFO">Copied directory from '&lt;a href="file:///var/dt/tf/etc/browsers/ffblankprofile"&gt;/var/dt/tf/etc/browsers/ffblankprofile&lt;/a&gt;' to '&lt;a href="file:///tmp/ffprofiles/0"&gt;/tmp/ffprofiles/0&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20160526 10:08:48.132" starttime="20160526 10:08:48.125"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${displayid}</arg>
+<arg>${displayid}</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.133" level="INFO">${displayid} = 0</msg>
+<status status="PASS" endtime="20160526 10:08:48.133" starttime="20160526 10:08:48.132"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${xvfbpid}</arg>
+<arg>${xvfbpid}</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.138" level="INFO">${xvfbpid} = 18330</msg>
+<status status="PASS" endtime="20160526 10:08:48.138" starttime="20160526 10:08:48.133"></status>
+</kw>
+<status status="PASS" endtime="20160526 10:08:48.138" starttime="20160526 10:08:48.105"></status>
+</kw>
+<test id="s1-t1" name="1_DT_Installation_Configuration">
+<kw type="kw" name="certifications_resources.Login">
+<doc>Login to specified Host using specified public key, also verifies with user id to confirm successful login</doc>
+<arguments>
+<arg>${NODE_IP}</arg>
+<arg>${Username}</arg>
+<arg>${User_Key}</arg>
+</arguments>
+<kw type="kw" name="SSHLibrary.Open Connection">
+<doc>Opens a new SSH connection to the given `host` and `port`.</doc>
+<arguments>
+<arg>${NODE_IP}</arg>
+</arguments>
+<status status="PASS" endtime="20160526 10:08:48.148" starttime="20160526 10:08:48.147"></status>
+</kw>
+<kw type="kw" name="${out} = SSHLibrary.Login With Public Key">
+<doc>Logs into the SSH server using key-based authentication.</doc>
+<arguments>
+<arg>${Username}</arg>
+<arg>${User_Key}</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.149" level="INFO">Logging into 'node35.morado.com:22' as 'akshay'.</msg>
+<msg timestamp="20160526 10:08:48.659" level="FAIL">Login with public key failed for user 'akshay'.</msg>
+<status status="FAIL" endtime="20160526 10:08:48.659" starttime="20160526 10:08:48.148"></status>
+</kw>
+<status status="FAIL" endtime="20160526 10:08:48.660" starttime="20160526 10:08:48.145"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20160526 10:08:48.661" critical="yes" starttime="20160526 10:08:48.138">Login with public key failed for user 'akshay'.</status>
+</test>
+<test id="s1-t2" name="DT_Uninstallation">
+<kw type="kw" name="certifications_resources.Login">
+<doc>Login to specified Host using specified public key, also verifies with user id to confirm successful login</doc>
+<arguments>
+<arg>${NODE_IP}</arg>
+<arg>${Username}</arg>
+<arg>${User_Key}</arg>
+</arguments>
+<kw type="kw" name="SSHLibrary.Open Connection">
+<doc>Opens a new SSH connection to the given `host` and `port`.</doc>
+<arguments>
+<arg>${NODE_IP}</arg>
+</arguments>
+<status status="PASS" endtime="20160526 10:08:48.667" starttime="20160526 10:08:48.667"></status>
+</kw>
+<kw type="kw" name="${out} = SSHLibrary.Login With Public Key">
+<doc>Logs into the SSH server using key-based authentication.</doc>
+<arguments>
+<arg>${Username}</arg>
+<arg>${User_Key}</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.668" level="INFO">Logging into 'node35.morado.com:22' as 'akshay'.</msg>
+<msg timestamp="20160526 10:08:48.901" level="FAIL">Login with public key failed for user 'akshay'.</msg>
+<status status="FAIL" endtime="20160526 10:08:48.902" starttime="20160526 10:08:48.668"></status>
+</kw>
+<status status="FAIL" endtime="20160526 10:08:48.902" starttime="20160526 10:08:48.665"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20160526 10:08:48.904" critical="yes" starttime="20160526 10:08:48.663">Login with public key failed for user 'akshay'.</status>
+</test>
+<kw type="teardown" name="Common_resources.DestroyBrowsingEnv">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Selenium2Library.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20160526 10:08:48.911" starttime="20160526 10:08:48.910"></status>
+</kw>
+<kw type="kw" name="helpers.Terminate PID">
+<doc>Tries to terminate the process by pid</doc>
+<arguments>
+<arg>${xvfbPID}</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.911" level="INFO">Terminating the process 18330</msg>
+<status status="PASS" endtime="20160526 10:08:48.917" starttime="20160526 10:08:48.911"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Remove Directory">
+<doc>Removes the directory pointed to by the given `path`.</doc>
+<arguments>
+<arg>/tmp/ffprofiles/${displayid}</arg>
+<arg>recursive=True</arg>
+</arguments>
+<msg timestamp="20160526 10:08:48.918" html="yes" level="INFO">Removed directory '&lt;a href="file:///tmp/ffprofiles/0"&gt;/tmp/ffprofiles/0&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20160526 10:08:48.918" starttime="20160526 10:08:48.917"></status>
+</kw>
+<status status="PASS" endtime="20160526 10:08:48.919" starttime="20160526 10:08:48.909"></status>
+</kw>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20160526 10:08:48.919" starttime="20160526 10:08:47.710"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="2" pass="0">Critical Tests</stat>
+<stat fail="2" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="2" pass="0" id="s1" name="Build Verification Tests">Build Verification Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

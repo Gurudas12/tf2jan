@@ -1,0 +1,315 @@
+{
+    "properties": {
+        "allocatedMB": {
+            "type": "string"
+        },
+        "allocatedVCores": {
+            "type": "string"
+        },
+        "appDataSources": {
+            "items": [{}],
+            "type": "array"
+        },
+        "appMasterTrackingUrl": {
+            "type": "string"
+        },
+        "appPath": {
+            "type": "string"
+        },
+        "applicationType": {
+            "type": "string"
+        },
+        "attributes": {
+            "properties": {
+                "APPLICATION_DATA_LINK": {
+                    "type": "null"
+                },
+                "APPLICATION_DOC_LINK": {
+                    "type": "null"
+                },
+                "APPLICATION_ID": {
+                    "type": "string"
+                },
+                "APPLICATION_NAME": {
+                    "type": "string"
+                },
+                "APPLICATION_PATH": {
+                    "type": "string"
+                },
+                "APP_PACKAGE_SOURCE": {
+                    "type": "string"
+                },
+                "BUFFER_SPOOLING": {
+                    "type": "boolean"
+                },
+                "CHECKPOINT_WINDOW_COUNT": {
+                    "type": "string"
+                },
+                "CONTAINER_JVM_OPTIONS": {
+                    "type": "null"
+                },
+                "CONTAINER_OPTS_CONFIGURATOR": {
+                    "properties": {},
+                    "type": "object"
+                },
+                "DEBUG": {
+                    "type": "boolean"
+                },
+                "ENABLE_STATS_RECORDING": {
+                    "type": "boolean"
+                },
+                "GATEWAY_CONNECT_ADDRESS": {
+                    "type": "string"
+                },
+                "GATEWAY_PASSWORD": {
+                    "type": "null"
+                },
+                "GATEWAY_USER_NAME": {
+                    "type": "null"
+                },
+                "GATEWAY_USE_SSL": {
+                    "type": "boolean"
+                },
+                "HEARTBEAT_INTERVAL_MILLIS": {
+                    "type": "string"
+                },
+                "HEARTBEAT_LISTENER_THREAD_COUNT": {
+                    "type": "string"
+                },
+                "HEARTBEAT_TIMEOUT_MILLIS": {
+                    "type": "string"
+                },
+                "MASTER_MEMORY_MB": {
+                    "type": "string"
+                },
+                "METRICS_TRANSPORT": {
+                    "type": "null"
+                },
+                "RESOURCE_ALLOCATION_TIMEOUT_MILLIS": {
+                    "type": "string"
+                },
+                "RPC_LATENCY_COMPENSATION_SAMPLES": {
+                    "type": "string"
+                },
+                "STATS_MAX_ALLOWABLE_WINDOWS_LAG": {
+                    "type": "string"
+                },
+                "STREAMING_WINDOW_SIZE_MILLIS": {
+                    "type": "string"
+                },
+                "STRING_CODECS": {
+                    "type": "null"
+                },
+                "THROUGHPUT_CALCULATION_INTERVAL": {
+                    "type": "string"
+                },
+                "THROUGHPUT_CALCULATION_MAX_SAMPLES": {
+                    "type": "string"
+                },
+                "TUPLE_RECORDING_PART_FILE_SIZE": {
+                    "type": "string"
+                },
+                "TUPLE_RECORDING_PART_FILE_TIME_MILLIS": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "APPLICATION_DATA_LINK",
+                "APPLICATION_DOC_LINK",
+                "APPLICATION_ID",
+                "APPLICATION_NAME",
+                "APPLICATION_PATH",
+                "APP_PACKAGE_SOURCE",
+                "BUFFER_SPOOLING",
+                "CHECKPOINT_WINDOW_COUNT",
+                "CONTAINER_JVM_OPTIONS",
+                "CONTAINER_OPTS_CONFIGURATOR",
+                "DEBUG",
+                "ENABLE_STATS_RECORDING",
+                "GATEWAY_CONNECT_ADDRESS",
+                "GATEWAY_PASSWORD",
+                "GATEWAY_USER_NAME",
+                "GATEWAY_USE_SSL",
+                "HEARTBEAT_INTERVAL_MILLIS",
+                "HEARTBEAT_LISTENER_THREAD_COUNT",
+                "HEARTBEAT_TIMEOUT_MILLIS",
+                "MASTER_MEMORY_MB",
+                "METRICS_TRANSPORT",
+                "RESOURCE_ALLOCATION_TIMEOUT_MILLIS",
+                "RPC_LATENCY_COMPENSATION_SAMPLES",
+                "STATS_MAX_ALLOWABLE_WINDOWS_LAG",
+                "STREAMING_WINDOW_SIZE_MILLIS",
+                "STRING_CODECS",
+                "THROUGHPUT_CALCULATION_INTERVAL",
+                "THROUGHPUT_CALCULATION_MAX_SAMPLES",
+                "TUPLE_RECORDING_PART_FILE_SIZE",
+                "TUPLE_RECORDING_PART_FILE_TIME_MILLIS"
+            ],
+            "type": "object"
+        },
+        "canWrite": {
+            "type": "boolean"
+        },
+        "connectedToThisGateway": {
+            "type": "boolean"
+        },
+        "currentAttemptId": {
+            "type": "string"
+        },
+        "customMetrics": {
+            "properties": {},
+            "type": "object"
+        },
+        "diagnostics": {
+            "type": "string"
+        },
+        "elapsedTime": {
+            "type": "string"
+        },
+        "finalStatus": {
+            "type": "string"
+        },
+        "finishedTime": {
+            "type": "string"
+        },
+        "gatewayAddress": {
+            "type": "string"
+        },
+        "gatewayConnected": {
+            "type": "boolean"
+        },
+        "id": {
+            "type": "string"
+        },
+        "isSystemApp": {
+            "type": "boolean"
+        },
+        "name": {
+            "type": "string"
+        },
+        "queue": {
+            "type": "string"
+        },
+        "runningContainers": {
+            "type": "string"
+        },
+        "startedTime": {
+            "type": "string"
+        },
+        "state": {
+            "type": "string"
+        },
+        "stats": {
+            "properties": {
+                "allocatedContainers": {
+                    "type": "string"
+                },
+                "criticalPath": {
+                    "items": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "array"
+                },
+                "currentWindowId": {
+                    "type": "string"
+                },
+                "failedContainers": {
+                    "type": "string"
+                },
+                "latency": {
+                    "type": "string"
+                },
+                "numOperators": {
+                    "type": "string"
+                },
+                "plannedContainers": {
+                    "type": "string"
+                },
+                "recoveryWindowId": {
+                    "type": "string"
+                },
+                "totalBufferServerReadBytesPSMA": {
+                    "type": "string"
+                },
+                "totalBufferServerWriteBytesPSMA": {
+                    "type": "string"
+                },
+                "totalMemoryAllocated": {
+                    "type": "string"
+                },
+                "totalTuplesEmitted": {
+                    "type": "string"
+                },
+                "totalTuplesProcessed": {
+                    "type": "string"
+                },
+                "tuplesEmittedPSMA": {
+                    "type": "string"
+                },
+                "tuplesProcessedPSMA": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "allocatedContainers",
+                "criticalPath",
+                "currentWindowId",
+                "failedContainers",
+                "latency",
+                "numOperators",
+                "plannedContainers",
+                "recoveryWindowId",
+                "totalBufferServerReadBytesPSMA",
+                "totalBufferServerWriteBytesPSMA",
+                "totalMemoryAllocated",
+                "totalTuplesEmitted",
+                "totalTuplesProcessed",
+                "tuplesEmittedPSMA",
+                "tuplesProcessedPSMA"
+            ],
+            "type": "object"
+        },
+        "trackingUrl": {
+            "type": "string"
+        },
+        "user": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "allocatedMB",
+        "allocatedVCores",
+        "appDataSources",
+        "appMasterTrackingUrl",
+        "appPath",
+        "applicationType",
+        "attributes",
+        "canWrite",
+        "connectedToThisGateway",
+        "currentAttemptId",
+        "customMetrics",
+        "diagnostics",
+        "elapsedTime",
+        "finalStatus",
+        "finishedTime",
+        "gatewayAddress",
+        "gatewayConnected",
+        "id",
+        "isSystemApp",
+        "name",
+        "queue",
+        "runningContainers",
+        "startedTime",
+        "state",
+        "stats",
+        "trackingUrl",
+        "user",
+        "version"
+    ],
+    "type": "object"
+}

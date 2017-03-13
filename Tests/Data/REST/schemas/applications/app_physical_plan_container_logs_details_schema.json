@@ -1,0 +1,25 @@
+{
+  "required": [
+    "lines"
+  ], 
+  "type": "object", 
+  "properties": {
+    "lines": {
+      "items": [
+        {
+          "type": "object", 
+          "properties": {
+            "line": {
+              "type": "string"
+            }, 
+            "byteOffset": {
+              "type": "string"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}
+

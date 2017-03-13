@@ -1,0 +1,75 @@
+
+1. Create a test config file:
+	/home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-test-configs/sample-module-test-configs.dat
+	e.g. 
+	TCID|dt.attr.MASTER_MEMORY_MB|dt.attr.APPLICATION_NAME
+	Launch-module-sanity|1024|MobileDemo-sanity
+	Launch-module-with-conf1|2048|_DEFAULT_
+	Launch-module-with-conf2|_DEFAULT_|MobileDemo_with_conf2
+
+2. Create the config xml files:
+	Command:
+	python ~/workspace/QA/utilities/create-testcase-configs.py  /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-test-configs/sample-module-test-configs.dat  /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-test-configs/
+
+	Output:
+	Using Parameters File:  /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-test-configs/sample-module-test-configs.dat
+	Output Directory Path:  /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-test-configs/
+	Field Separator:  |
+	Completed successfully!
+	
+	pradeep@daemon12:~$ ll /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-test-configs/
+		drwxrwxr-x 2 pradeep pradeep 4096 Dec  4 11:54 ./
+		drwxrwxr-x 3 pradeep pradeep 4096 Dec  4 11:55 ../
+		-rw-rw-r-- 1 pradeep pradeep  237 Dec  4 11:54 Launch-module-sanity.xml
+		-rw-rw-r-- 1 pradeep pradeep  129 Dec  4 11:54 Launch-module-with-conf1.xml
+		-rw-rw-r-- 1 pradeep pradeep  146 Dec  4 11:54 Launch-module-with-conf2.xml
+		-rw-rw-r-- 1 pradeep pradeep  196 Dec  4 11:49 sample-module-test-configs.dat
+
+3. Testcases in robot should have the same names as that of TCID mentioned in the config file used in step (1). That way there will be a link between config file and the robot testcases:
+	pradeep@daemon12:~$ cat /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-tests.txt | grep Launch-module
+		Launch-module-sanity
+		Launch-module-with-conf1
+		Launch-module-with-conf2
+
+4. Sample testcases written in robot (above 3) have few basic steps. You might have to update/modify/rewrite the tests as per the module. Brief description of the tests is as follows:
+	i.   Import Libraries & Resources which are needed
+	ii.  Suite Setup (Setup the environment)
+		Login to remote server where DT is installed and add dtcli to the PATH
+	iii. Initialize the variables:
+	iv.  Test Cases:
+		-Enter dtcli shell (Dtcli Enter)
+		-Get the config xml path for launching app
+		-Launch app with dtcli and do a basic validation check (App Launch And Validate)
+		-Get logs for the app (This will be a custom function)
+		-Do the validation (This will be a custom function)
+		-Exit dtcli shell (Dtcli Exit)
+
+5. Launch the testcases:
+	Command:
+	pybot -d /tmp/run1/logs/ -V /home/pradeep/workspace/QA/framework/etc/environments/sample-module.py /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-tests.txt
+
+	The variables file used in above run is set for local setup. You can use it as is by changing sshuser & sshkey. For running on cluster, change the it appropriately.
+
+
+6. Sample run output:
+
+	hduser@daemon12:~$ pybot -d /tmp/run1/logs/ -V /home/pradeep/workspace/QA/framework/etc/environments/sample-module.py /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-tests.txt 
+	==============================================================================
+	Sample-Module-Tests                                                           
+	==============================================================================
+	Launch-module-sanity                                                  | PASS |
+	------------------------------------------------------------------------------
+	Launch-module-with-conf1                                              | FAIL |
+	'application_1449209506189_0006 # application_1449209506189_0006' contains 'application_1449209506189_0006' 2 times, not 3 times.
+	------------------------------------------------------------------------------
+	Launch-module-with-conf2                                              | PASS |
+	------------------------------------------------------------------------------
+	Sample-Module-Tests                                                   | FAIL |
+	3 critical tests, 2 passed, 1 failed
+	3 tests total, 2 passed, 1 failed
+	==============================================================================
+	Output:  /tmp/run1/logs/output.xml
+	Log:     /tmp/run1/logs/log.html
+	Report:  /tmp/run1/logs/report.html
+	hduser@daemon12:~$ 
+

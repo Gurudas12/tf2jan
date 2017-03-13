@@ -1,0 +1,271 @@
+{
+  "required": [
+    "appDataSources", 
+    "appMasterTrackingUrl", 
+    "appPath", 
+    "attributes", 
+    "customMetrics", 
+    "elapsedTime", 
+    "finalStatus", 
+    "gatewayAddress", 
+    "gatewayConnected", 
+    "id", 
+    "name", 
+    "startTime", 
+    "state", 
+    "stats", 
+    "trackingUrl", 
+    "user", 
+    "version"
+  ], 
+  "type": "object", 
+  "properties": {
+    "stats": {
+      "required": [
+        "allocatedContainers", 
+        "criticalPath", 
+        "currentWindowId", 
+        "failedContainers", 
+        "latency", 
+        "numOperators", 
+        "plannedContainers", 
+        "recoveryWindowId", 
+        "totalBufferServerReadBytesPSMA", 
+        "totalBufferServerWriteBytesPSMA", 
+        "totalMemoryAllocated", 
+        "totalTuplesEmitted", 
+        "totalTuplesProcessed", 
+        "tuplesEmittedPSMA", 
+        "tuplesProcessedPSMA"
+      ], 
+      "type": "object", 
+      "properties": {
+        "totalBufferServerWriteBytesPSMA": {
+          "type": "string"
+        }, 
+        "tuplesProcessedPSMA": {
+          "type": "string"
+        }, 
+        "latency": {
+          "type": "string"
+        }, 
+        "failedContainers": {
+          "type": "string"
+        }, 
+        "totalMemoryAllocated": {
+          "type": "string"
+        }, 
+        "recoveryWindowId": {
+          "type": "string"
+        }, 
+        "tuplesEmittedPSMA": {
+          "type": "string"
+        }, 
+        "criticalPath": {
+          "type": "null"
+        }, 
+        "totalTuplesEmitted": {
+          "type": "string"
+        }, 
+        "totalTuplesProcessed": {
+          "type": "string"
+        }, 
+        "plannedContainers": {
+          "type": "string"
+        }, 
+        "currentWindowId": {
+          "type": "string"
+        }, 
+        "allocatedContainers": {
+          "type": "string"
+        }, 
+        "totalBufferServerReadBytesPSMA": {
+          "type": "string"
+        }, 
+        "numOperators": {
+          "type": "string"
+        }
+      }
+    }, 
+    "name": {
+      "type": "string"
+    }, 
+    "appPath": {
+      "type": "string"
+    }, 
+    "appDataSources": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ],
+      "type": "array"
+    }, 
+    "trackingUrl": {
+      "type": "string"
+    }, 
+    "elapsedTime": {
+      "type": "string"
+    }, 
+    "state": {
+      "type": "string"
+    }, 
+    "version": {
+      "type": "string"
+    }, 
+    "user": {
+      "type": "string"
+    }, 
+    "startTime": {
+      "type": "string"
+    }, 
+    "appMasterTrackingUrl": {
+      "type": "string"
+    }, 
+    "customMetrics": {
+      "type": "object", 
+      "properties": {}
+    }, 
+    "finalStatus": {
+      "type": "string"
+    }, 
+    "attributes": {
+      "required": [
+        "APPLICATION_DATA_LINK", 
+        "APPLICATION_DOC_LINK", 
+        "APPLICATION_ID", 
+        "APPLICATION_NAME", 
+        "APPLICATION_PATH", 
+        "APP_PACKAGE_SOURCE", 
+        "BUFFER_SPOOLING", 
+        "CHECKPOINT_WINDOW_COUNT", 
+        "CONTAINER_JVM_OPTIONS", 
+        "CONTAINER_OPTS_CONFIGURATOR", 
+        "DEBUG", 
+        "ENABLE_STATS_RECORDING", 
+        "GATEWAY_CONNECT_ADDRESS", 
+        "GATEWAY_PASSWORD", 
+        "GATEWAY_USER_NAME", 
+        "GATEWAY_USE_SSL", 
+        "HEARTBEAT_INTERVAL_MILLIS", 
+        "HEARTBEAT_LISTENER_THREAD_COUNT", 
+        "HEARTBEAT_TIMEOUT_MILLIS", 
+        "MASTER_MEMORY_MB", 
+        "METRICS_TRANSPORT", 
+        "RESOURCE_ALLOCATION_TIMEOUT_MILLIS", 
+        "RPC_LATENCY_COMPENSATION_SAMPLES", 
+        "STATS_MAX_ALLOWABLE_WINDOWS_LAG", 
+        "STREAMING_WINDOW_SIZE_MILLIS", 
+        "STRING_CODECS", 
+        "THROUGHPUT_CALCULATION_INTERVAL", 
+        "THROUGHPUT_CALCULATION_MAX_SAMPLES", 
+        "TUPLE_RECORDING_PART_FILE_SIZE", 
+        "TUPLE_RECORDING_PART_FILE_TIME_MILLIS"
+      ], 
+      "type": "object", 
+      "properties": {
+        "HEARTBEAT_LISTENER_THREAD_COUNT": {
+          "type": "string"
+        }, 
+        "THROUGHPUT_CALCULATION_INTERVAL": {
+          "type": "string"
+        }, 
+        "CONTAINER_OPTS_CONFIGURATOR": {
+          "type": "object", 
+          "properties": {}
+        }, 
+        "HEARTBEAT_INTERVAL_MILLIS": {
+          "type": "string"
+        }, 
+        "STATS_MAX_ALLOWABLE_WINDOWS_LAG": {
+          "type": "string"
+        }, 
+        "APPLICATION_NAME": {
+          "type": "string"
+        }, 
+        "CHECKPOINT_WINDOW_COUNT": {
+          "type": "string"
+        }, 
+        "STRING_CODECS": {
+          "type": "null"
+        }, 
+        "TUPLE_RECORDING_PART_FILE_SIZE": {
+          "type": "string"
+        }, 
+        "APPLICATION_PATH": {
+          "type": "string"
+        }, 
+        "BUFFER_SPOOLING": {
+          "type": "boolean"
+        }, 
+        "CONTAINER_JVM_OPTIONS": {
+          "type": "null"
+        }, 
+        "GATEWAY_PASSWORD": {
+          "type": "null"
+        }, 
+        "RPC_LATENCY_COMPENSATION_SAMPLES": {
+          "type": "string"
+        }, 
+        "GATEWAY_USER_NAME": {
+          "type": "null"
+        }, 
+        "GATEWAY_CONNECT_ADDRESS": {
+          "type": "string"
+        }, 
+        "APPLICATION_DATA_LINK": {
+          "type": "null"
+        }, 
+        "THROUGHPUT_CALCULATION_MAX_SAMPLES": {
+          "type": "string"
+        }, 
+        "TUPLE_RECORDING_PART_FILE_TIME_MILLIS": {
+          "type": "string"
+        }, 
+        "APPLICATION_DOC_LINK": {
+          "type": "null"
+        }, 
+        "HEARTBEAT_TIMEOUT_MILLIS": {
+          "type": "string"
+        }, 
+        "STREAMING_WINDOW_SIZE_MILLIS": {
+          "type": "string"
+        }, 
+        "DEBUG": {
+          "type": "boolean"
+        }, 
+        "ENABLE_STATS_RECORDING": {
+          "type": "boolean"
+        }, 
+        "APPLICATION_ID": {
+          "type": "string"
+        }, 
+        "APP_PACKAGE_SOURCE": {
+          "type": "null"
+        }, 
+        "MASTER_MEMORY_MB": {
+          "type": "string"
+        }, 
+        "RESOURCE_ALLOCATION_TIMEOUT_MILLIS": {
+          "type": "string"
+        }, 
+        "GATEWAY_USE_SSL": {
+          "type": "boolean"
+        }, 
+        "METRICS_TRANSPORT": {
+          "type": "null"
+        }
+      }
+    }, 
+    "gatewayAddress": {
+      "type": "string"
+    }, 
+    "id": {
+      "type": "string"
+    }, 
+    "gatewayConnected": {
+      "type": "boolean"
+    }
+  }
+}
+

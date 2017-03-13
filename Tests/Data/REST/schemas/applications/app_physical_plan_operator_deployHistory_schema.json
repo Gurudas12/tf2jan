@@ -1,0 +1,33 @@
+{
+  "required": [
+    "containers", 
+    "name"
+  ], 
+  "type": "object", 
+  "properties": {
+    "name": {
+      "type": "string"
+    }, 
+    "containers": {
+      "items": [
+        {
+          "required": [
+            "container", 
+            "startTime"
+          ], 
+          "type": "object", 
+          "properties": {
+            "container": {
+              "type": "string"
+            }, 
+            "startTime": {
+              "type": "string"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}
+

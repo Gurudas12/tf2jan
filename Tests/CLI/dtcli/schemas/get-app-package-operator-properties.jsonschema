@@ -1,0 +1,141 @@
+{
+  "required": [
+    "category",
+    "displayName",
+    "doclink",
+    "inputPorts",
+    "longDesc",
+    "name",
+    "outputPorts",
+    "portTypeInfo",
+    "properties",
+    "shortDesc",
+    "tags"
+  ],
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "outputPorts": {
+      "items": [
+        {
+          "required": [
+            "error",
+            "name",
+            "optional"
+          ],
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "boolean"
+            },
+            "optional": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "type": "array"
+    },
+    "tags": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ],
+      "type": "array"
+    },
+    "longDesc": {
+      "type": "string"
+    },
+    "portTypeInfo": {
+      "items": [
+        {
+          "required": [
+            "name",
+            "type"
+          ],
+          "type": "object",
+          "properties": {
+            "uiType": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "type": "array"
+    },
+    "doclink": {
+      "type": "string"
+    },
+    "inputPorts": {
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "optional": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "type": "array"
+    },
+    "shortDesc": {
+      "type": "string"
+    },
+    "properties": {
+      "items": [
+        {
+          "required": [
+            "canGet",
+            "canSet",
+            "name",
+            "type"
+          ],
+          "type": "object",
+          "properties": {
+            "canSet": {
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string"
+            },
+            "canGet": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "type": "array"
+    }
+  }
+}

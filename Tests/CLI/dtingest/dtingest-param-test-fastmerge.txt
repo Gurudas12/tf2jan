@@ -1,0 +1,131 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${S3N_S}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_S}
+${S3N_D}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_D}
+${RHDFS}          hdfs://node20.morado.com:8020
+
+*** Test Cases ***
+FMG_Copy_With_Fastmerge_Disabled
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/100gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/
+
+FMG_Copy_With_Fastmerge_Enabled_Compare
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/100gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-nonHDFS_Dest-HDFS_Should_Work
+    [Tags]    sanity
+    Comment    FMG_Source-NFS_Dest-HDFS_Should_Work
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+    Comment    FMG_Source-FTP_Dest-HDFS_Should_Work
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+    Comment    FMG_Source-RemoteHDFS_Dest-HDFS_Should_Work
+    DTCP Launch And Validate    ${RHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+    Comment    FMG_Source-S3_Dest-HDFS_Should_Work
+    DTCP Launch And Validate    ${S3N_S}/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Copy_1TB_File
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1tb.file    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Copy_0KB_File
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/0kb.file    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Copy_Blank_Dir
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/blank-dir    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Copy_Dir_With_500-depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-500-depth    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Copy_2_File_4_Dir_Sources
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir ${HDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/blank-dir ${HDFS}${BASEDIR}/ing-source-data/generic.file2 ${HDFS}${BASEDIR}/ing-source-data/same-dir-str1/ ${HDFS}${BASEDIR}/ing-source-data/same-dir-str2/    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Copy_Dir_With_Large_Num_Of_Small_Files
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Copy_Dir_With_Rec_Random_Str
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Copy_Dir_With_Symlink
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-symlink    ${oHDFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Dummy_Test
+    [Tags]    sanity
+    Comment    This is just a placeholder FOR_NEGATIVE_SCENARIOS
+
+FMG_Source-HDFS_Dest-RemoteHDFS_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    hdfs://node20.morado.com:8020/user/sandeep/output/FastMerge/${TEST_NAME}/    fastmerge=ON
+    
+FMG_Source-HDFS_Dest-NFS_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${NFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-HDFS_Dest-FTP_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${FTP}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-HDFS_Dest-S3_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${S3N_D}/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-NFS_Dest-RemoteHDFS_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1gb.file    hdfs://node20.morado.com:8020/user/sandeep/output/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-NFS_Dest-NFS_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1gb.file    ${NFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-NFS_Dest-FTP_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1gb.file    ${FTP}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-NFS_Dest-S3_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1gb.file    ${S3N_D}/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-FTP_Dest-RemoteHDFS_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/1gb.file    hdfs://node20.morado.com:8020/user/sandeep/output/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-FTP_Dest-NFS_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/1gb.file    ${NFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-FTP_Dest-FTP_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/1gb.file    ${FTP}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-FTP_Dest-S3_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/1gb.file    ${S3N_D}/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-S3_Dest-RemoteHDFS_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/1gb.file    hdfs://node20.morado.com:8020/user/sandeep/output/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-S3_Dest-NFS_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/1gb.file    ${NFS}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-S3_Dest-FTP_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/1gb.file    ${FTP}${BASEDIR}/ing-dest-data/FastMerge/${TEST_NAME}/    fastmerge=ON
+
+FMG_Source-S3_Dest-S3_Should_Work_noFMG
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/1gb.file    ${S3N_D}/FastMerge/${TEST_NAME}/    fastmerge=ON

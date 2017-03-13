@@ -1,0 +1,21 @@
+*** Settings ***
+Resource          ../../CLI/cli_resources.txt
+Resource          ../../CLI/dtcli/dtcli_resources.txt
+Resource          ../operator_resources.txt
+
+*** Keywords ***
+Run Parameter Test
+    [Arguments]    ${paramName}    ${paramValue}    ${runDuration}=30    ${extraConfig}=${EMPTY}    ${kill}=${True}    ${shutdown}=${False}
+    ${extraConfig}=    Catenate    SEPARATOR=${SPACE}    -exactMatch ${APPLICATION_NAME}    ${extraConfig}
+    Dtcli Enter    -vvvv    #Enter DTCLI
+    ${new_conf}=    Catenate    SEPARATOR=${SPACE}    ${extraConfig}    -D${paramName}=${paramValue}    #Create config with provided params
+    ${app_id}    ${cmd_stdout}=    Launch App    ${app_pkg}    ${new_conf}    ${APPLICATION_NAME}    #Launch app
+    Sleep    ${runDuration}    #Wait for runDuration
+    Validate Details    ${app_id}    kill=${True}    #Validate
+    Comment    Dtcli Exit    ${app_id}    ${kill}    ${shutdown}    #Exit DTCLI after killing app
+    [Teardown]    Dtcli Exit    ${app_id}    ${kill}    ${shutdown}
+
+Validate Details
+    [Arguments]    ${app_id}    ${kill}=${False}    ${shutdown}=${False}
+    Check App State    ${app_id}    expected=RUNNING
+    Check Operator Property Value    ${app_id}    ${OPERATOR_NAME}    ${paramName}    ${paramValue}

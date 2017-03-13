@@ -1,0 +1,7 @@
+[{arguments: '', author_id: 7, case_id: 1005, case_status_id: 2, category_id: 5, creation_date: '2015-09-15
+      06:53:28', default_tester_id: 7, estimated_time: '00:00:00', isautomated: 0,
+    priority_id: 4, requirement: '', script: '', summary: Sample Protractor Test 1},
+  {arguments: '', author_id: 7, case_id: 1006, case_status_id: 2, category_id: 5,
+    creation_date: '2015-09-15 11:14:57', default_tester_id: 7, estimated_time: '00:00:00',
+    isautomated: 0, priority_id: 4, requirement: '', script: '', summary: Sample Protractor
+      Test 2}]

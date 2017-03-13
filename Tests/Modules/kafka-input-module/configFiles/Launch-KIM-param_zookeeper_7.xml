@@ -1,0 +1,15 @@
+<configuration>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.topic</name>
+     <value>Launch-KIM-param_zookeeper_7</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.broker</name>
+     <value>node35.morado.com:9092</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.zookeeper</name>
+     <value>2181:node35.morado.com</value>
+  </property>
+
+</configuration>

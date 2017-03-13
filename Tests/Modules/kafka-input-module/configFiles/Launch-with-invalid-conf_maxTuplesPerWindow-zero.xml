@@ -1,0 +1,15 @@
+<configuration>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.topic</name>
+     <value>Launch-with-invalid-conf_maxTuplesPerWindow-zero</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.zookeeper</name>
+     <value>localhost:2181</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.maxTuplesPerWindow</name>
+     <value>0</value>
+  </property>
+
+</configuration>

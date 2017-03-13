@@ -1,0 +1,114 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${S3N_S}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_S}
+${S3N_D}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_D}
+
+*** Test Cases ***
+CMR_GZIP_File_1GB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_File_500GB
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/500gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=60
+
+CMR_GZIP_Dir_Input
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_3_File_Sources
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file ${HDFS}${BASEDIR}/ing-source-data/0kb.file ${HDFS}${BASEDIR}/ing-source-data/generic.file ${HDFS}${BASEDIR}/ing-source-data/1gb.file.jar    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_2_File_1_Dir_Sources
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file ${HDFS}${BASEDIR}/ing-source-data/generic-dir3 ${HDFS}${BASEDIR}/ing-source-data/generic.file ${HDFS}${BASEDIR}/ing-source-data/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_Dir_With_Diff_File_Types
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/encryption-data    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=100
+
+CMR_GZIP_Dir_With_5-Depth
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-5-depth    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_Dir_With_500-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-500-depth    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=60
+
+CMR_GZIP_Dir_With_Recursive_Random_Str
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=60
+
+CMR_GZIP_Dir_With_Large_Num_Of_Small_Files
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=100
+
+CMR_GZIP_Dir_With_One_Blank_Dir
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-one-blank-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_Dir_With_Symlink
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-symlink    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_Existing_Dir_At_dest-AS-IS
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-dir-at-destination/    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_Already_Compressed_File
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compressed-data/env_nt.07.tar.gz    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_Already_Compressed_Dir
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compressed-data    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_File_and_File.gz
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-file-and-compressed-file/    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_GZIP_Tampered_gzip_File
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compression-data/ingestion-app-1.0-SNAPSHOT.jar.tampered.gz    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip
+
+CMR_Dummy_Test
+    [Tags]    sanity
+    Comment    This is just a placeholder
+
+CMR_GZIP_Sanity_N2H
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/5gb.file ${NFS}${BASEDIR}/ing-source-data/encryption-data ${NFS}${BASEDIR}/ing-source-data/dir-with-5-depth/    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=60
+
+CMR_GZIP_Dir_With_Large_Num_Of_Small_Files_F2H
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files    ${oHDFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=100
+
+CMR_GZIP_Sanity_F2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/5gb.file ${FTP}${BASEDIR}/ing-source-data/encryption-data ${FTP}${BASEDIR}/ing-source-data/dir-with-5-depth/    ${NFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=60
+
+CMR_GZIP_Dir_With_Large_Num_Of_Small_Files_S2N
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${S3N_S}/dir-with-large-num-of-small-files    ${NFS}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=100
+
+CMR_GZIP_Sanity_S2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/5gb.file ${S3N_S}/encryption-data ${S3N_S}/dir-with-5-depth/    ${FTP}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=60
+
+CMR_GZIP_Dir_With_Large_Num_Of_Small_Files_N2F
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files    ${FTP}${BASEDIR}/ing-dest-data/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=100
+
+CMR_GZIP_Sanity_F2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/5gb.file ${FTP}${BASEDIR}/ing-source-data/encryption-data ${FTP}${BASEDIR}/ing-source-data/dir-with-5-depth/    ${S3N_D}/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=60
+
+CMR_GZIP_Dir_With_Large_Num_Of_Small_Files_N2S
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files    ${S3N_D}/Compression/${TEST_NAME}    cmp_type=-c-gzip    timeout=100
+
+CMR_Dummy_Test_For_LZO
+    [Tags]    sanity
+    Comment    Add testcases for LZO compression
+

@@ -1,0 +1,21 @@
+*** Settings ***
+Library           String
+Library           OperatingSystem
+Resource          ../module_resources.txt
+Resource          ../../CLI/dtcli/dtcli_resources.txt
+Resource          ../../CLI/cli_resources.txt
+Library           ../../../lib/CLI/HDFSLib.py    localhost    50070
+Variables         ../../../etc/environments/aggregation-module.py
+
+*** Keywords ***
+LaunchAggApp
+    [Arguments]    ${config}    ${wait_interval}=300 s
+    [Documentation]    This method launches the aggregation application with given time waits for configured given time in sec and terminates the application.
+    Dtcli Enter    -vvvv
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_aggregation_app}    -conf ${config} -exactMatch AggregationModuleRegressionApp    AggregationModuleRegressionApp    kill=${False}
+    Dtcli Exit
+    Sleep    ${wait_interval}
+    Terminate App    ${app_id}    10s
+    ${logFile}=    Set Variable    ${DTCLI_APP_PATH}${/}${app_id}${/}status
+    ${data}=    Search String In Hdfs File    ${logFile}    TEST FAILED
+    Should Be Equal    ${data}    ${EMPTY}

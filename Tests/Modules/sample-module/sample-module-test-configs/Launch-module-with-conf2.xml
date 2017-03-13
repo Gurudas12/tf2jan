@@ -1,0 +1,7 @@
+<configuration>
+  <property>
+     <name>dt.attr.APPLICATION_NAME</name>
+     <value>MobileDemo_with_conf2</value>
+  </property>
+
+</configuration>

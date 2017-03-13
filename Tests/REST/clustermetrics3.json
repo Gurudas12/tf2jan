@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "averageAge": {
+      "id": "http://jsonschema.net/averageAge",
+      "type": "integer"
+    },
+    "numAppsFinished": {
+      "id": "http://jsonschema.net/numAppsFinished",
+      "type": "integer"
+    },
+    "numAppsPending": {
+      "id": "http://jsonschema.net/numAppsPending",
+      "type": "integer"
+    },
+    "cpuPercentage": {
+      "id": "http://jsonschema.net/cpuPercentage",
+      "type": "number"
+    },
+    "numContainers": {
+      "id": "http://jsonschema.net/numContainers",
+      "type": "integer"
+    },
+    "numAppsRunning": {
+      "id": "http://jsonschema.net/numAppsRunning",
+      "type": "integer"
+    },
+    "currentMemoryAllocatedMB": {
+      "id": "http://jsonschema.net/currentMemoryAllocatedMB",
+      "type": "integer"
+    },
+    "numAppsKilled": {
+      "id": "http://jsonschema.net/numAppsKilled",
+      "type": "integer"
+    },
+    "tuplesProcessedPSMA": {
+      "id": "http://jsonschema.net/tuplesProcessedPSMA",
+      "type": "integer"
+    },
+    "numOperators": {
+      "id": "http://jsonschema.net/numOperators",
+      "type": "integer"
+    },
+    "numAppsFailed": {
+      "id": "http://jsonschema.net/numAppsFailed",
+      "type": "integer"
+    },
+    "tuplesEmittedPSMA": {
+      "id": "http://jsonschema.net/tuplesEmittedPSMA",
+      "type": "integer"
+    },
+    "maxMemoryAllocatedMB": {
+      "id": "http://jsonschema.net/maxMemoryAllocatedMB",
+      "type": "integer"
+    },
+    "numAppsSubmitted": {
+      "id": "http://jsonschema.net/numAppsSubmitted",
+      "type": "integer",
+"minimum": 170,
+"maximum": 176
+    }
+  },
+  "required": [
+    "averageAge",
+    "numAppsFinished",
+    "numAppsPending",
+    "cpuPercentage",
+    "numContainers",
+    "numAppsRunning",
+    "currentMemoryAllocatedMB",
+    "numAppsKilled",
+    "tuplesProcessedPSMA",
+    "numOperators",
+    "numAppsFailed",
+    "tuplesEmittedPSMA",
+    "maxMemoryAllocatedMB",
+    "numAppsSubmitted"
+  ]
+}

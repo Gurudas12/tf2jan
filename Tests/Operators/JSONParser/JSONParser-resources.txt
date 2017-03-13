@@ -1,0 +1,47 @@
+*** Settings ***
+Resource          ../../CLI/cli_resources.txt
+Resource          ../../CLI/dtcli/dtcli_resources.txt
+Resource          ../operator_resources.txt
+
+*** Keywords ***
+RUNit
+    [Arguments]    ${paramName}    ${paramValue}    ${runDuration}=60    ${extraConfig}=${EMPTY}    ${kill}=${True}    ${negative}=${False}
+    ...    ${validate}=${True}
+    #Process parameter value to replace new lines with space
+    ${paramValue}=    Replace String    ${paramValue}    ${\n}    ${SPACE}
+    #Create extra configuration, if required
+    ${extraConfig}=    Catenate    SEPARATOR=${SPACE}    -exactMatch ${APPLICATION_NAME}    ${extraConfig}
+    #Create configuration XML file
+    #${confFile}=    Create Properties File    ${paramName}    ${paramValue}
+    #${confFile}=    Create Properties File    dt.application.JsonProcessor.operator.JsonGenerator.totalNumTuples    ${numTuples}    new=${False}    path=${confFile}
+    ${confFile}=    Create Properties File    dt.application.JsonProcessor.operator.JsonGenerator.totalNumTuples    ${numTuples}
+    ${confFile}=    Create Properties File    ${paramName}    ${paramValue}    new=${False}    path=${confFile}
+    #Create final configuration for 'launch' command
+    ${new_conf}=    Catenate    SEPARATOR=${SPACE}    ${extraConfig}    -conf ${confFile}
+    #Launch application in Apex CLI
+    ${app_id}    ${cmd_stdout}=    Launch App    ${app_pkg}    ${new_conf}    ${APPLICATION_NAME}
+    Set Test Variable    ${app_id}
+    #Wait for application to go from ACCEPTED -> RUNNING
+    Sleep    ${runDuration}
+    #Validate the launched application details
+    Return From Keyword If    ${validate}==${False}
+    Validate Details    ${app_id}    ${paramName}    ${paramValue}    ${negative}    kill=${True}
+
+Validate Details
+    [Arguments]    ${app_id}    ${pname}    ${pvalue}    ${negative}    ${kill}=${False}
+    Check App State    ${app_id}    expected=RUNNING
+    Check Operator Property Value    ${app_id}    ${OPERATOR_NAME}    ${pname}    ${pvalue}
+    Set Tuple Counts    ${negative}
+    Verify Tuples Count    ${app_id}    ${OPERATOR_NAME}    totalTuplesProcessed    ${TTP_JP}
+    Verify Tuples Count    ${app_id}    ${OPERATOR_NAME}    totalTuplesEmitted    ${TTE_JP}
+    Verify Tuples Count    ${app_id}    Error    totalTuplesProcessed    ${TTP_ER}
+    Kill Container Test    ${app_id}    ${OPERATOR_NAME}    wait=10s
+
+Set Tuple Counts
+    [Arguments]    ${negative}
+    Set Test Variable    ${TTP_JP}    ${numTuples}
+    ${TTE_JP}=    Evaluate    ${numTuples}*${2}
+    Set Test Variable    ${TTE_JP}
+    Set Test Variable    ${TTP_ER}    0
+    Run Keyword If    ${negative}==${True}    Set Test Variable    ${TTE_JP}    ${numTuples}
+    Run Keyword If    ${negative}==${True}    Set Test Variable    ${TTP_ER}    ${numTuples}

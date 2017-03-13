@@ -1,0 +1,45 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${S3N}            s3n://${S3NUSER}:${S3NPSWD}@${S3NURL}
+${S3N_S}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_S}
+${S3N_D}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_D}
+
+*** Test Cases ***
+OWR_Copy_File_With_OverWrite_Enabled
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/OverWrite/${TEST_NAME}    overwrite=ON
+
+OWR_Copy_Existing_File_At_dest-AS-IS
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-file-at-destination.file    ${oHDFS}${BASEDIR}/ing-dest-data/OverWrite/${TEST_NAME}    overwrite=ON
+
+OWR_Copy_Existing_File_At_dest-diff-sized
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-file-at-destination-diff-size.file    ${oHDFS}${BASEDIR}/ing-dest-data/OverWrite/${TEST_NAME}    overwrite=ON
+
+OWR_Copy_Existing_Dir_At_dest-AS-IS
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-dir-at-destination    ${oHDFS}${BASEDIR}/ing-dest-data/OverWrite/${TEST_NAME}    overwrite=ON
+
+OWR_Copy_Existing_Dir_At_dest-diff-sized
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-dir-at-destination-diff-size    ${oHDFS}${BASEDIR}/ing-dest-data/OverWrite/${TEST_NAME}    overwrite=ON
+
+OWR_Copy_File_At_Same_Location
+    DTCP Launch And Validate    ${oHDFS}${BASEDIR}/ing-dest-data/OverWrite/copy-at-same-location/generic.file    ${HDFS}${BASEDIR}/ing-dest-data/OverWrite/copy-at-same-location    overwrite=ON    otc=OFF
+
+OWR_Dummy_Test
+    [Tags]    sanity
+    Comment    This is just a placeholder
+
+OWR_Copy_Existing_Dir_At_dest-diff-sized_N2S
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/existing-dir-at-destination-diff-size    ${S3N_D}/ing-dest-data/OverWrite/${TEST_NAME}    overwrite=ON
+
+OWR_Copy_Existing_Dir_At_dest-diff-sized_S2F
+    DTCP Launch And Validate    ${S3N_S}/ing-source-data/existing-dir-at-destination-diff-size    ${FTP}${BASEDIR}/ing-dest-data/OverWrite/${TEST_NAME}    overwrite=ON
+
+OWR_Copy_Existing_Dir_At_dest-diff-sized_F2N
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/existing-dir-at-destination-diff-size    ${NFS}${BASEDIR}/ing-dest-data/OverWrite/${TEST_NAME}    overwrite=ON

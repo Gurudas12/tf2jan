@@ -1,0 +1,4 @@
+*** Settings ***
+Resource          develop_page.txt
+Resource          configure_page.txt
+Resource          Common_resources.txt

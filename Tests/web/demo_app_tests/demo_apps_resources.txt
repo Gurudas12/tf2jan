@@ -1,0 +1,35 @@
+*** Settings ***
+Library           Selenium2Library
+
+*** Variables ***
+${Events_per_sec_xpath}    //div[text()='Events/sec']/../div[@class='value ng-binding']
+${Total_Events_xpath}    //div[text()='Total Events']/../div[@class='value ng-binding']
+${regex_time_for_up}    (\\d+\\s+\\w+,)?(\\d{2}:\\d{2}:\\d{2})
+${Up_For}         //div[text()='Up For']/../div[@class='value ng-binding']
+${regex_for_int_val}    ^[0-9][0-9,]+
+
+*** Keywords ***
+Goto_Demo_Apps_UI_Console
+    [Arguments]    ${url}    ${ff_dir}=None
+    [Documentation]    The keyword redirects to, demo applications UI console, \ ${url} passed as an argument
+    Open Browser    ${url}    ff_profile_dir=/home/correct_path_here/Automation/DT_Automation/Tests/ff_proxy
+    Maximize Browser Window
+    Wait Until Page Contains    DataTorrent Demo Applications
+
+Verify_Event_Related_Data
+    ${event_cnt_t1}=    Get Text    ${Events_per_sec_xpath}
+    Should Not Be Equal As Strings    ${event_cnt_t1}    0
+    Should Match Regexp    ${event_cnt_t1}    ${regex_for_int_val}
+    ${tot_event_cnt_t1}=    Get Text    ${Total_Events_xpath}
+    Should Not Be Equal As Strings    ${tot_event_cnt_t1}    0
+    Should Match Regexp    ${tot_event_cnt_t1}    ${regex_for_int_val}
+    ${Time_for_up_t1}    Get Text    ${Up_For}
+    Comment    Should Match Regexp    ${Time_for_up}    ${regex_time_for_up}
+    Should Not Be Equal    ${Time_for_up_t1}    00:00:00
+    Sleep    5s    #Explict wait to check whether event data is updating
+    ${event_cnt_t2}    Get Text    ${Events_per_sec_xpath}    #Events per sec count should keep on updating
+    Should Not Be Equal As Strings    ${event_cnt_t1}    ${event_cnt_t2}
+    ${tot_event_cnt_t2}=    Get Text    ${Total_Events_xpath}    #Total events should keep on updating
+    Should Not Be Equal As Strings    ${tot_event_cnt_t1}    ${tot_event_cnt_t2}
+    ${Time_for_up_t2}    Get Text    ${Up_For}    #Time for application is up should be updated
+    Should Not Be Equal As Strings    ${Time_for_up_t1}    ${Time_for_up_t2}

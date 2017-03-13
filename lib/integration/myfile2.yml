@@ -1,0 +1,43 @@
+fws:
+- created_on: '2015-04-23T13:54:50.723924'
+  fw_id: -13
+  name: Unnamed FW
+  spec:
+    _tasks:
+    - _fw_name: ScriptTask
+      script:
+      - cd /var/dt/tf; /usr/local/bin/pybot -L DEBUG -v 'dt_version:NOMATCH' -t 'REST
+        API PING' Tests/; cp log.html /var/www/html/
+      use_shell: true
+  updated_on: '2015-04-23T13:54:50.723936'
+- created_on: '2015-04-23T13:46:44.657304'
+  fw_id: 12
+  name: Unnamed FW
+  spec:
+    _tasks:
+    - _fw_name: ScriptTask
+      script:
+      - cd /var/dt/tf; /usr/local/bin/pybot -L DEBUG Tests/; cp log.html /var/www/html/
+      use_shell: true
+  state: READY
+  updated_on: '2015-04-23T13:47:13.509715'
+- created_on: '2015-04-23T13:41:48.816242'
+  fw_id: 14
+  name: Unnamed FW
+  spec:
+    _tasks:
+    - _fw_name: ScriptTask
+      script:
+      - echo always true
+      use_shell: true
+  state: READY
+  updated_on: '2015-04-23T13:51:50.208657'
+links:
+  '-13':
+  - 12
+  '12': []
+  '14':
+  - -13
+metadata: {}
+name: unnamed WF
+updated_on: 2015-04-23 13:55:00.582569

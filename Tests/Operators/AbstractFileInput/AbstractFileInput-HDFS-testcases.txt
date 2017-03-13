@@ -1,0 +1,250 @@
+*** Settings ***
+Suite Setup       Dtcli Setup
+Resource          AbstractFileInput-resources.txt
+Library           Collections
+
+*** Test Cases ***
+HDFS_Copy_1GB
+    [Tags]    SANITY
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1gb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Copy_0KB
+    [Tags]    SPOI-9502
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/0kb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Copy_blank-dir
+    [Tags]    SPOI-9540
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/blank-dir    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Copy_dir-with-one-blank-dir
+    [Tags]    SPOI-9544
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/dir-with-one-blank-dir    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Copy_dir-with-different-file-types
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/dir-with-different-file-types    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Copy_dir-with-15-depth
+    [Tags]    SPOI-9544
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/dir-with-15-depth    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Copy_from-different-cluster
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=hdfs://node18.morado.com:8020/user/dttbc/1gb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test-For-Fault-Tolerance_smalldata
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/100mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}    testFaultTolerance=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test-For-Fault-Tolerance_bigdata
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1gb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}    testFaultTolerance=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test-For-Dynamic-Scalability_smalldata
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/100mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}    testDynamicScaling=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test-For-Dynamic-Scalability_bigdata
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1gb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}    testDynamicScaling=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+HDFS_Test_scanIntervalMillis-10m
+    [Setup]    Dtcli Enter
+    ${input}=    Set Variable    ${HDFS_INDIR}/scan-interval-input
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${input}    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanIntervalMillis=600000
+    RUNit    ${params}    validateData=${False}
+    Sleep    2m    Input is small sized files, so should get copied in 2m
+    Add Update Files On Hdfs    ${input}    ${dtserver}    ${sshuser}    ${sshkey}    update=0
+    Sleep    2m    New input is again small sized files, so IDEALLY shd get copied in another 2m
+    Run Keyword And Expect Error    *DICTIONARIES DO NOT MATCH*    Validate Data    ${app_id}    ${params}    1    #But they shdn't get copied as scan time is not yet reached
+    Sleep    6m    Waiting for scan interval time to get finished
+    Validate Data    ${app_id}    ${params}    1
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test_scanIntervalMillis-from-logs-1m
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanIntervalMillis=60000    dt.operator.read.prop.partitionCount=1
+    RUNit    ${params}    validateData=${False}
+    Sleep    2m    Scan is 1minute. So at least 2 "scanning" messages should appear in log.
+    ${cid}=    Get Container Id From Operator Name    ${base_get_url}    ${app_id}    ${OPERATOR_NAME}
+    ${dt_log}=    Get Container Logs    ${base_get_url}    ${app_id}    ${cid}    dt.log
+    Check Time Difference Between Log Lines    ${dt_log}    AbstractFileInputOperator: Scanning    60    #in seconds
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test_filePatternRegexp-single-file-filtered-in
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanner.filePatternRegexp=.*\\.file
+    RUNit    ${params}    filefilter=*.file
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test_filePatternRegexp-single-file-filtered-out
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanner.filePatternRegexp=.*\\.xyz
+    RUNit    ${params}    filefilter=*.xyz    timeout=3
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test_filePatternRegexp-ends-with-jar
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/file-filter-input-dir    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanner.filePatternRegexp=.*\\.jar
+    RUNit    ${params}    filefilter=*.jar
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test_filePatternRegexp-starts-with-EXT
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/file-filter-input-dir    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanner.filePatternRegexp=EXT.*
+    RUNit    ${params}    filefilter=EXT*    timeout=3
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test_filePatternRegexp-contains-EXT
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/file-filter-input-dir    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanner.filePatternRegexp=.*EXT.*
+    RUNit    ${params}    filefilter=*EXT*
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_Test_filePatternRegexp-all-filtered-out
+    [Tags]    SPOI-9579
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/file-filter-input-dir    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanner.filePatternRegexp=.*data.*
+    RUNit    ${params}    filefilter=*data*
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+HDFS_PT_scanIntervalMillis-1s
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanIntervalMillis=1000
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_scanIntervalMillis-5m
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanIntervalMillis=300000
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_scanIntervalMillis-negative-minus100
+    [Tags]    negative    SPOI-9536
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanIntervalMillis=-100
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_scanIntervalMillis-negative-string
+    [Tags]    negative
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanIntervalMillis=ABC
+    Run Keyword And Expect Error    0 != ABC    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_emitBatchSize-100
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.emitBatchSize=100
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_emitBatchSize-10000
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.emitBatchSize=10000
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_emitBatchSize-negative-minus100
+    [Tags]    negative    SPOI-9536
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.emitBatchSize=-100
+    Run Keyword And Expect Error    0 != -100    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_emitBatchSize-negative-string
+    [Tags]    negative
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.emitBatchSize=ABC
+    Run Keyword And Expect Error    0 != ABC    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_partitionCount-1
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.partitionCount=1
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_partitionCount-10
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.partitionCount=10
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_partitionCount-negative-minus5
+    [Tags]    negative
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.partitionCount=-5
+    Run Keyword And Expect Error    FAILED != RUNNING    RUNit    ${params}    validateData=${False}    #as app goes to FAILED state when partitionCount is wrong
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_partitionCount-negative-string
+    [Tags]    negative
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.partitionCount=ABC
+    Run Keyword And Expect Error    FAILED != RUNNING    RUNit    ${params}    validateData=${False}    #as app goes to FAILED state when partitionCount is wrong
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_maxRetryCount-2
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.maxRetryCount=2
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_maxRetryCount-10
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.maxRetryCount=10
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_maxRetryCount-negative-minus5
+    [Tags]    negative    SPOI-9536
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.maxRetryCount=-5
+    Run Keyword And Expect Error    0 != -5    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_maxRetryCount-negative-string
+    [Tags]    negative
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.maxRetryCount=ABC
+    Run Keyword And Expect Error    0 != ABC    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+HDFS_PT_filePatternRegexp-contains-file
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${HDFS_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanner.filePatternRegexp=file
+    RUNit    ${params}    validateData=${False}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}

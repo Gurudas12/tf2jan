@@ -1,0 +1,40 @@
+*** Settings ***
+Library           String
+Library           OperatingSystem
+Resource          ../module_resources.txt
+Resource          ../../CLI/cli_resources.txt
+Resource          ../../CLI/dtcli/dtcli_resources.txt
+Library           ../../../lib/CLI/HDFSLib.py    ${namenode}    ${webhdfsport}
+
+*** Variables ***
+${pkg_mobile_demo}    /home/hduser/datatorrent/current/demos/mobile-demo-3.2.0-incubating.apa
+${TC_CONFIG_DIR_PATH}    /home/pradeep/workspace/QA/framework/Tests/Modules/sample-module/sample-module-test-configs/
+
+*** Test Cases ***
+Launch-module-sanity
+    ${config}=    Set Variable    ${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml
+    ${app_id}    ${cmd_stdout}=    Dtcli Launch App And Exit    ${pkg_mobile_demo}    -conf ${config}    ModuleName
+    ${logs}=    Get Logs For App    ${app_id}
+    Should Contain X Times    ${logs}    ${app_id}    2
+    [Teardown]    Terminate App    ${app_id}    10
+
+Launch-module-with-conf1
+    ${config}=    Set Variable    ${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml
+    ${app_id}    ${cmd_stdout}=    Dtcli Launch App And Exit    ${pkg_mobile_demo}    -conf ${config}    ModuleName
+    ${logs}=    Get Logs For App    ${app_id}
+    Should Contain X Times    ${logs}    ${app_id}    3
+    [Teardown]    Terminate App    ${app_id}    10
+
+Launch-module-with-conf2
+    ${config}=    Set Variable    ${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml
+    ${app_id}    ${cmd_stdout}=    Dtcli Launch App And Exit    ${pkg_mobile_demo}    -conf ${config}    ModuleName
+    ${logs}=    Get Logs For App    ${app_id}
+    Should Contain    ${logs}    ${app_id}
+    #e.g. for Basic Checks
+    ${out}=    Check Hdfs File Exists    /user/hduser/datatorrent/conf/dt-site-global.xml
+    Log    ${out}
+    ${out}=    Get Hdfs File Content    /user/hduser/datatorrent/conf/dt-site-global.xml
+    Log    ${out}
+    ${out}=    Search String In Hdfs File    /user/hduser/datatorrent/conf/dt-site-global.xml    property
+    Log    ${out}
+    [Teardown]    Terminate App    ${app_id}    10

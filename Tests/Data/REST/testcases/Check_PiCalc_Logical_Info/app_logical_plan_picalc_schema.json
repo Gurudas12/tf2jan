@@ -1,0 +1,113 @@
+{
+    "properties": {
+        "autoMetrics": {
+            "type": "null"
+        },
+        "checkpointTimeMA": {
+            "type": "string"
+        },
+        "className": {
+            "type": "string"
+        },
+        "containerIds": {
+            "items": [
+                {
+                    "type": "string"
+                }
+            ],
+            "type": "array"
+        },
+        "counters": {
+            "type": "null"
+        },
+        "cpuPercentageMA": {
+            "type": "string"
+        },
+        "currentWindowId": {
+            "type": "string"
+        },
+        "failureCount": {
+            "type": "string"
+        },
+        "hosts": {
+            "items": [
+                {
+                    "type": "string"
+                }
+            ],
+            "type": "array"
+        },
+        "lastHeartbeat": {
+            "type": "string"
+        },
+        "latencyMA": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "partitions": {
+            "items": [
+                {
+                    "type": "string"
+                }
+            ],
+            "type": "array"
+        },
+        "recoveryWindowId": {
+            "type": "string"
+        },
+        "status": {
+            "properties": {
+                "ACTIVE": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "ACTIVE"
+            ],
+            "type": "object"
+        },
+        "totalTuplesEmitted": {
+            "type": "string"
+        },
+        "totalTuplesProcessed": {
+            "type": "string"
+        },
+        "tuplesEmittedPSMA": {
+            "type": "string"
+        },
+        "tuplesProcessedPSMA": {
+            "type": "string"
+        },
+        "unifiers": {
+            "items": [{
+            "type": "string"
+        }],
+            "type": "array"
+        }
+    },
+    "required": [
+        "autoMetrics",
+        "checkpointTimeMA",
+        "className",
+        "containerIds",
+        "counters",
+        "cpuPercentageMA",
+        "currentWindowId",
+        "failureCount",
+        "hosts",
+        "lastHeartbeat",
+        "latencyMA",
+        "name",
+        "partitions",
+        "recoveryWindowId",
+        "status",
+        "totalTuplesEmitted",
+        "totalTuplesProcessed",
+        "tuplesEmittedPSMA",
+        "tuplesProcessedPSMA",
+        "unifiers"
+    ],
+    "type": "object"
+}

@@ -1,0 +1,7 @@
+*** Settings ***
+Resource          resources.txt
+
+*** Test Cases ***
+Test_Data
+    Send To Kafka    node32:9092    False    ${1000}    test1	${3}
+

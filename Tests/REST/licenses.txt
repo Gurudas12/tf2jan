@@ -1,0 +1,43 @@
+*** Settings ***
+Documentation     *DT Gateway REST Test case Suite*
+Resource          resource.txt    # Importing resources
+
+*** Variables ***
+${base_url}       http://node18.morado.com    # Base URL
+${gateway_port}    1090    # Gateway Port
+${api_version}    v2    # API version
+${base_get_url}    ${base_url}:${gateway_port}/ws/${api_version}    # Base get URL
+${dt_version}     2.1.0-RC2    #Accepts DT version to be matched, default is 2.0.0
+
+*** Test Cases ***
+REST API Ping
+    [Documentation]    Test API ping
+    REST API Ping    about    ${dt_version}
+
+REST List License Agents
+    [Documentation]    List License Agents
+    ${return_value}=    REST Get API Dict    licenses/agents
+    Validate List LIcense Agents    ${return_value}
+
+*** Keywords ***
+Validate List LIcense Agents
+    [Arguments]    ${arg1}
+    Log Many    ${arg1}
+    Should Contain    ${arg1}    licenseAgents    LicenseAgents Key Not found
+    ${licenseAgents}=    Get From Dictionary    ${arg1}    licenseAgents
+    Log Many    ${licenseAgents}
+    Get Type    ${licenseAgents}
+    ${NoOfLicAgents}=    Get Length    ${licenseAgents}
+    ${MinRunning}=    Check If MT    ${NoOfLicAgents}    ${0}
+    Should Be True    ${MinRunning}    No. of Agents are less than required ${NoOfLicAgents}
+    : FOR    ${LicAgent}    IN    @{licenseAgents}
+    \    ${LicRetType}=    Get Type    ${LicAgent}
+    \    Log Many    Return Type for LicAgent is:     ${LicRetType}
+    \    Should Be Equal As Strings    ${LicRetType}    <type 'dict'>    LicAgent should be Dict
+    \    ${DictKeys}=    Get Dictionary Keys    ${LicAgent}
+    :FOR    ${LicKey}    IN    @{DictKeys}
+    \    ${LicValue}=    Get From Dictionary    ${LicAgent}    ${LicKey}
+    \    Log Many    Lic Key: ${LicKey}    Lic Value : ${LicValue}
+    \    @{NeedKeys}=    Create LIst    appId    id    remainingLicensedMB    startedTime
+    \    ...    totalLicensedMB    user
+    \    List Should Contain Sub List    ${DictKeys}    ${NeedKeys}

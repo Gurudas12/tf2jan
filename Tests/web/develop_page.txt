@@ -1,0 +1,67 @@
+*** Settings ***
+Library           Selenium2Library
+
+*** Variables ***
+${DT_Console_Page_xpath}    ${EMPTY}
+${Select_Demo_App_xpath}    ${EMPTY}
+${Import_Button_xpath}    //button[text()='Import']
+${pkg_success_xpath}    //div[contains(@class,'alert-success')]//span[text()='Package(s) successfully imported']
+${Pkg_Name_Link_xpath}    ${EMPTY}
+${Launch_The_App_xpath}    ${EMPTY}
+${Launch_App_Alert_xpath}    ${EMPTY}
+${Select_Use_Config_file_xpath}    //label/input[@ng-model="launchOptions.usingConfigFile"]
+${Launch_Success_Button_xpath}    //span[text()='Launch']/..
+${Upload_New_Pkg}    //t[text()="upload a package"]/..
+${Upload_Dialogue_Button}    //p[text()="Drag a file here"]/..//button
+${File_Upload_Success}    //span[contains(text(),"uploaded")]/../..
+${Input_Tag_Type}    //input[@type='file']
+${Import_Demos_xpath}    //t[text()='import demos']/..
+${Demo_Pkg_Import_Successful}    //span[text()="Package(s) successfully imported"]
+${Pkg_In_App_Pkgs_table}    ${EMPTY}
+${App_Launch_Success_Msg}    //span[contains(text(),"Application ID")]
+
+*** Keywords ***
+Develop_The_App
+    [Arguments]    ${app_type}    ${app_name}    ${app_jar}=None
+    Go_To_Page    Develop    App Packages
+    ${Select_Demo_App_xpath}=    Set Variable    //span[text()='${app_name}']/../..//input[@type='checkbox']
+    Run Keyword If    '${app_type}'=='Demo'    Import_Demo_App    ${app_name}
+    Run Keyword Unless    '${app_type}'=='Demo'    Import_New_App    ${app_jar}
+
+Go_To_Page
+    [Arguments]    ${link_disp_name}    ${str_on_page_to_verify}
+    Click Element    xpath=//span[text()='${link_disp_name}']/..
+    Wait Until Page Contains    ${str_on_page_to_verify}
+
+Import_Demo_App
+    [Arguments]    ${app_name}
+    Click Element    xpath=${Import_Demos_xpath}    #For 2.0.0 Console, xpath=//span[text()='import demos']/..    #For 2.1.0 Console,xpath=//t[text()='import demos']/..
+    Wait Until Element Is Visible    xpath=${Select_Demo_App_xpath}
+    Select Checkbox    xpath=${Select_Demo_App_xpath}
+    Click Button    xpath=${Import_Button_xpath}
+    Wait Until Element Is Visible    xpath=${Demo_Pkg_Import_Successful}    timeout=10
+    ${Pkg_In_App_Pkgs_table}    Set Variable    //table//a[contains(text(),'${app_name}')]
+    Wait Until Page Contains Element    xpath=${Pkg_In_App_Pkgs_table}
+    Wait Until Element Is Visible    xpath=${pkg_success_xpath}    timeout=10s
+
+Launch_The_App
+    [Arguments]    ${pkg_name}    ${app_name}
+    ${Pkg_Name_Link_xpath}    Set Variable    //table//a[contains(text(),'${pkg_name}')]
+    Click Element    xpath=${Pkg_Name_Link_xpath}
+    Wait Until Page Contains    ${pkg_name}
+    ${Launch_The_App_xpath}    Set Variable    //table//a[contains(text(),'${app_name}')]/../../td[5]//button    #For 2.0.0 Console : //table//a[contains(text(),'${app_name}')]/../../td[4]/button    For 2.1.0 Console: //table//a[contains(text(),'${app_name}')]/../../td[5]//button
+    Click Element    xpath=${Launch_The_App_xpath}
+    sleep    2s
+    ${Launch_App_Alert_xpath}    Set Variable    //h3//span[contains(text(),'Launch ${app_name}')]
+    Element Should Be Visible    xpath=${Launch_App_Alert_xpath}
+    Select Checkbox    xpath=${Select_Use_Config_file_xpath}
+    Click Element    xpath=${Launch_Success_Button_xpath}
+    Wait Until Element Is Visible    xpath=${App_Launch_Success_Msg}    timeout=10s
+
+Import_New_App
+    [Arguments]    ${File_To_Upload}
+    Click Element    xpath=${Upload_New_Pkg}
+    Wait Until Element Is Visible    xpath=${Upload_Dialogue_Button}
+    Click Element    xpath=${Upload_Dialogue_Button}
+    Choose File    ${Input_Tag_Type}    ${File_To_Upload}
+    Wait Until Element Is Visible    ${File_Upload_Success}    timeout=10s

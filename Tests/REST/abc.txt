@@ -1,0 +1,7 @@
+    | *Settings* | *Value* |
+    | Library    | JsonValidator |
+    | Library    | OperatingSystem |
+    | *Test Cases* | *Action* | *Argument* | *Argument* |
+    | Check |
+    | |Check element | ${json_example}=   | OperatingSystem.Get File |  ../Data/REST_Schema/application_ID_schema.json  |
+    | | | Element should exist  |  ${json_example}  |  .author:contains("Evelyn Waugh") |

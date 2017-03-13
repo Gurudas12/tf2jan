@@ -1,0 +1,95 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+
+*** Test Cases ***
+N2F_Copy_At_Non-Existent_Location
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/generic.file    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}/non/existent/path
+
+N2F_Copy_1GB_File
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1gb.file    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_500GB_File
+    [Tags]    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/500gb.file    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_1TB_File
+    [Tags]    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/1tb.file    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_0KB_File
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/0kb.file    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Blank_Dir
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/blank-dir    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_1-Depth
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-1-depth/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_5-Depth
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-5-depth/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_25-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-25-depth/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_500-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-500-depth/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_3_File_Sources
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/generic.file1 ${NFS}${BASEDIR}/ing-source-data/generic.file2 ${NFS}${BASEDIR}/ing-source-data/generic.file3    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_3_Dir_Sources
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/generic-dir1/ ${NFS}${BASEDIR}/ing-source-data/generic-dir2/ ${NFS}${BASEDIR}/ing-source-data/generic-dir3/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_2_File_2_Dir_Sources
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/generic.file1 ${NFS}${BASEDIR}/ing-source-data/generic.file2 ${NFS}${BASEDIR}/ing-source-data/generic-dir1/ ${NFS}${BASEDIR}/ing-source-data/generic-dir2/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_2_Dir_With_Same_Dir_Str
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/same-dir-str1 ${NFS}${BASEDIR}/ing-source-data/same-dir-str2    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_2_Dir_From_Same_Loc
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/same-dir-str1/dir1/ ${NFS}${BASEDIR}/ing-source-data/same-dir-str1/dir2/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_And_Subdir
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/generic-dir ${NFS}${BASEDIR}/ing-source-data/generic-dir/subdir    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_2_Dir_With_Same_Name
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-same-name1/COMMON-NAME ${NFS}${BASEDIR}/ing-source-data/dir-with-same-name2/COMMON-NAME    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_With_Large_Num_Of_Small_Files
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_With_Rec_Random_Str
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str/    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_With_Symlink
+    Run Keyword And Expect Error    *DICTIONARIES DO NOT MATCH !!*Following keys missing from first dictionary: /dir-with-symlink/generic-dir-symlink, /dir-with-symlink/generic-dir-symlink/generic.file, /dir-with-symlink/generic-dir-symlink/subdir, /dir-with-symlink/generic-dir-symlink/subdir/generic.file3*Following keys missing from second dictionary: /dir-with-symlink/generic-dir-symlink->generic-dir, /dir-with-symlink/invalid-symlink->/disk5/dt-nfs-mount/IngestionAppTesting/DATASETS/ing-source-data/invalid.path*    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-symlink    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Dir_With_One_Blank_Dir
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-one-blank-dir    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Existing_File_At_dest-AS-IS
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/existing-file-at-destination.file    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Existing_File_At_dest-diff-sized
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/existing-file-at-destination-diff-size.file    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Existing_Dir_At_dest-AS-IS
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/existing-dir-at-destination    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}
+
+N2F_Copy_Existing_Dir_At_dest-diff-sized
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/existing-dir-at-destination-diff-size    ${FTP}${BASEDIR}/ing-dest-data/nfs-to-hdfs/${TEST_NAME}

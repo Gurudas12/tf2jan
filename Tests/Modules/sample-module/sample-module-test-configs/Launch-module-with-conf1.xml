@@ -1,0 +1,7 @@
+<configuration>
+  <property>
+     <name>dt.attr.MASTER_MEMORY_MB</name>
+     <value>2048</value>
+  </property>
+
+</configuration>

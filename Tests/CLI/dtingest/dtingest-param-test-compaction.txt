@@ -1,0 +1,177 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${S3N_S}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_S}
+${S3N_D}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_D}
+
+*** Test Cases ***
+CMC_BASIC
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1MB    cmSep=\\n
+
+CMC_File_1GB_cSize_1MB
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1MB    cmSep=\\n
+
+CMC_File_1GB_cSize_100MB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100MB    cmSep=\\n
+
+CMC_File_1GB_cSize_1GB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n
+
+CMC_File_1GB_cSize_1000GB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1000GB    cmSep=\\n
+
+CMC_File_100GB_cSize_1GB
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/100gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n
+
+CMC_File_500GB_cSize_100GB
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/500gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100GB    cmSep=\\n
+
+CMC_File_1TB_cSize_100GB
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1tb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100GB    cmSep=\\n
+
+CMC_File_0KB_cSize_100MB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/0kb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100MB    cmSep=\\n
+
+CMC_Dir_Blank_cSize_100MB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/blank-dir    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100MB    cmSep=\\n
+
+CMC_3_Files_1GB_each_cSize_100MB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic.file2 ${HDFS}${BASEDIR}/ing-source-data/generic.file3    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100MB    cmSep=\\n
+
+CMC_3_Files_1GB_each_cSize_100GB
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic.file2 ${HDFS}${BASEDIR}/ing-source-data/generic.file3    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100GB    cmSep=\\n
+
+CMC_2_Files_1_Dir_cSize_1GB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic-dir ${HDFS}${BASEDIR}/ing-source-data/generic.file2    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n
+
+CMC_Dir_With_Diff_File_Types_cSize_1GB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/encryption-data/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n    timeout=60
+
+CMC_Dir_With_5-Depth_cSize_1GB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-5-depth/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n
+
+CMC_Dir_With_500-Depth_cSize_50MB
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-500-depth/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=50MB    cmSep=\\n
+
+CMC_Dir_With_Recursive_Random_Str_cSize_50MB
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=50MB    cmSep=\\n    timeout=60
+
+CMC_Dir_With_Large_Num_Of_Small_Files_cSize_100MB
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100MB    cmSep=\\n
+
+CMC_Dir_With_Large_Num_Of_Small_Files_cSize_10000000000GB
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=10000000000GB    cmSep=\\n    timeout=60
+
+CMC_Dir_With_Symlink_cSize_1GB
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-symlink/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n
+
+CMC_Dir_With_Already_compacted_Files_cSize_200MB
+    DTCP Launch And Validate    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/CMC_File_1GB_cSize_100MB/    ${HDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=200MB    cmSep=\\n
+
+CMC_CMSIZE_Invalid_0MB
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=0MB    cmSep=\\n
+
+CMC_CMSIZE_Invalid_Negative
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=-10MB    cmSep=\\n
+
+CMC_CMSIZE_Invalid_Decimal
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=10.20MB    cmSep=\\n
+
+CMC_CMSIZE_Invalid_Inf
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1000000000000000000000000000000000000000000000GB    cmSep=\\n
+
+CMC_CMSIZE_Invalid_String
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100BG    cmSep=\\n
+
+CMC_CMSEP_Valid_String1
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=EOF
+
+CMC_CMSEP_Valid_String2
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=eof
+
+CMC_CMSEP_Valid_String3
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep="\\nAbove File=+++++++#+#+++++=Ends Here!\\n"
+
+CMC_CMSEP_Valid_String4
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=+++++++++++++
+
+CMC_CMSEP_Valid_String5
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=++++++####+++++++EOF++++++####+++++++
+
+CMC_CMSEP_Valid_String6
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n+++++@@@@@++++++++EOF+++++@@@@++++++++\\n
+
+CMC_CMSEP_Valid_String7
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n\\n\\n\\n\\n
+
+CMC_CMSEP_Valid_String8_Empty
+    [Tags]    sanity
+    Comment    Should be allowed for just concating files
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=""
+
+CMC_CMSEP_Invalid_Chars
+    [Tags]    sanity
+    Comment    cmSep="Com@#$%^\*()+=\!{}[]|\/;:?paction" NOT ALLOWED because of !
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/compaction-data/small_input/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep="Com@#$%^\*()+=\{}[]|\/;:?paction"
+
+CMC_Dummy_Test
+    [Tags]    sanity
+    Comment    This is just a placeholder
+
+CMC_File_100GB_cSize_1GB_N2H
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/100gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n    timeout=60
+
+CMC_Dir_With_Recursive_Random_Str_cSize_23MB_F2H
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/dir-with-rec-random-str/    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=23MB    cmSep=####+++++++EOF++++++####    timeout=60
+
+CMC_File_100GB_cSize_1GB_H2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/100gb.file    ${NFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n    timeout=60
+
+CMC_Dir_With_Recursive_Random_Str_cSize_23MB_F2N
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/dir-with-rec-random-str/    ${NFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=23MB    cmSep=####+++++++EOF++++++####    timeout=60
+
+CMC_File_100GB_cSize_1GB_H2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/100gb.file    ${FTP}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=1GB    cmSep=\\n    timeout=60
+
+CMC_Dir_With_Recursive_Random_Str_cSize_23MB_N2F
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str/    ${FTP}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=23MB    cmSep=####+++++++EOF++++++####    timeout=60
+
+CMC_File_1GB_cSize_100MB_N2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/100gb.file    ${S3N_D}/Compaction/${TEST_NAME}/    compact=ON    cmSize=100MB    cmSep=\\n    timeout=60
+
+CMC_File_1GB_cSize_100MB_S2H
+    DTCP Launch And Validate    ${S3N_S}/100gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Compaction/${TEST_NAME}/    compact=ON    cmSize=100MB    cmSep=\\n    timeout=60

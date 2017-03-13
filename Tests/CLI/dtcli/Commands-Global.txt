@@ -1,0 +1,788 @@
+*** Settings ***
+Documentation     GLOBAL COMMANDS EXCEPT WHEN CHANGING LOGICAL PLAN
+Suite Setup       Dtcli Setup
+Resource          dtcli_resources.txt
+Library           OperatingSystem    # For accessing OS environment variables
+Library           String    # A test library for string manipulation and verification. String is Robot Framework's standard library for manipulating strings (e.g. Replace String Using Regexp, Split To Lines) and verifying their contents (e.g. Should Be String).
+
+*** Variables ***
+#${dtinstall}     /home/dttbc/datatorrent/current/
+#${pkg_pi_demo}    ${dtinstall}${/}demos${/}pi-demo-3.0.0-RC2.apa
+#${pkg_dimensions_demo}    ${dtinstall}${/}demos${/}dimensions-demo-3.0.0-RC2.apa
+#${pkg_frauddetect_demo}    ${dtinstall}${/}demos${/}frauddetect-demo-3.0.0-RC2.apa
+#${pkg_machinedata_demo}    ${dtinstall}${/}demos${/}machinedata-demo-3.0.0-RC2.apa
+#${pkg_mobile_demo}    ${dtinstall}${/}demos${/}mobile-demo-3.0.0-RC2.apa
+#${pkg_twitter_demo}    ${dtinstall}${/}demos${/}twitter-demo-3.0.0-RC2.apa
+#${pkg_wordcount_demo}    ${dtinstall}${/}demos${/}wordcount-demo-3.0.0-RC2.apa
+#${pkg_yahoo_finance_demo}    ${dtinstall}${/}demos${/}yahoo-finance-demo-3.0.0-RC2.apa
+#${pkg_ingestion_apa}    ${dtinstall}${/}apps${/}ingestion-app-1.0.0-RC1.apa
+#${pkg_ingestion_jar}    /home/dttbc/IngestionAppTesting/.ingestion-app-2.2.0-SNAPSHOT.jar
+
+
+*** Test Cases ***
+dtcli_help_usage
+    [Setup]    Dtcli Enter
+    #EXAMPLE:
+    ${cmd}=    Set Variable    help
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    #Get individual command help:
+    ${cmd}=    Set Variable    help add-stream-sink
+    ${cmd_stdout1}=    Write Read Prompt    ${cmd}    prompt=apex>
+    ${cmd_stdout1}=    Remove Color Codes    ${cmd_stdout1}
+    Should Contain    ${cmd_stdout1}    This usage is only valid when changing logical plan (via begin-logical-plan-change)${\n}add-stream-sink stream-name to-operator-name to-port-name${\n}    Add a sink to an existing streampkg_mobile_demo
+    Should Contain    ${cmd_stdout}    add-stream-sink stream-name to-operator-name to-port-name${\n}    Add a sink to an existing stream
+    [Teardown]    Dtcli Exit
+
+dtcli_alias
+    [Setup]    Dtcli Enter
+    #USAGE Check:
+    Verify Usage    alias    Usage: alias <alias-name> <command>
+    #EXAMPLE:
+    ${cmd}=    Set Variable    alias HELP-ALIAS help
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Contain    ${cmd_stdout}    Alias HELP-ALIAS created.
+    Comment    Getting original command output
+    ${cmd1_stdout}=    Write Read Prompt    help    prompt=apex>
+    ${cmd1_stdout}=    Remove Color Codes    ${cmd1_stdout}
+    Comment    Getting alias command output
+    ${cmd2_stdout}=    Write Read Prompt    HELP-ALIAS    prompt=apex>
+    ${cmd2_stdout}=    Remove Color Codes    ${cmd2_stdout}
+    Comment    Comparing 2 outputs
+    Should Be Equal    ${cmd1_stdout}    ${cmd2_stdout}
+    [Teardown]    Dtcli Exit
+
+dtcli_echo
+    [Setup]    Dtcli Enter
+    ${txt}=    Set Variable    On dtcli prompt
+    ${cmd}=    Set Variable    echo ${txt}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Be Equal    ${cmd_stdout}    ${txt}
+    [Teardown]    Dtcli Exit
+
+dtcli_source
+    [Setup]    Dtcli Enter
+    #USAGE Check:
+    Verify Usage    source    Usage: source <file>
+    #EXAMPLE:
+    ${cmd1}=    Set Variable    alias NEWALIAS help
+    ${cmd2}=    Set Variable    NEWALIAS
+    ${cmd3}=    Set Variable    echo "Using dtcli!"
+    ${cmd4}=    Set Variable    list-apps
+    ${cmd5}=    Set Variable    list-application-attributes
+    ${cmd6}=    Set Variable    list-operator-attributes
+    ${cmd7}=    Set Variable    list-port-attributes
+    ${source_file_path}=    Set Variable    /tmp/dtcli_source_eg.sh
+    #Source File:    #With all above commands
+    Create File    ${source_file_path}    ${cmd1}${\n}${cmd2}${\n}${cmd3}${\n}${cmd4}${\n}${cmd5}${\n}${cmd6}${\n}${cmd7}${\n}
+    Put File    ${source_file_path}    ${source_file_path}
+    ${cmd}=    Set Variable    source ${source_file_path}
+    ${src_cmd_op}=    Write Read Prompt    ${cmd}    prompt=apex>
+    #Extra processing:
+    ${src_cmd_op}=    Remove Color Codes    ${src_cmd_op}
+    ${src_cmd_op}=    Replace String Using Regexp    ${src_cmd_op}    <|>    ${EMPTY}
+    #Verify cmd2 output:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd2}    prompt=apex>
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    ${cmd_stdout}=    Replace String Using Regexp    ${cmd_stdout}    <|>    ${EMPTY}
+    Should Contain    ${src_cmd_op}    ${cmd_stdout}
+    #Verify cmd3 output:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd3}    prompt=apex>
+    Should Contain    ${src_cmd_op}    ${cmd_stdout}
+    #Verify cmd4 output:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd4}    prompt=apex>
+    Should Contain    ${src_cmd_op}    {"apps": [
+    Should Contain    ${cmd_stdout}    {"apps": [
+    #Verify cmd5 output:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd5}    prompt=apex>
+    ${cmd_stdout}=    Replace String Using Regexp    ${cmd_stdout}    <|>    ${EMPTY}
+    Should Contain    ${src_cmd_op}    ${cmd_stdout}
+    #Verify cmd6 output:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd6}    prompt=apex>
+    Should Contain    ${src_cmd_op}    ${cmd_stdout}
+    #Verify cmd7 output:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd7}    prompt=apex>
+    Should Contain    ${src_cmd_op}    ${cmd_stdout}
+    [Teardown]    Dtcli Exit
+
+dtcli_list-apps
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    list-apps
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Contain    ${cmd_stdout}    {"apps": [
+    Check String For Errors    ${cmd_stdout}
+    ${apps}=    Get App List    ${cmd_stdout}
+    Log    ${apps}
+    ${cmd_stdout}=    Remove Line From String    ${cmd_stdout}    -1
+    #Validate schema
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/list-apps.jsonschema
+    [Teardown]    Dtcli Exit
+
+dtcli_list-apps-with-query
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    list-apps
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Contain    ${cmd_stdout}    {"apps": [
+    Check String For Errors    ${cmd_stdout}
+    ${apps}=    Get App List    ${cmd_stdout}
+    #RUNNING
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} RUNNING    prompt=apex>
+    ${running_apps}=    Get App List    ${cmd_stdout}
+    Check String For Errors    ${cmd_stdout}
+    Should Not Contain    ${cmd_stdout}    "state": "KILLED"
+    Should Not Contain    ${cmd_stdout}    "state": "FINISHED"
+    #FINISHED
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} FINISHED    prompt=apex>
+    ${finished_apps}=    Get App List    ${cmd_stdout}
+    Check String For Errors    ${cmd_stdout}
+    Should Not Contain    ${cmd_stdout}    "state": "RUNNING"
+    Should Not Contain    ${cmd_stdout}    "state": "KILLED"
+    #KILLED
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} KILLED    prompt=apex>
+    ${killed_apps}=    Get App List    ${cmd_stdout}
+    Check String For Errors    ${cmd_stdout}
+    Should Not Contain    ${cmd_stdout}    "state": "RUNNING"
+    Should Not Contain    ${cmd_stdout}    "state": "FINISHED"
+    #Log all apps
+    Log Many    ALL: ${apps}    RUNNING: ${running_apps}    FINISHED: ${finished_apps}    KILLED: ${killed_apps}
+    [Teardown]    Dtcli Exit
+
+dtcli_list-default-app-attributes
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable   list-default-app-attributes 
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Contain    ${cmd_stdout}    {"attributes": [
+    Check String For Errors    ${cmd_stdout}
+    #Validate schema
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/list-application-attributes.jsonschema
+    [Teardown]    Dtcli Exit
+
+dtcli_list-default-operator-attributes
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    list-default-operator-attributes
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Contain    ${cmd_stdout}    {"attributes": [
+    Check String For Errors    ${cmd_stdout}
+    #Validate schema
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/list-operator-attributes.jsonschema
+    [Teardown]    Dtcli Exit
+
+dtcli_list-default-port-attributes
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    list-default-port-attributes
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Contain    ${cmd_stdout}    {"attributes": [
+    Check String For Errors    ${cmd_stdout}
+    #Validate schema
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/list-port-attributes.jsonschema
+    [Teardown]    Dtcli Exit
+
+dtcli_connect_usage
+    [Setup]    Dtcli Enter    -vvv
+    #USAGE Check:
+    Verify Usage    connect    Usage: connect <app-id>
+    [Teardown]    Dtcli Exit
+
+dtcli_connect_running
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    list-apps
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    ${apps}=    Get App List    ${cmd_stdout}
+    Log    ${apps}
+    Comment    For RUNNING apps
+    ${app_id1}    ${cmd_stdout1}=    App Launch And Validate    ${pkg_mobile_demo}    -apconf my-app-conf1.xml    MobileDemo    kill=${False}
+    ...    shutdown=${False}    prompt=${True}
+    ${app_id2}    ${cmd_stdout2}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ...    shutdown=${False}    prompt=${True}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} RUNNING    prompt=apex>
+    ${running_apps}=    Get App List    ${cmd_stdout}
+    ${app_id}=    Get From List    ${running_apps}    0
+    ${cmd_stdout}=    Write Read Prompt    connect ${app_id}    prompt=apex (${app_id}) >
+    Check String For Errors    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    Connected to application ${app_id}
+    [Teardown]    Dtcli Exit    app_id=${app_id1} ${app_id2}
+
+dtcli_connect_finished
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    list-apps
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    ${apps}=    Get App List    ${cmd_stdout}
+    Log    ${apps}
+    Comment    For FINISHED apps
+    ${app_id1}    ${cmd_stdout1}=    App Launch And Validate    ${pkg_mobile_demo}    -apconf my-app-conf1.xml    MobileDemo    kill=${False}
+    ...    shutdown=${True}    prompt=${True}
+    ${app_id2}    ${cmd_stdout2}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ...    shutdown=${True}    prompt=${True}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} FINISHED    prompt=apex>
+    ${finished_apps}=    Get App List    ${cmd_stdout}
+    ${app_id}=    Get From List    ${finished_apps}    0
+    ${cmd_stdout}=    Write Read Prompt    connect ${app_id}    prompt=apex (${app_id}) >
+    Should Contain    ${cmd_stdout}    Application terminated
+    Should Contain    ${cmd_stdout}    ERROR cli.ApexCli: Exception caught:
+    Should Contain    ${cmd_stdout}    com.datatorrent.stram.cli.ApexCli$CliException: Application terminated
+    [Teardown]    Dtcli Exit    app_id=${app_id1} ${app_id2}
+
+dtcli_connect_killed
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    list-apps
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    ${apps}=    Get App List    ${cmd_stdout}
+    Log    ${apps}
+    Comment    For KILLED apps
+    ${app_id1}    ${cmd_stdout1}=    App Launch And Validate    ${pkg_mobile_demo}    -apconf my-app-conf1.xml    MobileDemo    kill=${True}
+    ...    shutdown=${False}    prompt=${True}
+    ${app_id2}    ${cmd_stdout2}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${True}
+    ...    shutdown=${False}    prompt=${True}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} KILLED    prompt=apex>
+    ${killed_apps}=    Get App List    ${cmd_stdout}
+    ${app_id}=    Get From List    ${killed_apps}    0
+    ${cmd_stdout}=    Write Read Prompt    connect ${app_id}    prompt=apex (${app_id}) >
+    Should Contain    ${cmd_stdout}    Application terminated
+    Should Contain    ${cmd_stdout}    ERROR cli.ApexCli: Exception caught:
+    Should Contain    ${cmd_stdout}    com.datatorrent.stram.cli.ApexCli$CliException: Application terminated
+    [Teardown]    Dtcli Exit
+
+dtcli_connect_non-existent
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    list-apps
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    ${apps}=    Get App List    ${cmd_stdout}
+    Log    ${apps}
+    Comment    For Non-Existent apps
+    ${wrong_app_id}=    Set Variable    applicationva_1436972230772_0001
+    ${cmd_stdout}=    Write Read Prompt    connect ${wrong_app_id}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Streaming application with id ${wrong_app_id} is not found.
+    Should Contain    ${cmd_stdout}    ERROR cli.ApexCli: Exception caught:
+    Should Contain    ${cmd_stdout}    com.datatorrent.stram.cli.ApexCli$CliException: Streaming application with id ${wrong_app_id} is not found.
+    [Teardown]    Dtcli Exit
+
+dtcli_get-app-info
+    [Setup]    Dtcli Enter    -vvv
+    #USAGE Check:
+    Verify Usage    get-app-info    Usage: get-app-info <app-id>
+    #EXAMPLE:
+    ${app_id1}    ${cmd_stdout1}=    App Launch And Validate    ${pkg_mobile_demo}    -apconf my-app-conf1.xml    MobileDemo    kill=${False}
+    ...    shutdown=${False}    prompt=${True}
+    ${app_id2}    ${cmd_stdout2}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ...    shutdown=${False}    prompt=${True}
+    ${cmd_stdout}=    Write Read Prompt    list-apps RUNNING    prompt=apex>
+    ${running_apps}=    Get App List    ${cmd_stdout}
+    ${app_id}=    Get From List    ${running_apps}    0
+    ${cmd_stdout}=    Write Read Prompt    get-app-info ${app_id}    prompt=apex>
+    Check String For Errors    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    "finalStatus": "UNDEFINED"
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-info.jsonschema
+    [Teardown]    Dtcli Exit    app_id=${app_id1} ${app_id2}
+
+dtcli_get-app-package-info
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-package-info
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-app-package-info <app-package-file>
+    #Disabled for now:    #Should be enabled for all below apps:    Check For Errors    ${cmd_stdout}
+    #EXAMPLES:
+    Comment    ########
+    Comment    EXAMPLE: pi-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_pi_demo}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_pi-demo.jsonschema
+    Comment    ########
+    Comment    EXAMPLE: dimension-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_dimensions_demo}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_dimensions-demo.jsonschema
+    Comment    ########
+    Comment    EXAMPLE: frauddetect-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_frauddetect_demo}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_frauddetect-demo.jsonschema
+    Comment    ########
+    Comment    EXAMPLE: machinedata-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_machinedata_demo}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_machinedata-demo.jsonschema
+    Comment    ########
+    Comment    EXAMPLE: mobile-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_mobile_demo}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_mobile-demo.jsonschema
+    Comment    ########
+    Comment    EXAMPLE: twitter-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_twitter_demo}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_twitter-demo.jsonschema
+    Comment    ########
+    Comment    EXAMPLE: wordcount-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_wordcount_demo}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_wordcount-demo.jsonschema
+    Comment    ########
+    Comment    EXAMPLE: yahoo-finance-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_yahoo_finance_demo}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_yahoo-finance-demo.jsonschema
+    Comment    ########
+    Comment    EXAMPLE: Ingestion
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_ingestion}    prompt=apex>
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-info_ingestion.jsonschema
+    [Teardown]    Dtcli Exit
+
+dtcli_exit
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    exit
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=$
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Be Empty    ${cmd_stdout}
+
+dtcli_get-app-package-operators
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-package-operators
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-app-package-operators [options] <app-package-file> [<search-term>]${\n}Options:${\n} \ \ \ -parent \ \ \ Specify the parent class for the operators
+    #EXAMPLES:
+    Comment    EXAMPLE: pi-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_pi_demo}    prompt=apex>    time_out=500 s
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-operators.jsonschema
+    [Teardown]    Dtcli Exit
+
+dtcli_get-app-package-operators_with-search-term
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-package-operators
+    Comment    EXAMPLE: pi-demo    with "search term"
+    ${search1}=    Set Variable    Distinct
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_pi_demo} ${search1}    prompt=apex>
+    Should Contain    ${cmd_stdout}    com.datatorrent.lib.algo.Distinct
+    Should Contain    ${cmd_stdout}    com.datatorrent.lib.algo.DistinctMap
+    Should Contain    ${cmd_stdout}    com.datatorrent.lib.pigquery.PigDistinctOperator
+    [Teardown]    Dtcli Exit
+
+dtcli_get-app-package-operators_with-parent-option
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-package-operators
+    Comment    EXAMPLE: pi-demo    with "-parent" option
+    ${parent_class}=    Set Variable    com.datatorrent.demos.pi
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} -parent ${parent_class} ${pkg_pi_demo}    prompt=apex>
+    Should Not Contain    ${cmd_stdout}    does not match any file
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-operators.jsonschema
+    [Teardown]    Dtcli Exit
+
+dtcli_get-app-package-operators_wrong-ap-path
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-package-operators
+    Comment    EXAMPLE: pi-demo    wrong app file path
+    ${pkg_pi-demo-X}=    Set Variable    ${dtinstall}${/}demos${/}pi-demo-3.0.0-RC2.apaX
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_pi-demo-X}    prompt=apex>
+    Should Contain    ${cmd_stdout}    demos${/}pi-demo-3.0.0-RC2.apaX does not match any file
+    [Teardown]    Dtcli Exit
+
+dtcli_get-app-package-operator-properties
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-package-operator-properties
+    ${pidemo_rand_op}=    Set Variable    com.datatorrent.lib.testbench.RandomEventGenerator
+    ${pidemo_topN_op}=    Set Variable    com.datatorrent.lib.testbench.TopOccurrence
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-app-package-operator-properties <app-package-file> <operator-class>
+    #EXAMPLES:
+    Comment    EXAMPLE: pi-demo
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_pi_demo} ${pidemo_rand_op}    prompt=apex>
+    Check String For Errors    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    ${pidemo_rand_op}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-operator-properties.jsonschema
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_pi_demo} ${pidemo_topN_op}    prompt=apex>
+    Should Contain    ${cmd_stdout}    ${pidemo_topN_op}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-operator-properties.jsonschema
+    [Teardown]    Dtcli Exit
+
+dtcli_get-app-package-operator-properties_wrong-op-name
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-package-operator-properties
+    ${pidemo_rand_op}=    Set Variable    com.datatorrent.lib.testbench.RandomEventGenerator
+    ${pidemo_topN_op}=    Set Variable    com.datatorrent.lib.testbench.TopOccurrence
+    Comment    EXAMPLE: pi-demo    with wrong op name
+    ${wrong_op}=    Set Variable    com.datatorrent.lib.testbench.TopOccurrenceXYZ
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_pi_demo} ${wrong_op}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Wrong operator class
+    [Teardown]    Dtcli Exit
+
+dtcli_get-config-parameter
+    [Setup]    Dtcli Enter
+    #EXAMPLE:
+    ${cmd}=    Set Variable    get-config-parameter
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Check String For Errors    ${cmd_stdout}
+    #EXAMPLE:    with parameter-name
+    ${param1}=    Set Variable    yarn.nodemanager.keytab
+    ${param2}=    Set Variable    dfs.datanode.available-space-volume-choosing-policy.balanced-space-preference-fraction
+    ${param3}=    Set Variable    yarn.resourcemanager.scheduler.monitor.policies
+    ${out}=    Write Read Prompt    ${cmd} ${param1}    prompt=apex>
+    Should Contain    ${cmd_stdout}    ${param1}=${out}
+    ${out}=    Write Read Prompt    ${cmd} ${param2}    prompt=apex>
+    Should Contain    ${cmd_stdout}    ${param2}=${out}
+    ${out}=    Write Read Prompt    ${cmd} ${param3}    prompt=apex>
+    Should Contain    ${cmd_stdout}    ${param3}=${out}
+    [Teardown]    Dtcli Exit
+
+dtcli_get-jar-operator-classes
+    [Tags]    incomplete
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-jar-operator-classes
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-jar-operator-classes [options] <jar-files-comma-separated> [<search-term>]${\n}Options:${\n} \ \ \ -parent \ \ \ Specify the parent class for the operators
+    #EXAMPLES:
+    Comment    EXAMPLE: Ingestion
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_ingestion_jar}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Should contain list of all operator classes
+    Comment    Add below tests once    the final usage is determined
+    Comment    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-operators.jsonschema
+    Comment    EXAMPLE: Ingestion    with "search term"
+    Comment    EXAMPLE: Ingestion    wrong app file path
+    Comment    EXAMPLE: Ingestion    with "-parent" option
+    [Teardown]    Dtcli Exit
+
+dtcli_get-jar-operator-properties
+    [Tags]    incomplete
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-jar-operator-properties
+    ${ingestion_FS_op}=    Set Variable    com.datatorrent.apps.ingestion.io.input.IngestionFileSplitter
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-jar-operator-properties <jar-files-comma-separated> <operator-class-name>
+    #EXAMPLES:
+    Comment    EXAMPLE: Ingestion
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_ingestion_jar} ${ingestion_FS_op}    prompt=apex>
+    Check String For Errors    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    PlaceHolder: Until usage is decided
+    Comment    Add below tests once    the final usage is determined
+    Comment    Should Contain    ${cmd_stdout}    ${ingestion_FS_op}
+    Comment    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-package-operator-properties.jsonschema
+    Comment    EXAMPLE: Ingestion    with wrong op name
+    [Teardown]    Dtcli Exit
+
+dtcli_dump-properties-file
+    [Tags]    incomplete
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    dump-properties-file
+    ${ingestion_FS_op}=    Set Variable    com.datatorrent.apps.ingestion.io.input.IngestionFileSplitter
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: dump-properties-file <out-file> <jar-file> <class-name>
+    #EXAMPLES:
+    Comment    EXAMPLE: Ingestion
+    ${outfile_path}=    Set Variable    /tmp/dtcli_dump-properties-file.out
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${outfile_path} ${pkg_ingestion_jar} ${ingestion_FS_op}    prompt=apex>
+    Should Contain    ${cmd_stdout}    PlaceHolder: Until usage is decided
+    Comment    Add more testcases    once usage is decided
+    Comment    Check for file existence
+    Comment    cat file and check errors
+    Comment    cat file and check schema
+    [Teardown]    Dtcli Exit
+
+dtcli_show-logical-plan_usage
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    show-logical-plan
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: show-logical-plan [options] <jar-file/app-package-file> [<class-name>]${\n}Options:${\n} \ \ \ -exactMatch \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Only consider exact match for app${\n} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ name${\n} \ \ \ -ignorepom \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Do not run maven to find the${\n} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dependency${\n} \ \ \ -libjars <comma separated list of jars> \ \ \ Specify comma separated${\n} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jar/resource files to include in${\n} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the classpath.
+    [Teardown]    Dtcli Exit
+
+dtcli_show-logical-plan_appPkg
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    show-logical-plan
+    ${exactMatch}=    Set Variable    -exactMatch
+    ${ignorepom}=    Set Variable    -ignorepom
+    ${libjars}=    Set Variable    NULL, NULL, NULL
+    ${libjars}=    Set Variable    -libjars ${libjars}
+    ${ingestion_FS_op}=    Set Variable    com.datatorrent.apps.ingestion.io.input.IngestionFileSplitter
+    #EXAMPLES:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_ingestion_apa}    prompt=apex>
+    Should Contain    ${cmd_stdout}    PlaceHolder: Until usage is decided    #Fails currently; DOes not give any output
+    Comment    Add more tests once    the final usage is determined
+    Comment    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${exactMatch} ${ignorepom} ${pkg_ingestion_apa} ${ingestion_FS_op}    prompt=apex>
+    [Teardown]    Dtcli Exit
+
+dtcli_set-pager
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    set-pager
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: set-pager <on/off>
+    #on
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} on    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Be Equal    ${cmd_stdout}    ${EMPTY}
+    #off
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} off    prompt=apex>
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Be Equal    ${cmd_stdout}    ${EMPTY}
+    #OFF
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} OFF    prompt=apex>
+    Should Contain    ${cmd_stdout}    set-pager parameter is either on or off.
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_usage
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: launch [options] <jar-file/json-file/properties-file/app-package-file> [<matching-app-name>]
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-apconf
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -apconf    ###############    ###############
+    App Launch And Validate    ${pkg_mobile_demo}    -apconf my-app-conf1.xml    MobileDemo
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-conf-valid
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -conf custom    ###############    ###############
+    App Launch And Validate    ${pkg_mobile_demo}    -conf ${CURDIR}${/}inputs${/}MobileDemo_my-app-conf1_custom.xml    Auto_Name_MobileDemo
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-conf-blank
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -conf blank    ###############    ###############
+    App Launch And Validate    ${pkg_mobile_demo}    -conf ${CURDIR}${/}inputs${/}MobileDemo_my-app-conf1_blank.xml    MobileDemo
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-D
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -D    ###############    ###############
+    App Launch And Validate    ${pkg_mobile_demo}    -D dt.application.MobileDemo.attr.APPLICATION_NAME=Auto_Name_with-D_MobileDemo    Auto_Name_with-D_MobileDemo
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-exactMatch
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -exactMatch    ###############    ###############
+    App Launch And Validate    ${pkg_mobile_demo}    -exactMatch MobileDemo    MobileDemo
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-exactMatch-wrong-app
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -exactMatch    Wrong application match    ###############
+    ${cmd_stdout}=    Write Read Prompt    launch \ ${pkg_mobile_demo} \ -exactMatch Wrong-Name    prompt=apex>
+    Should Contain    ${cmd_stdout}    No applications in Application Package matching "Wrong-Name"
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-ignorepom
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -ignorepom    ###############    ###############    TO-DO (expand)
+    App Launch And Validate    ${pkg_mobile_demo}    -ignorepom    MobileDemo
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-local
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -local    ###############    ###############    TO-DO (expand)    Commenting on local for now
+    ${cmd_stdout}=    Write Read Prompt    launch \ ${pkg_mobile_demo} \ -local    prompt=apex>
+    Should Contain    ${cmd_stdout}    StramLocalCluster
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-originalAppId-killed
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -origAppId    ###############    with killed app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_mobile_demo}    -apconf my-app-conf1.xml    MobileDemo    kill=${False}
+    ...    shutdown=${False}
+    Sleep    30s
+    Write Read Prompt    kill-app    prompt=apex>
+    App Relaunch And Validate    ${pkg_mobile_demo}    ${app_id}    -D dt.application.MobileDemo.attr.APPLICATION_NAME=MobileDemo-RelaunchK    MobileDemo-RelaunchK
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-originalAppId-shutdown
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -origAppId    ###############    with shutdown app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ...    shutdown=${False}
+    Sleep    30s
+    Write Read Prompt    shutdown-app    prompt=apex>
+    Sleep    10s    #shutdown takes time
+    App Relaunch And Validate    ${pkg_pi_demo}    ${app_id}    -D dt.application.PiDemo.attr.APPLICATION_NAME=PiDemo-RelaunchS -exactMatch PiDemo    PiDemo-RelaunchS
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-originalAppId-wrong
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -origAppId    ###############    with wrong app ID
+    ${pidemo_app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ...    shutdown=${False}
+    Sleep    10s
+    Write Read Prompt    kill-app    prompt=apex>
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${pkg_mobile_demo}    -originalAppId ${pidemo_app_id}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Unable to find class: com.datatorrent.demos.pi.PiCalculateOperator
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-originalAppId-non-existent
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -origAppId    ###############    Non-existent app ID
+    ${non-ex_app_id}=    Set Variable    application_1437296961097_NA
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${pkg_mobile_demo}    -originalAppId ${non-ex_app_id}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Should Match Regexp    ${cmd_stdout}    No previous application state found in hdfs://.*${non-ex_app_id}
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-originalAppId-running
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -origAppId    ###############    relaunch running app
+    ${app_id1}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ...    shutdown=${False}
+    Sleep    10s
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${pkg_pi_demo}    -exactMatch PiDemo    -originalAppId ${app_id1}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Should Match Regexp    ${cmd_stdout}    Cannot relaunch non-terminated application: ${app_id1} RUNNING
+    Write Read Prompt    kill-app    prompt=apex>
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-queue
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -queue    ###############    ###############    expand
+    App Launch And Validate    ${pkg_mobile_demo}    -queue DTTBC    MobileDemo    queue=DTTBC
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-archives
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -archives    ###############    ###############    expand
+    ${archive11}=    Set Variable    archive_dtcli_1.tar.gz
+    ${archive1}=    Set Variable    ${CURDIR}${/}inputs/${archive11}
+    ${archive22}=    Set Variable    archive_dtcli_2.tar.gz
+    ${archive2}=    Set Variable    ${CURDIR}${/}inputs/${archive22}
+    ${archive33}=    Set Variable    WRONG.path.tar.gz
+    ${archive3}=    Set Variable    ${CURDIR}${/}inputs/${archive33}
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_mobile_demo}    -archives ${archive1},${archive2}    MobileDemo
+    Should Match Regexp    ${cmd_stdout}    Copy ${archive1} from local filesystem to hdfs://.*${archive11}
+    Should Match Regexp    ${cmd_stdout}    Copy ${archive2} from local filesystem to hdfs://.*${archive22}
+    Should Not Match Regexp    ${cmd_stdout}    Copy ${archive3} from local filesystem to hdfs://.*${archive33}
+    Should Match Regexp    ${cmd_stdout}    archives: hdfs://.*${archive11}.*hdfs://.*${archive22}
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-files
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -files    ###############    ###############    expand
+    ${file11}=    Set Variable    file1.txt
+    ${file1}=    Set Variable    ${CURDIR}${/}inputs/${file11}
+    ${file22}=    Set Variable    file2.ext
+    ${file2}=    Set Variable    ${CURDIR}${/}inputs/${file22}
+    ${file33}=    Set Variable    WRONG.path.to.file
+    ${file3}=    Set Variable    ${CURDIR}${/}inputs/${file33}
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_mobile_demo}    -files ${file1},${file2},${file3}    MobileDemo
+    Should Match Regexp    ${cmd_stdout}    Copy ${file1} from local filesystem to hdfs://.*${file11}
+    Should Match Regexp    ${cmd_stdout}    Copy ${file2} from local filesystem to hdfs://.*${file22}
+    Should Not Match Regexp    ${cmd_stdout}    Copy ${file3} from local filesystem to hdfs://.*${file33}
+    Should Match Regexp    ${cmd_stdout}    files: hdfs://.*${file11}.*hdfs://.*${file22}
+    [Teardown]    Dtcli Exit
+
+dtcli_launch_with-libjars
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    launch
+    Comment    launch with -libjars    ###############    ###############    expand
+    ${jar11}=    Set Variable    malhar.jar
+    ${jar1}=    Set Variable    ${CURDIR}${/}inputs/${jar11}
+    ${jar22}=    Set Variable    netlet.jar
+    ${jar2}=    Set Variable    ${CURDIR}${/}inputs/${jar22}
+    ${jar33}=    Set Variable    WRONG.path.to.jar
+    ${jar3}=    Set Variable    ${CURDIR}${/}inputs/${jar33}
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_mobile_demo}    -libjars ${jar1},${jar2},${jar3}    MobileDemo
+    Should Match Regexp    ${cmd_stdout}    Copy ${jar1} from local filesystem to hdfs://.*${jar11}
+    Should Match Regexp    ${cmd_stdout}    Copy ${jar2} from local filesystem to hdfs://.*${jar22}
+    Should Not Match Regexp    ${cmd_stdout}    Copy ${jar3} from local filesystem to hdfs://.*${jar33}
+    Should Match Regexp    ${cmd_stdout}    libjars: .*hdfs://.*${jar11}.*hdfs://.*${jar22}
+    [Teardown]    Dtcli Exit
+
+dtcli_kill-app_running
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    kill-app
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: kill-app <app-id> [<app-id> ... ]
+    #EXAMPLE:
+    Comment    kill running app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_mobile_demo}    ${EMPTY}    MobileDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Killed application ${app_id}
+    Should Contain    ${cmd_stdout}    Kill app requested
+    [Teardown]    Dtcli Exit
+
+dtcli_kill-app_shutdown
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    kill-app
+    Comment    kill shutdown app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    Write Read Prompt    shutdown-app    prompt=apex>
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Killed application ${app_id}
+    Should Contain    ${cmd_stdout}    Kill app requested
+    [Teardown]    Dtcli Exit
+
+dtcli_kill-app_killed
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    kill-app
+    Comment    kill killed app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${True}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Killed application ${app_id}
+    Should Contain    ${cmd_stdout}    Kill app requested
+    [Teardown]    Dtcli Exit
+
+dtcli_kill-app_non-existent
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    kill-app
+    Comment    kill non-existent app
+    ${cmd1}=    Catenate    SEPARATOR=${SPACE}    ${cmd}    application_1437296961097_NA
+    ${cmd_stdout}=    Write Read Prompt    ${cmd1}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Streaming application with id application_1437296961097_NA is not found.
+    [Teardown]    Dtcli Exit
+
+dtcli_shutdown-app_running
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    shutdown-app
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: shutdown-app <app-id> [<app-id> ... ]
+    #EXAMPLE:
+    Comment    shutdown running app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Shutdown requested:
+    [Teardown]    Dtcli Exit
+
+dtcli_shutdown-app_shutdown
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    shutdown-app
+    Comment    shutdown shutdown app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Sleep    30S
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Failed to request shutdown for appid ${app_id}: Application terminated
+    [Teardown]    Dtcli Exit
+
+dtcli_shutdown-app_killed
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    shutdown-app
+    Comment    shutdown killed app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo
+    Sleep    5s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Failed to request shutdown for appid ${app_id}: Application terminated
+    [Teardown]    Dtcli Exit
+
+dtcli_shutdown-app_non-existent
+    [Setup]    Dtcli Enter    -vvv
+    ${cmd}=    Set Variable    shutdown-app
+    Comment    shut non-existent app
+    ${cmd1}=    Catenate    SEPARATOR=${SPACE}    ${cmd}    application_1437296961097_NA
+    ${cmd_stdout}=    Write Read Prompt    ${cmd1}    prompt=apex>
+    Should Contain    ${cmd_stdout}    Streaming application with id application_1437296961097_NA is not found.
+    [Teardown]    Dtcli Exit

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20150819 11:49:45.547" generator="Robot 2.8.7 (Python 2.7.6 on linux2)">
+<suite source="/var/dt/tf/Tests/web/DT_Web_Console/DT_web_console.txt" id="s1" name="DT web console">
+<kw type="setup" name="Common_resources.SetupBrowsingEnv">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${displayid}, ${xvfbpid} = helpers.Setup XVFB">
+<doc>Sets up xvfb display, returns the display id and pid</doc>
+<arguments>
+<arg>${width}</arg>
+<arg>${height}</arg>
+<arg>${colordepth}</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.794" level="INFO">[]
+no ls
+0
+locks:
+0
+0
+xvfb pid is: 15092
+fluxbox pid is: 15093
+display id is: 0</msg>
+<msg timestamp="20150819 11:49:45.795" level="INFO">${displayid} = 0</msg>
+<msg timestamp="20150819 11:49:45.795" level="INFO">${xvfbpid} = 15092</msg>
+<status status="PASS" endtime="20150819 11:49:45.795" starttime="20150819 11:49:45.783"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Set Environment Variable">
+<doc>Sets an environment variable to a specified value.</doc>
+<arguments>
+<arg>DISPLAY</arg>
+<arg>:${displayid}</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.796" level="INFO">Environment variable 'DISPLAY' set to value ':0'</msg>
+<status status="PASS" endtime="20150819 11:49:45.796" starttime="20150819 11:49:45.796"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Create Directory">
+<doc>Creates the specified directory.</doc>
+<arguments>
+<arg>/tmp/ffprofiles/</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.797" html="yes" level="INFO">Created directory '&lt;a href="file:///tmp/ffprofiles"&gt;/tmp/ffprofiles&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20150819 11:49:45.797" starttime="20150819 11:49:45.797"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Copy Directory">
+<doc>Copies the source directory into the destination.</doc>
+<arguments>
+<arg>/var/dt/tf/etc/browsers/ffblankprofile</arg>
+<arg>/tmp/ffprofiles/${displayid}</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.798" html="yes" level="INFO">Copied directory from '&lt;a href="file:///var/dt/tf/etc/browsers/ffblankprofile"&gt;/var/dt/tf/etc/browsers/ffblankprofile&lt;/a&gt;' to '&lt;a href="file:///tmp/ffprofiles/0"&gt;/tmp/ffprofiles/0&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20150819 11:49:45.798" starttime="20150819 11:49:45.797"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${displayid}</arg>
+<arg>${displayid}</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.803" level="INFO">${displayid} = 0</msg>
+<status status="PASS" endtime="20150819 11:49:45.803" starttime="20150819 11:49:45.803"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${xvfbpid}</arg>
+<arg>${xvfbpid}</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.804" level="INFO">${xvfbpid} = 15092</msg>
+<status status="PASS" endtime="20150819 11:49:45.804" starttime="20150819 11:49:45.804"></status>
+</kw>
+<status status="PASS" endtime="20150819 11:49:45.804" starttime="20150819 11:49:45.782"></status>
+</kw>
+<test id="s1-t1" name="Run_Demo_Application_Test">
+<kw type="kw" name="Common_resources.Connect_To_DT_Console">
+<doc></doc>
+<arguments>
+<arg>${url}</arg>
+</arguments>
+<kw type="kw" name="Selenium2Library.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>${url}</arg>
+<arg>ff_profile_dir=/home/akki/Automation/DT_Automation/Tests/ff_proxy</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.818" level="INFO">Opening browser 'firefox' to base url 'http://node17.morado.com:9090'</msg>
+<kw type="kw" name="Selenium2Library.Capture Page Screenshot">
+<doc>Takes a screenshot of the current page and embeds it into the log.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20150819 11:49:45.827" level="FAIL">No browser is open</msg>
+<status status="FAIL" endtime="20150819 11:49:45.827" starttime="20150819 11:49:45.822"></status>
+</kw>
+<msg timestamp="20150819 11:49:45.827" level="WARN">Keyword 'Capture Page Screenshot' could not be run on failure: No browser is open</msg>
+<msg timestamp="20150819 11:49:45.832" level="FAIL">OSError: [Errno 2] No such file or directory: '/home/akki/Automation/DT_Automation/Tests/ff_proxy'</msg>
+<status status="FAIL" endtime="20150819 11:49:45.833" starttime="20150819 11:49:45.818"></status>
+</kw>
+<status status="FAIL" endtime="20150819 11:49:45.833" starttime="20150819 11:49:45.815"></status>
+</kw>
+<kw type="teardown" name="Selenium2Library.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20150819 11:49:45.835" starttime="20150819 11:49:45.835"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20150819 11:49:45.835" critical="yes" starttime="20150819 11:49:45.804">OSError: [Errno 2] No such file or directory: '/home/akki/Automation/DT_Automation/Tests/ff_proxy'</status>
+</test>
+<kw type="teardown" name="Common_resources.DestroyBrowsingEnv">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Selenium2Library.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20150819 11:49:45.841" starttime="20150819 11:49:45.840"></status>
+</kw>
+<kw type="kw" name="helpers.Terminate PID">
+<doc>Tries to terminate the process by pid</doc>
+<arguments>
+<arg>${xvfbPID}</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.841" level="INFO">Terminating the process 15092</msg>
+<status status="PASS" endtime="20150819 11:49:45.841" starttime="20150819 11:49:45.841"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Remove Directory">
+<doc>Removes the directory pointed to by the given `path`.</doc>
+<arguments>
+<arg>/tmp/ffprofiles/${displayid}</arg>
+<arg>recursive=True</arg>
+</arguments>
+<msg timestamp="20150819 11:49:45.846" html="yes" level="INFO">Removed directory '&lt;a href="file:///tmp/ffprofiles/0"&gt;/tmp/ffprofiles/0&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20150819 11:49:45.846" starttime="20150819 11:49:45.841"></status>
+</kw>
+<status status="PASS" endtime="20150819 11:49:45.847" starttime="20150819 11:49:45.839"></status>
+</kw>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20150819 11:49:45.847" starttime="20150819 11:49:45.548"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" pass="0" id="s1" name="DT web console">DT web console</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20150819 11:49:45.827" level="WARN">Keyword 'Capture Page Screenshot' could not be run on failure: No browser is open</msg>
+</errors>
+</robot>

@@ -1,0 +1,97 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}          hdfs://${iNN}:${iNNPORT}
+${oHDFS}          hdfs://${oNN}:${oNNPORT}
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+
+*** Test Cases ***
+H2F_Copy_At_Non-Existent_Location
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}/non/existent/path
+
+H2F_Copy_1GB_File
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_500GB_File
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/500gb.file    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_1TB_File
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1tb.file    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_0KB_File
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/0kb.file    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Blank_Dir
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/blank-dir    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_1-Depth
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-1-depth/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_5-Depth
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-5-depth/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_25-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-25-depth/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_500-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-500-depth/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_3_File_Sources
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic.file2 ${HDFS}${BASEDIR}/ing-source-data/generic.file3    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_3_Dir_Sources
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir1/ ${HDFS}${BASEDIR}/ing-source-data/generic-dir2/ ${HDFS}${BASEDIR}/ing-source-data/generic-dir3/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_2_File_2_Dir_Sources
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file1 ${HDFS}${BASEDIR}/ing-source-data/generic.file2 ${HDFS}${BASEDIR}/ing-source-data/generic-dir1/ ${HDFS}${BASEDIR}/ing-source-data/generic-dir2/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_2_Dir_With_Same_Dir_Str
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/same-dir-str1 ${HDFS}${BASEDIR}/ing-source-data/same-dir-str2    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_2_Dir_From_Same_Loc
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/same-dir-str1/dir1/ ${HDFS}${BASEDIR}/ing-source-data/same-dir-str1/dir2/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_And_Subdir
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic-dir ${HDFS}${BASEDIR}/ing-source-data/generic-dir/subdir    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_2_Dir_With_Same_Name
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-same-name1/COMMON-NAME ${HDFS}${BASEDIR}/ing-source-data/dir-with-same-name2/COMMON-NAME    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_With_Large_Num_Of_Small_Files
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_With_Rec_Random_Str
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-rec-random-str/    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_With_Symlink
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-symlink    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Dir_With_One_Blank_Dir
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-one-blank-dir    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Existing_File_At_dest-AS-IS
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-file-at-destination.file    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Existing_File_At_dest-diff-sized
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-file-at-destination-diff-size.file    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Existing_Dir_At_dest-AS-IS
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-dir-at-destination    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}
+
+H2F_Copy_Existing_Dir_At_dest-diff-sized
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/existing-dir-at-destination-diff-size    ${FTP}${BASEDIR}/ing-dest-data/hdfs-to-ftp/${TEST_NAME}

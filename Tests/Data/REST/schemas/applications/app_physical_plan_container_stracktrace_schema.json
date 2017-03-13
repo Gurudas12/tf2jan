@@ -1,0 +1,42 @@
+{
+  "required": [
+    "threads"
+  ], 
+  "type": "object", 
+  "properties": {
+    "threads": {
+      "items": [
+        {
+          "required": [
+            "id", 
+            "name", 
+            "stackTraceElements", 
+            "state"
+          ], 
+          "type": "object", 
+          "properties": {
+            "stackTraceElements": {
+              "items": [
+                {
+                  "type": "string"
+                }
+              ], 
+              "type": "array"
+            }, 
+            "id": {
+              "type": "integer"
+            }, 
+            "name": {
+              "type": "string"
+            }, 
+            "state": {
+              "type": "string"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}
+

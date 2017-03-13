@@ -1,0 +1,26 @@
+{"apps": [
+  {
+    "startTime": "2015-07-15 10:06:27 +0530",
+    "id": 1,
+    "name": "PiDemo",
+    "state": "KILLED",
+    "trackingUrl": "daemon12:8088\/cluster\/app\/application_1436934686455_0001",
+    "finalStatus": "KILLED"
+  },
+  {
+    "startTime": "2015-07-15 10:06:35 +0530",
+    "id": 2,
+    "name": "PiDemo1",
+    "state": "FINISHED",
+    "trackingUrl": "http:\/\/daemon12:8088\/proxy\/application_1436934686455_0002\/A",
+    "finalStatus": "SUCCEEDED"
+  },
+  {
+    "startTime": "2015-07-15 10:06:45 +0530",
+    "id": 3,
+    "name": "PiDemo2",
+    "state": "RUNNING",
+    "trackingUrl": "http:\/\/daemon12:8088\/proxy\/application_1436934686455_0003\/",
+    "finalStatus": "UNDEFINED"
+  }
+]}

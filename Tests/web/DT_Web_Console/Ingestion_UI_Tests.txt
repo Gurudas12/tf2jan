@@ -1,0 +1,30 @@
+*** Settings ***
+Documentation     ${src_scheme} | ${dest_scheme} | ${dest_dir}=${EMPTY} | ${kafka_topic}=${EMPTY} | ${kafka_zookeeper}=${EMPTY} | ${jms_url}=${EMPTY} | ${jms_topic}=${EMPTY} | ${filter}=${EMPTY} | ${no_recurse}=${EMPTY} | ${scan}=${EMPTY} | ${appid_r}=${EMPTY} | ${overwrite}=ON | ${otc}=ON | ${enc_type}=${EMPTY} | ${enc_key}=${EMPTY} | ${dec_key}=${EMPTY} | ${compression_type}=None | ${Duplicate_Str}=ON | ${Opt_Hr_Files}=OFF | ${Compact_Files}=OFF | ${Fast_Merge}=OFF | ${Save_As_Config}=None
+Suite Setup       SetupBrowsingEnv
+Suite Teardown    DestroyBrowsingEnv
+Resource          ../../../lib/web/Ingestion/Ingestion_Config_UI.txt
+Library           ../../../lib/CLI/Ingestion/KafkaDataProducer.py
+
+*** Variables ***
+@{Ingestion_Src_Dir}    hdfs://node34.morado.com/user/dttbc/test1    hdfs://node34.morado.com/user/dttbc/test2    hdfs://node34.morado.com/user/dttbc/test3    hdfs://node34.morado.com/user/dttbc/test4
+${url}            http://node35.morado.com:9091
+
+*** Test Cases ***
+HDFS_TO_HDFS_Test
+    Connect_To_DT_Console    ${url}
+    ${app_id}=    Launch_and_Configure_Ingestion    HDFS    HDFS    hdfs://node34.morado.com/user/dttbc/
+    Log    ${app_id}
+    [Teardown]
+
+NFS_TO_HDFS_Test
+    Connect_To_DT_Console    ${url}
+    Launch_and_Configure_Ingestion    File / NFS    HDFS    hdfs://node34.morado.com/user/dttbc/
+
+File_To_HDFS_Test
+    Connect_To_DT_Console    ${url}
+    Launch_and_Configure_Ingestion    File / NFS    HDFS    hdfs://node34.morado.com/user/dttbc/
+
+Kafka_To_HDFS_Test
+    Connect_To_DT_Console    ${url}
+    Launch_and_Configure_Ingestion    Kafka    HDFS    dest_dir=hdfs://node34.morado.com/user/dttbc/    kafka_topic=SPOI-6090_kafka_TEST    kafka_zookeeper=node35.morado.com:2181
+    Send To Kafka    kafka_client=node35.morado.com:9092    is_multi_partitioner=True    noOfMsgs=2000    topic=test-RC2

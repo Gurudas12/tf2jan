@@ -1,0 +1,86 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${RHDFS}          hdfs://node20.morado.com:8020
+${RHDFS1}         hdfs://node5.morado.com:8020
+
+${enc_aes_256b_key}    Datat0rr6nt1ndiaRealPunePa55w0rd    
+${enc_pki_pub_key_512}    MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAND0r9mbqETxL8jhaYxCQE+gU5qxtVY8V392ufrpOj3SwSbTdZNhqgeDbhLTCDoaBAQlJkXjzrn9XHUIzw/z/U0CAwEAAQ==
+${enc_pki_pri_key_512}    MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEA0PSv2ZuoRPEvyOFpjEJAT6BTmrG1VjxXf3a5+uk6PdLBJtN1k2GqB4NuEtMIOhoEBCUmRePOuf1cdQjPD/P9TQIDAQABAkA1fb4and9orrmF2jaT4k3mVGuymTWLuuzHQ5R+p//x3TCKxhdxu4m5E/PyxtX+x8cHumfDLmgWrfd+T343wjNhAiEA6bvzfiBpWVXGmrwOU5ulpoAnKaesZksfhpazzmS1/vUCIQDk3HfloRkhXeT4tlqdAQAj91vSctE6ysksD/BwFhBd+QIhALSk4YR6UlGMHKncbAosQnOTmjD0eSa6KsxfTupWJd69AiB/UXNWCQA9Aso93tycGZFlcNfhRMTHS0cNPzTIdk3WqQIgDRiMkARiLnZ9xCVI95s0MQ/ybWxl5/7vLYzsLgr0pX4=
+
+*** Test Cases ***
+CMB_Copy_with_multiple_Options1_H2H
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${oHDFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_H2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${NFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.*    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_H2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${FTP}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=2m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_H2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${S3N_D}/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=OFF    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_N2H
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${oHDFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=15    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_N2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${NFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_N2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${FTP}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=75    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_N2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${S3N_D}/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-pki    enc_key=${enc_pki_pub_key_512}        dec_key=${enc_pki_pri_key_512}
+
+CMB_Copy_with_multiple_Options1_F2H
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${oHDFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_F2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${NFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_F2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${FTP}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_F2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/file-filter-input-dir-rec    ${S3N_D}/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_S2H
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/file-filter-input-dir-rec    ${oHDFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_S2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/file-filter-input-dir-rec    ${NFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_S2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/file-filter-input-dir-rec    ${FTP}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+CMB_Copy_with_multiple_Options1_S2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/file-filter-input-dir-rec    ${S3N_D}/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    cmp_type=-c-gzip    enc_type=-e-aes    enc_key=${enc_aes_256b_key}
+
+*** Test Cases ***
+CMB_Copy_with_multiple_Options2_H2H
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/dir-with-large-num-of-small-files    ${oHDFS}${BASEDIR}/ing-dest-data/combinations/${TEST_NAME}    filter=*.log    scan=1m    overwrite=ON    readers=7    bandwidth=100    compact=ON    cmSize=100MB    cmSep=\\n####+++++++EOF++++++####\\n

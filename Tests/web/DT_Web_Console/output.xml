@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20151105 14:51:31.864" generator="Robot 2.8.7 (Python 2.7.6 on linux2)">
+<suite source="/home/akki/Automation/QA_Fork/QA/framework/Tests/web/DT_Web_Console/DT_web_console.txt" id="s1" name="DT web console">
+<test id="s1-t1" name="Run_Demo_Application_Test">
+<kw type="kw" name="Common_resources.Connect_To_DT_Console">
+<doc>Connects to DT web console</doc>
+<arguments>
+<arg>${url}</arg>
+</arguments>
+<kw type="kw" name="Selenium2Library.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>${url}</arg>
+<arg>ff_profile_dir=/home/akki/Automation/DT_Automation/Tests/ff_proxy</arg>
+</arguments>
+<msg timestamp="20151105 14:51:31.994" level="INFO">Opening browser 'firefox' to base url 'http://node35.morado.com:9090/static/#/ops'</msg>
+<status status="PASS" endtime="20151105 14:52:09.344" starttime="20151105 14:51:31.994"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Maximize Browser Window">
+<doc>Maximizes current browser window.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20151105 14:52:09.349" starttime="20151105 14:52:09.345"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Wait Until Page Contains">
+<doc>Waits until `text` appears on current page.</doc>
+<arguments>
+<arg>Cluster Overview</arg>
+</arguments>
+<status status="PASS" endtime="20151105 14:52:11.052" starttime="20151105 14:52:09.350"></status>
+</kw>
+<status status="PASS" endtime="20151105 14:52:11.052" starttime="20151105 14:51:31.993"></status>
+</kw>
+<kw type="kw" name="develop_page.Develop_The_App">
+<doc></doc>
+<arguments>
+<arg>Demo</arg>
+<arg>DataTorrent Pi Demo</arg>
+</arguments>
+<kw type="kw" name="Common_resources.Go_To_Page">
+<doc>Redirects to the page by given link display name and waits for the string " str_on_page_to_verify"  to be displayed on the page</doc>
+<arguments>
+<arg>Develop</arg>
+<arg>Application Packages</arg>
+</arguments>
+<kw type="kw" name="${Go_To_Page_Link} = BuiltIn.Set Variable">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>//span[text()='${link_disp_name}']/..</arg>
+</arguments>
+<msg timestamp="20151105 14:52:11.055" level="INFO">${Go_To_Page_Link} = //span[text()='Develop']/..</msg>
+<status status="PASS" endtime="20151105 14:52:11.054" starttime="20151105 14:52:11.054"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Click Element">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=${Go_To_Page_Link}</arg>
+</arguments>
+<msg timestamp="20151105 14:52:11.055" level="INFO">Clicking element 'xpath=//span[text()='Develop']/..'.</msg>
+<status status="PASS" endtime="20151105 14:52:11.141" starttime="20151105 14:52:11.055"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Wait Until Page Contains">
+<doc>Waits until `text` appears on current page.</doc>
+<arguments>
+<arg>Application Packages</arg>
+<arg>timeout=10s</arg>
+</arguments>
+<status status="PASS" endtime="20151105 14:52:11.150" starttime="20151105 14:52:11.142"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Comment">
+<doc>Displays the given messages in the log file as keyword arguments.</doc>
+<arguments>
+<arg>Wait Until Page Contains</arg>
+<arg>//t[text()="Application Packages"]/..</arg>
+<arg>10s</arg>
+</arguments>
+<status status="PASS" endtime="20151105 14:52:11.150" starttime="20151105 14:52:11.150"></status>
+</kw>
+<status status="PASS" endtime="20151105 14:52:11.151" starttime="20151105 14:52:11.053"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Click Element">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=${Goto_Application_Packages_Link}</arg>
+</arguments>
+<msg timestamp="20151105 14:52:11.152" level="INFO">Clicking element 'xpath=//t[text()="Application Packages"]/..'.</msg>
+<status status="PASS" endtime="20151105 14:52:11.253" starttime="20151105 14:52:11.151"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Wait Until Page Contains">
+<doc>Waits until `text` appears on current page.</doc>
+<arguments>
+<arg>App Packages</arg>
+<arg>timeout=10s</arg>
+</arguments>
+<status status="PASS" endtime="20151105 14:52:12.490" starttime="20151105 14:52:11.253"></status>
+</kw>
+<kw type="kw" name="${Select_Demo_App_xpath} = BuiltIn.Set Variable">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>//span[text()='${app_name}']/../..//input[@type='checkbox']</arg>
+</arguments>
+<msg timestamp="20151105 14:52:12.491" level="INFO">${Select_Demo_App_xpath} = //span[text()='DataTorrent Pi Demo']/../..//input[@type='checkbox']</msg>
+<status status="PASS" endtime="20151105 14:52:12.490" starttime="20151105 14:52:12.490"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Run Keyword If">
+<doc>Runs the given keyword with the given arguments, if `condition` is true.</doc>
+<arguments>
+<arg>'${app_type}'=='Demo'</arg>
+<arg>Import_Demo_App</arg>
+<arg>${app_name}</arg>
+</arguments>
+<kw type="kw" name="develop_page.Import_Demo_App">
+<doc></doc>
+<arguments>
+<arg>${app_name}</arg>
+</arguments>
+<kw type="kw" name="Selenium2Library.Click Element">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=${Import_Demos_xpath}</arg>
+</arguments>
+<msg timestamp="20151105 14:52:12.492" level="INFO">Clicking element 'xpath=//t[text()='import demos']/..'.</msg>
+<kw type="kw" name="Selenium2Library.Capture Page Screenshot">
+<doc>Takes a screenshot of the current page and embeds it into the log.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20151105 14:52:12.614" html="yes" level="INFO">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-1.png"&gt;&lt;img src="selenium-screenshot-1.png" width="800px"&gt;&lt;/a&gt;</msg>
+<status status="PASS" endtime="20151105 14:52:12.614" starttime="20151105 14:52:12.500"></status>
+</kw>
+<msg timestamp="20151105 14:52:12.633" level="FAIL">ValueError: Element locator 'xpath=//t[text()='import demos']/..' did not match any elements.</msg>
+<status status="FAIL" endtime="20151105 14:52:12.634" starttime="20151105 14:52:12.492"></status>
+</kw>
+<status status="FAIL" endtime="20151105 14:52:12.634" starttime="20151105 14:52:12.491"></status>
+</kw>
+<status status="FAIL" endtime="20151105 14:52:12.634" starttime="20151105 14:52:12.491"></status>
+</kw>
+<status status="FAIL" endtime="20151105 14:52:12.635" starttime="20151105 14:52:11.053"></status>
+</kw>
+<kw type="teardown" name="Selenium2Library.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20151105 14:52:12.661" starttime="20151105 14:52:12.635"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20151105 14:52:12.661" critical="yes" starttime="20151105 14:51:31.992">ValueError: Element locator 'xpath=//t[text()='import demos']/..' did not match any elements.</status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20151105 14:52:12.662" starttime="20151105 14:51:31.864"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" pass="0" id="s1" name="DT web console">DT web console</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

@@ -1,0 +1,335 @@
+*** Settings ***
+Suite Setup       Kafka Input Module Suite Setup
+Resource          kafka-input-module-resources.txt
+Variables         ../../../etc/environments/kafka-input-module.py
+
+*** Variables ***
+
+*** Test Cases ***
+TEST
+    [Tags]    TEST
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=1    rep_factor=1
+    Launch Validator App Manual    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM_default1_P1R1
+    [Tags]    sanity
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=1    rep_factor=1
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM_default2_P10R3
+    [Tags]    sanity
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=10    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM_custom1-P1R1
+    [Tags]    sanity
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=1    rep_factor=1
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM_custom2-P1R3
+    [Tags]    sanity
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=1    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM_custom3-P5R1
+    [Tags]    sanity
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=5    rep_factor=1
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM_custom4-P15R3
+    [Tags]    sanity
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=15    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_zookeeper_1
+    [Documentation]    Zookeeper: node35.morado.com:2181
+    [Tags]    param    zookeeper
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_zookeeper_2
+    [Documentation]    Zookeeper: Kafka1::node35.morado.com:2181
+    [Tags]    param    zookeeper
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_zookeeper_3
+    [Documentation]    Zookeeper: node35.morado.com:2181,node32.morado.com:2181
+    [Tags]    param    zookeeper
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_zookeeper_4
+    [Documentation]    Zookeeper: node35.morado.com:2181,node32.morado.com:2181,node31.morado.com:2181
+    [Tags]    param    zookeeper
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_zookeeper_5
+    [Documentation]    Zookeeper: Kafka1::node35.morado.com:2181;Kafka2::node30.morado.com:2181
+    [Tags]    param    zookeeper
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_zookeeper_6
+    [Documentation]    Zookeeper: Kafka1::node35.morado.com:2181,node32.morado.com:2181,node31.morado.com;Kafka2::node30.morado.com:2181,node34.morado.com:2181
+    [Tags]    param    zookeeper
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_zookeeper_7
+    [Documentation]    Zookeeper: 2181:node35.morado.com
+    [Tags]    param    negative    zookeeper
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error="TO BE SET"
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_initialOffset_earliest
+    [Documentation]    Initial Offset: earliest
+    [Tags]    param    initialOffset
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_initialOffset_latest
+    [Documentation]    Initial Offset: latest
+    [Tags]    param    initialOffset
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_initialOffset_Latest_
+    [Documentation]    Initial Offset: Latest
+    [Tags]    param    initialOffset
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_initialOffset_EARLIEST_
+    [Documentation]    Initial Offset: EARLIEST
+    [Tags]    param    initialOffset
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_initialOffset_NOW
+    [Documentation]    Initial Offset: NOW
+    [Tags]    param    negative    initialOffset
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=must match the following regular expression: earliest|latest
+
+Launch-KIM-param_initialOffset_100
+    [Documentation]    Initial Offset: 100
+    [Tags]    param    negative    initialOffset
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=must match the following regular expression: earliest|latest
+
+Launch-KIM-param_OffsetFilePath_empty
+    [Documentation]    Offset File Name: Provide empty file
+    [Tags]    param    OffsetFilePath
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_OffsetFilePath_valid
+    [Documentation]    Offset File Name: Provide valid offset file
+    [Tags]    param    OffsetFilePath
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_OffsetFilePath_alongwith_initialOffset
+    [Documentation]    Offset File Name: Provide valid offset file alongwith initialOffset parameter
+    [Tags]    param    OffsetFilePath
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_OffsetFilePath_invalid
+    [Documentation]    Offset File Name: Provide invalid offset file
+    [Tags]    param    negative    OffsetFilePath
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error="TO BE SET"
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_OffsetFilePath_non-existent
+    [Documentation]    Offset File Name: Provide non existent file path
+    [Tags]    param    negative    OffsetFilePath
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error="TO BE SET"
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_maxTuplesPerWindow_1
+    [Documentation]    MaxTuplesPerWindow: 1
+    [Tags]    param    maxTuplesPerWindow
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_maxTuplesPerWindow_10
+    [Documentation]    MaxTuplesPerWindow: 10
+    [Tags]    param    maxTuplesPerWindow
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_maxTuplesPerWindow_1000000000
+    [Documentation]    MaxTuplesPerWindow: 1000000000
+    [Tags]    param    maxTuplesPerWindow
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_maxTuplesPerWindow_0
+    [Documentation]    MaxTuplesPerWindow: 0
+    [Tags]    param    maxTuplesPerWindow    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=propertyPath='maxTuplesPerWindow', message='must be greater than or equal to 1'
+
+Launch-KIM-param_maxTuplesPerWindow_null
+    [Documentation]    MaxTuplesPerWindow: null
+    [Tags]    param    maxTuplesPerWindow    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=propertyPath='maxTuplesPerWindow', message='must be greater than or equal to 1'
+
+Launch-KIM-param_maxTuplesPerWindow_TEN
+    [Documentation]    MaxTuplesPerWindow: TEN
+    [Tags]    param    maxTuplesPerWindow    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=propertyPath='maxTuplesPerWindow', message='must be greater than or equal to 1'
+
+Launch-KIM-param_strategy_ONE_TO_ONE
+    [Documentation]    strategy: ONE_TO_ONE
+    [Tags]    param    strategy
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_strategy_oNE_To_One_
+    [Documentation]    strategy: oNE_To_One
+    [Tags]    param    strategy
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_strategy_ONE_TO_MANY
+    [Documentation]    strategy: ONE_TO_MANY
+    [Tags]    param    strategy
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_strategy_one_to_many_
+    [Documentation]    strategy: one_to_many
+    [Tags]    param    strategy
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_strategy_many_to_many
+    [Documentation]    strategy: many_to_many
+    [Tags]    param    strategy    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=No enum constant com.datatorrent.contrib.kafka.AbstractKafkaInputOperator.PartitionStrategy.MANY_TO_ONE
+
+Launch-KIM-param_strategy_MANY_TO_ONE
+    [Documentation]    strategy: MANY_TO_ONE
+    [Tags]    param    strategy    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=No enum constant com.datatorrent.contrib.kafka.AbstractKafkaInputOperator.PartitionStrategy.MANY_TO_ONE
+
+Launch-KIM-param_strategy_none
+    [Documentation]    strategy: none
+    [Tags]    param    strategy    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=No enum constant com.datatorrent.contrib.kafka.AbstractKafkaInputOperator.PartitionStrategy.MANY_TO_ONE
+
+Launch-KIM-param_parallelReads_1
+    [Documentation]    parallelReads: 1
+    [Tags]    param    parallelReads
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_parallelReads_3
+    [Documentation]    parallelReads: 3
+    [Tags]    param    parallelReads
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_parallelReads_10
+    [Documentation]    parallelReads: 10
+    [Tags]    param    parallelReads
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_parallelReads_-2
+    [Documentation]    parallelReads: -2
+    [Tags]    param    parallelReads    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=propertyPath='initialPartitionCount', message='must be greater than or equal to 1
+
+Launch-KIM-param_parallelReads_0
+    [Documentation]    parallelReads: 0
+    [Tags]    param    parallelReads    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=propertyPath='initialPartitionCount', message='must be greater than or equal to 1
+
+Launch-KIM-param_parallelReads_ONE
+    [Documentation]    parallelReads: ONE
+    [Tags]    param    parallelReads    negative
+    Launch Negative Test    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    error=propertyPath='initialPartitionCount', message='must be greater than or equal to 1
+
+Launch-KIM-param_bandwidth_1
+    [Documentation]    bandwidth: 1
+    [Tags]    param    bandwidth
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_bandwidth_10
+    [Documentation]    bandwidth: 10
+    [Tags]    param    bandwidth
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_bandwidth_100
+    [Documentation]    bandwidth: 100
+    [Tags]    param    bandwidth
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_bandwidth_1000
+    [Documentation]    bandwidth: 1000
+    [Tags]    param    bandwidth
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_bandwidth_0.5
+    [Documentation]    bandwidth: 0.5
+    [Tags]    param    bandwidth
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-param_bandwidth_100.234
+    [Documentation]    bandwidth: 100.234
+    [Tags]    param    bandwidth
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}
+
+Launch-KIM-kill_container_test
+    [Documentation]    Check the app status after killing the Kafka Input Operator
+    [Tags]    extra
+    [Setup]    Kafka Input Module Test Setup    topic_name=${TEST_NAME}    partitions=3    rep_factor=3
+    Launch Validator App    config=${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml    wait=1m    killc=${True}
+    [Teardown]    Kafka Input Module Test Teardown    topic_name=${TEST_NAME}

@@ -1,0 +1,107 @@
+*** Settings ***
+Library           Selenium2Library
+Resource          Common_resources.txt
+
+*** Variables ***
+${DT_Console_Page_xpath}    ${EMPTY}
+${Select_Demo_App_xpath}    ${EMPTY}
+${Import_Button_xpath}    ${EMPTY}
+${pkg_success_xpath}    //div[contains(@class,'alert-success')]//span[text()='Package(s) successfully imported']
+${Pkg_Name_Link_xpath}    ${EMPTY}
+${Launch_The_App_xpath}    ${EMPTY}
+${Launch_App_Alert_xpath}    ${EMPTY}
+${Select_Use_Config_file_xpath}    //label/input[@ng-model="launchOptions.usingConfigFile"]
+${Launch_Success_Button_xpath}    //span[text()='Launch']/..
+${Upload_New_Pkg}    //t[text()="upload a package"]/..
+${Upload_Dialogue_Button}    //p[text()="Drag a file here"]/..//button
+${File_Upload_Success}    //span[contains(text(),"uploaded")]/../..
+${Input_Tag_Type}    //input[@type='file']
+${Import_From_DtHub}    //t[text()='import from dtHub']/..
+${Demo_Pkg_Import_Successful}    //div[contains(text(),"imported")]
+${Pkg_In_App_Pkgs_table}    ${EMPTY}
+${App_Launch_Success_Msg}    //t[contains(text(),"Application ID")]
+${Goto_Application_Packages_Link}    //t[text()="Application Packages"]/..
+${App_Pkg_Breadcrum}    //a[text()='App Packages']
+
+*** Keywords ***
+Develop_The_App
+    [Arguments]    ${app_type}    ${app_name}    ${app_jar}=None
+    Go_To_Page    Develop    Application Packages    #Application Packages
+    Comment    Click Element    xpath=${Goto_Application_Packages_Link}
+    sleep    5s
+    Wait Until Page Contains    Application Packages    timeout=5s
+    Page Should Not Contain   Cluster
+    Go_To_Page    AppHub   AppHub
+    sleep  12s    #Takes time to list packages
+    ${Select_Demo_App_xpath}=    Set Variable    //span[text()='${app_name}']/../..//input[@type='checkbox']
+    log   ${Select_Demo_App_xpath}
+    Run Keyword If    '${app_type}'=='Demo'    Import_Demo_App    ${app_name}
+    Run Keyword Unless    '${app_type}'=='Demo'    Import_New_App    ${app_jar}
+
+Import_Demo_App
+    [Arguments]    ${app_name}
+    #Click Element    xpath=${Import_Demos_xpath}    #For 2.0.0 Console, xpath=//span[text()='import demos']/..    #For 2.1.0 Console,xpath=//t[text()='import demos']/..
+    ${Select_Demo_App_xpath}=    Set Variable     //*[contains(text(),'${app_name}')]
+    log   ${Select_Demo_App_xpath}
+    Click Element   xpath=/html/body/div[2]/div/div[1]/label[2]
+    Wait Until Element Is Visible    xpath=${Select_Demo_App_xpath}
+    Click Element    xpath=${Select_Demo_App_xpath}
+    sleep   10s
+    Click Button    xpath=/html/body/div[2]/div/h2/div/button[1]
+    Wait Until Element Is Visible    xpath=/html/body/div[4]/div/div[4]/a    timeout=1000   #TAKES DAMN LONG !
+    #${Pkg_In_App_Pkgs_table}    Set Variable    //table//a[contains(text(),'${app_name}')]
+    #Wait Until Page Contains Element    xpath=${Pkg_In_App_Pkgs_table}
+    #Wait Until Element Is Visible    xpath=${pkg_success_xpath}    timeout=10s
+    Connect_To_DT_Console    ${url}
+
+Launch_The_App
+    [Arguments]    ${pkg_name}    ${app_name}
+    Select_App_From_Given_Pkg_List    ${pkg_name}    ${app_name}
+    ${Launch_App_Alert_xpath}    Set Variable    //h3//span[contains(text(),'Launch ${app_name}')]
+    #Element Should Be Visible    xpath=${Launch_App_Alert_xpath}    timeout=10s
+    #Select Checkbox    xpath=${Select_Use_Config_file_xpath}
+    #Click Element    xpath=${Launch_Success_Button_xpath}
+    #${Select_Demo_App_xpath}=    Set Variable     //*[contains(text(),'${app_name}')]
+    #log   ${Select_Demo_App_xpath}
+    #Wait Until Element Is Visible    xpath=${Select_Demo_App_xpath}
+    #Click Element    xpath=${Select_Demo_App_xpath}
+    sleep    5s
+    Capture Page Screenshot
+
+Import_New_App
+    [Arguments]    ${File_To_Upload}
+    Click Element    xpath=${Upload_New_Pkg}
+    Wait Until Element Is Visible    xpath=${Upload_Dialogue_Button}
+    Click Element    xpath=${Upload_Dialogue_Button}
+    Choose File    ${Input_Tag_Type}    ${File_To_Upload}
+    Wait Until Element Is Visible    ${File_Upload_Success}    timeout=10s
+
+Select_App_From_Given_Pkg_List
+    [Arguments]    ${pkg_name}    ${app_name}    # To select package from the list
+    Go_To_Page    Develop    Development
+    Click Element   xpath=/html/body/div[2]/div/div[1]/h2/a
+    Click Element   xpath=/html/body/div[2]/div/h1/div/label[1]
+    wait until page contains   Develop
+    ${Select_Demo_App_xpath}=    Set Variable     //*[contains(text(),'${app_name}')]
+    log   ${Select_Demo_App_xpath}
+    Wait Until Element Is Visible    xpath=${Select_Demo_App_xpath}
+    Click Element    xpath=${Select_Demo_App_xpath}
+    #Comment    Click Element    xpath=${Goto_Application_Packages_Link}
+    Wait Until Element Is Visible    xpath=/html/body/div[2]/div/h1/span[2]/button
+    Click Element   xpath=/html/body/div[2]/div/h1/span[2]/button
+    Comment    Wait Until Page Contains    Ingestion    timeout=20s
+    Comment    Click Element    xpath=//table//a[text()='${app_name}']/../../td[3]//button[1]
+    sleep  1s
+    ${Launch_The_App_xpath}    Set Variable    /html/body/div[1]/div/div/form/div[3]/button[1]     # for version 3.6.0  //table//a[text()='${app_name}']/../../td[3]//button[1]    #//table//a[contains(text(),'${app_name}')]/../../td[5]//button    #For 2.0.0 Console : //table//a[contains(text(),'${app_name}')]/../../td[4]/button    For 2.1.0 Console: //table//a[contains(text(),'${app_name}')]/../../td[5]//button
+    Click Element    xpath=${Launch_The_App_xpath}
+    sleep    2s
+
+Delete_App_From_Develop_Page
+    [Arguments]    ${pkg_name}    ${app_name}    ${version}  # To select package from the list
+    Go to  ${url}static/#/dev/packages/${username}/${pkg_name}/${version}/  #set your username in variables  in tf2jan/Tests/web/DT_Web_Console/DT_web_console.txt
+    ${delete}  Set Variable   /html/body/div[2]/div/div[2]/button[2]
+    Wait Until Page Contains   ${app_name}
+    Click Button  xpath=${delete}
+    sleep  2s
+    Click Button  xpath=/html/body/div[1]/div/div/div[3]/button[1]
+    Capture Page Screenshot

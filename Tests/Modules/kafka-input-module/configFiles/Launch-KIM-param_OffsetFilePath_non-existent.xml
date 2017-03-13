@@ -1,0 +1,19 @@
+<configuration>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.topic</name>
+     <value>Launch-KIM-param_OffsetFilePath_non-existent</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.broker</name>
+     <value>node35.morado.com:9092</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.zookeeper</name>
+     <value>node35.morado.com:2181</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.offsetFilePath</name>
+     <value>/path/to/non-existent/file</value>
+  </property>
+
+</configuration>

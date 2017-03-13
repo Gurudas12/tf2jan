@@ -1,0 +1,204 @@
+*** Settings ***
+Resource          ../operator_resources.txt
+Resource          ../../CLI/cli_resources.txt
+Resource          ../../CLI/dtcli/dtcli_resources.txt
+Library           ../../../lib/CLI/dtingest/DTCPLib.py
+Library           DateTime
+
+*** Keywords ***
+RUNit
+    [Arguments]    ${params}    ${timeout}=10    ${cliConfig}=${EMPTY}    ${valChq}=${True}    ${validateData}=${True}    ${kill}=${True}
+    ...    ${testFaultT}=${False}    ${testDynamicS}=${False}
+    Append To File    ${dtcli_log}    ${TEST_NAME} ${SPACE}${:}${SPACE}
+    #Get SQL details like: tablein, tableout, dbname
+    Get SQL Details    ${params}
+    # Cleanup Old data in output table
+    Cleanup    ${dbname}    ${tableout}
+    #>>>>>>> Launch file-copy app
+    # Enter the Apex CLI prompt
+    Dtcli Enter
+    #Create conf for apexcli 'launch' command
+    ${cliConfig}=    Catenate    SEPARATOR=${SPACE}    -exactMatch ${APP_NAME}    ${cliConfig}
+    #Create properties file with operator params
+    ${confFile}=    Create Properties File From Dict    ${params}
+    #Update conf for apexcli 'launch' command with properties file path
+    ${cliConfig}=    Catenate    SEPARATOR=${SPACE}    ${cliConfig}    -conf ${confFile}
+    #Launch application in Apex CLI
+    ${app_id}    ${cmd_stdout}=    Launch App    ${app_pkg}    ${cliConfig}    ${APP_NAME}
+    Set Test Variable    ${app_id}
+    #>>>>>>> Some basic validation
+    Check App State    ${app_id}    expected=RUNNING
+    Run Keyword If    ${valChq}==${True}    Check Operator Property Values    ${app_id}    ${OP_NAME}    ${params}
+    #>>>>>>> Fault tolerance test
+    Run Keyword If    ${testFaultT}==${True}    Kill Container Test All    ${app_id}    ${OP_NAME}    wait=30s
+    #>>>>>>> Dynamic Scalability test
+    Run Keyword If    ${testDynamicS}==${True}    Check Dynamic Scalability    ${app_id}    ${OP_NAME}    ${OP_NAME}    partitionCount
+    ...    10
+    #Poll for app status :
+    Poll For App Status Using Tuples Count    ${app_id}    ${timeout}    #timeout is in int(minutes)
+    #Log app info
+    Log App Info    ${app_id}
+    # Exit out of the Apex CLI prompt
+    Dtcli Exit    ${app_id}    kill=${kill}
+    #>>>>>>> Actual data validation
+    Run Keyword If    ${validateData}==${True}    Validate Data    ${params}
+
+Validate Data
+    [Arguments]    ${params}
+    ${whereClause}=    Get Where Clause    ${params}
+    Set Test Variable    ${whereClause}
+    ${join_query}=    Create Join Query    ${params}
+    ${join_count}=    Execute MySQL Query    ${join_query}    ${dbname}    #WHERE clause is not necessary for JOIN
+    ${tin_query}=    Set Variable    SELECT COUNT(*) FROM ${tablein}
+    ${tin_count}=    Execute MySQL Query    ${tin_query} ${whereClause}    ${dbname}
+    ${tout_query}=    Set Variable    SELECT COUNT(*) FROM ${tableout}
+    ${tout_count}=    Execute MySQL Query    ${tout_query}    ${dbname}    #WHERE clause should not be applied to OUTPUT
+    Should Be Equal    ${join_count}    ${tin_count}
+    Should Be Equal    ${join_count}    ${tout_count}
+
+Get Where Clause
+    [Arguments]    ${params}
+    #Here, 2 Evaluate statements are used to avoid escaping symbols in ${condition}
+    ${bool}=    Evaluate    "dt.operator.JdbcInput.prop.whereCondition" in ${params}
+    ${condition}=    Evaluate    $params.get("dt.operator.JdbcInput.prop.whereCondition", "ERROR")
+    ${whereClause}=    Set Variable If    ${bool}    WHERE ${condition}    ${EMPTY}
+    [Return]    ${whereClause}
+
+Create Join Query
+    [Arguments]    ${params}
+    ${colExp}=    Evaluate    $params.get("dt.operator.JdbcInput.prop.columnsExpression", "customerName, customerPhone, customerEmail, city, country, uid, accountNumber, txId, txAmount")
+    ${colExp}=    Replace String    ${colExp}    ${SPACE}    ${EMPTY}
+    ${cols}=    Split String    ${colExp}    separator=,
+    ${castCols}=    Create List    txAmount
+    ${query}=    Set Variable    SELECT COUNT(*) FROM ${tablein} as A JOIN ${tableout} as B ON
+    : FOR    ${x}    IN    @{cols}
+    \    ${bool}=    Evaluate    "${x}" in ${castCols}
+    \    ${clause}=    Set Variable If    ${bool}    CAST(A.${x} AS CHAR(10))=CAST(B.${x} AS CHAR(10))    A.${x}=B.${x}
+    \    ${query}=    Catenate    SEPARATOR=${SPACE}    ${query}    ${clause} AND
+    ${query}=    Replace String Using Regexp    ${query}    ${SPACE}AND$    ${EMPTY}
+    [Return]    ${query}
+
+Get SQL Details
+    [Arguments]    ${params}
+    ${tablein}=    Get From Dictionary    ${params}    dt.operator.JdbcInput.prop.tableName
+    ${tableout}=    Get From Dictionary    ${params}    dt.operator.JdbcOutput.prop.tablename
+    ${dburl}=    Get From Dictionary    ${params}    dt.operator.JdbcInput.prop.store.databaseUrl
+    @{tmp}=    Split String    ${dburl}    separator=/
+    ${dbname}=    Get From List    ${tmp}    -1
+    Set Test Variable    ${tablein}
+    Set Test Variable    ${tableout}
+    Set Test Variable    ${dbname}
+    Return From Keyword    ${tablein}    ${tableout}    ${dbname}
+
+Execute MySQL Query
+    [Arguments]    ${query}    ${dbname}    ${timeout}=2m    ${uname}=${uname}    ${pswd}=${pswd}    ${host}=${host}
+    ${query}    Catenate    SEPARATOR=${SPACE}    mysql -u ${uname} -p${pswd} -h ${host} -Nsr -e    "${query}"    ${dbname}
+    Log    Query:: ${query}
+    ${result}=    Write Read Prompt    ${query}    time_out=${timeout}
+    Should Not Match    ${result}    error in your SQL syntax
+    Return From Keyword    ${result}
+
+Insert Data Into Table And Validate
+    [Arguments]    ${params}    ${table}    ${what}    ${timeout}    ${kill}=${True}    ${validate}=${True}
+    ${bool}=    Evaluate    type(${what}) == int
+    Run Keyword If    ${bool}    Insert Dummy Data Into Table    ${dbname}    ${table}    ${what}
+    Run Keyword Unless    ${bool}    Insert File Data Into Table    ${dbname}    ${table}    ${what}
+    Sleep    10s    #Wait some time for Poller to start polling data
+    Dtcli Enter
+    Poll For App Status Using Tuples Count    ${app_id}    ${timeout}    #above [Argument]timeout is only for polling
+    Log App Info    ${app_id}
+    Dtcli Exit    ${app_id}    kill=${kill}
+    Run Keyword If    ${validate}==${True}    Validate Data    ${params}
+
+Insert Dummy Data Into Table
+    [Arguments]    ${dbname}    ${table}    ${num}    ${timeout}=2m
+    ${infile}=    Set Variable    /tmp/input.sql
+    Create File    ${infile}
+    : FOR    ${n}    IN RANGE    1    ${num}+1
+    \    ${record}=    Create A Record
+    \    Append To File    ${infile}    ${record}${\n}
+    Put File    ${infile}    ${infile}    mode=0777
+    ${query}=    Set Variable    LOAD DATA INFILE '${infile}' INTO TABLE ${table} FIELDS TERMINATED BY ','
+    Execute MySQL Query    ${query}    ${dbname}    ${timeout}
+
+Insert File Data Into Table
+    [Arguments]    ${dbname}    ${table}    ${infile}    ${timeout}=2m
+    ${query}=    Set Variable    LOAD DATA INFILE ${infile} INTO TABLE ${table} FIELDS TERMINATED BY '|'
+    Execute MySQL Query    ${query}    ${dbname}    ${timeout}
+
+Delete Data From OutTable And Validate
+    [Arguments]    ${params}    ${table}    ${num}    ${timeout}
+    ${query}=    Set Variable    DELETE FROM ${table} limit ${num}
+    Execute MySQL Query    ${query}    ${dbname}
+    Sleep    ${timeout}
+    Validate Data    ${params}
+
+Create A Record
+    @{fields}=    Create List    NAME    PHONE    EMAIL    CITY    COUNTRY
+    ...    UID    ACCNO    TxID    TxDATE    TxAMT    LABEL
+    @{types}=    Create List    varchar    varchar    varchar    varchar    varchar
+    ...    varchar    varchar    int    date    float    varchar
+    ${len}=    Get Length    ${fields}
+    ${record}=    Set Variable    ${EMPTY}
+    : FOR    ${i}    IN RANGE    0    ${len}
+    \    ${alnum}=    Generate Random String    length=4
+    \    ${justnum}=    Generate Random String    length=7    chars=123456789
+    \    ${date}=    Get Current Date    result_format=%Y-%m-%d
+    \    ${field}=    Get From List    ${fields}    ${i}
+    \    ${type}=    Get From List    ${types}    ${i}
+    \    ${cellval}=    Set Variable If    '${type}'=='varchar'    ${field}_${alnum}
+    \    ${cellval}=    Set Variable If    '${type}'=='int' or '${type}'=='float' or '${type}'=='decimal'    ${justnum}    ${cellval}
+    \    ${cellval}=    Set Variable If    '${type}'=='date'    ${date}    ${cellval}
+    \    ${record}=    Catenate    SEPARATOR=,    ${record}    ${cellval}
+    ${record}=    Replace String    ${record}    ,    ${EMPTY}    count=1
+    Return From Keyword    ${record}
+
+Log App Info
+    [Arguments]    ${app_id}
+    ${ttP}=    Get App Info Using Key    ${app_id}    totalTuplesProcessed
+    ${ttE}=    Get App Info Using Key    ${app_id}    totalTuplesEmitted
+    Set Test Variable    ${ttP}
+    Set Test Variable    ${ttE}
+
+Cleanup
+    [Arguments]    ${dbname}    ${table}    ${kill}=${False}    ${q}=${EMPTY}    ${h}=${host}
+    Run Keyword If    ${kill}==${True}    Post Api    ${base_get_url}    applications/${app_id}/kill    payload=${empty}
+    Run Keyword If    ${kill}==${True}    Run Keyword If Test Failed    Dtcli Force Exit    #Needed sometimes (on failure) to come out of apex cli prompt
+    Run Keyword If    ${kill}==${True}    Run Keyword If Test Failed    Return From Keyword
+    ${query}=    Set Variable    SELECT COUNT(*) FROM ${table}
+    ${result}=    Execute MySQL Query    ${query}    ${dbname}
+    ${query}=    Set Variable    TRUNCATE ${table}
+    ${result}=    Execute MySQL Query    ${query}    ${dbname}
+    ${query}=    Set Variable    SELECT COUNT(*) FROM ${table}
+    ${result}=    Execute MySQL Query    ${query}    ${dbname}
+    Run Keyword If    '${q}' != '${EMPTY}'    Execute MySQL Query    ${q}    ${dbname}
+
+JDBC Suite Setup
+    Dtcli Setup
+    MySQL Setup
+
+MySQL Setup
+    ${dbname}=    Set Variable    jdbcpoll
+    #FOR INPUT TABLES
+    @{tables}=    Create List    txn0d    txn100    txn1000    txn1000d    txnBig
+    : FOR    ${tt}    IN    @{tables}
+    \    ${query}=    Set Variable    DROP TABLE IF EXISTS ${tt}
+    \    Execute MySQL Query    ${query}    ${dbname}
+    \    ${query}=    Set Variable    CREATE TABLE ${tt} (customerName VARCHAR(100) PRIMARY KEY, customerPhone VARCHAR(100), customerEmail VARCHAR(100), city VARCHAR(100), country VARCHAR(100), uid VARCHAR(100), accountNumber VARCHAR(100), txId INT, txDate DATE, txAmount DOUBLE PRECISION, label VARCHAR(100), state VARCHAR(100))
+    \    Execute MySQL Query    ${query}    ${dbname}
+    #For txn100
+    ${query}=    Set Variable    LOAD DATA INFILE '/home/dttbc/test-apps/100_records1.data' INTO TABLE txn100 FIELDS TERMINATED BY '|'
+    Execute MySQL Query    ${query}    ${dbname}
+    #For txn1000
+    ${query}=    Set Variable    LOAD DATA INFILE '/home/dttbc/test-apps/1K_records1.data' INTO TABLE txn1000 FIELDS TERMINATED BY '|'
+    Execute MySQL Query    ${query}    ${dbname}
+    #For txn1000d
+    ${query}=    Set Variable    LOAD DATA INFILE '/home/dttbc/test-apps/1K_records1.data' INTO TABLE txn1000d FIELDS TERMINATED BY '|'
+    Execute MySQL Query    ${query}    ${dbname}
+    #FOR OUTPUT TABLES : With no primary key (needed for veirfication)
+    @{tables}=    Create List    txn_out    txnBig_out
+    : FOR    ${tt}    IN    @{tables}
+    \    ${query}=    Set Variable    DROP TABLE IF EXISTS ${tt}
+    \    Execute MySQL Query    ${query}    ${dbname}
+    \    ${query}=    Set Variable    CREATE TABLE ${tt} (customerName VARCHAR(100), customerPhone VARCHAR(100), customerEmail VARCHAR(100), city VARCHAR(100), country VARCHAR(100), uid VARCHAR(100), accountNumber VARCHAR(100), txId INT, txDate DATE, txAmount DOUBLE PRECISION, label VARCHAR(100), state VARCHAR(100))
+    \    Execute MySQL Query    ${query}    ${dbname}

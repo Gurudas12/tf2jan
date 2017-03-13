@@ -1,0 +1,1033 @@
+{
+  "required": [
+    "failedOperators",
+    "operatorClasses",
+    "portClassHier"
+  ],
+  "type": "object",
+  "properties": {
+    "failedOperators": {
+      "required": [
+        "com.datatorrent.lib.converter.ByteArrayToStringConverterOperator",
+        "com.datatorrent.lib.io.WidgetOutputOperator$1",
+        "com.datatorrent.lib.logs.RegexMatchMapOperator",
+        "com.datatorrent.lib.pigquery.PigGroupOperator",
+        "com.datatorrent.lib.pigquery.PigJoinOperator",
+        "com.datatorrent.lib.pigquery.PigJoinOuterOperator"
+      ],
+      "type": "object",
+      "properties": {
+        "com.datatorrent.lib.pigquery.PigJoinOperator": {
+          "type": "string"
+        },
+        "com.datatorrent.lib.io.WidgetOutputOperator$1": {
+          "type": "string"
+        },
+        "com.datatorrent.lib.pigquery.PigJoinOuterOperator": {
+          "type": "string"
+        },
+        "com.datatorrent.lib.converter.ByteArrayToStringConverterOperator": {
+          "type": "string"
+        },
+        "com.datatorrent.lib.pigquery.PigGroupOperator": {
+          "type": "string"
+        },
+        "com.datatorrent.lib.logs.RegexMatchMapOperator": {
+          "type": "string"
+        }
+      }
+    },
+    "portClassHier": {
+      "required": [
+        "class com.datatorrent.lib.io.block.AbstractBlockReader$ReaderRecord",
+        "class com.datatorrent.lib.io.block.BlockMetadata$AbstractBlockMetadata",
+        "class com.datatorrent.lib.io.block.BlockMetadata$FileBlockMetadata",
+        "class com.datatorrent.lib.io.fs.FileSplitter$FileMetadata",
+        "class com.datatorrent.lib.util.HighLow",
+        "class com.datatorrent.lib.util.KeyHashValPair",
+        "class com.datatorrent.lib.util.KeyValPair",
+        "class java.lang.Boolean",
+        "class java.lang.Double",
+        "class java.lang.Float",
+        "class java.lang.Integer",
+        "class java.lang.Long",
+        "class java.lang.Number",
+        "class java.lang.Object",
+        "class java.lang.Short",
+        "class java.lang.String",
+        "class java.util.AbstractCollection",
+        "class java.util.AbstractList",
+        "class java.util.AbstractMap",
+        "class java.util.AbstractMap$SimpleEntry",
+        "class java.util.ArrayList",
+        "class java.util.HashMap",
+        "class org.codehaus.jettison.json.JSONObject",
+        "interface com.datatorrent.lib.io.block.BlockMetadata",
+        "interface java.io.Serializable",
+        "interface java.lang.CharSequence",
+        "interface java.lang.Cloneable",
+        "interface java.lang.Comparable",
+        "interface java.util.Collection",
+        "interface java.util.List",
+        "interface java.util.Map",
+        "interface java.util.Map$Entry",
+        "interface java.util.RandomAccess"
+      ],
+      "type": "object",
+      "properties": {
+        "interface java.util.Map": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.Integer": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface java.util.List": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface com.datatorrent.lib.io.block.BlockMetadata": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.String": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface java.util.RandomAccess": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class com.datatorrent.lib.io.fs.FileSplitter$FileMetadata": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.Object": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class com.datatorrent.lib.util.HighLow": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface java.lang.Comparable": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class com.datatorrent.lib.util.KeyHashValPair": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class com.datatorrent.lib.io.block.AbstractBlockReader$ReaderRecord": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.util.HashMap": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.Number": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.util.AbstractCollection": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.Short": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class com.datatorrent.lib.util.KeyValPair": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.Double": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class com.datatorrent.lib.io.block.BlockMetadata$FileBlockMetadata": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.util.ArrayList": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.Boolean": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface java.lang.CharSequence": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class org.codehaus.jettison.json.JSONObject": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class com.datatorrent.lib.io.block.BlockMetadata$AbstractBlockMetadata": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.util.AbstractList": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.util.AbstractMap": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.Float": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.util.AbstractMap$SimpleEntry": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface java.io.Serializable": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface java.lang.Cloneable": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface java.util.Map$Entry": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "interface java.util.Collection": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        },
+        "class java.lang.Long": {
+          "items": [
+            {
+              "type": "string"
+            }
+          ],
+          "type": "array"
+        }
+      }
+    },
+    "operatorClasses": {
+      "items": [
+        {
+          "required": [
+            "defaultValue",
+            "inputPorts",
+            "name",
+            "outputPorts",
+            "portTypeInfo",
+            "properties"
+          ],
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string"
+            },
+            "displayName": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "outputPorts": {
+              "items": [
+                {
+                  "required": [
+                    "error",
+                    "name",
+                    "optional"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean"
+                    },
+                    "optional": {
+                      "type": "boolean"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ],
+              "type": "array"
+            },
+            "tags": {
+              "items": [
+                {
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "defaultValue": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "dimensionKeyVal": {
+                  "type": "string"
+                },
+                "ioThreadMultiplier": {
+                  "type": "integer"
+                },
+                "levelThreeAlertTime": {
+                  "type": "integer"
+                },
+                "scanner": {
+                  "type": "object",
+                  "properties": {
+                    "com.datatorrent.lib.io.fs.AbstractFileInputOperator$DirectoryScanner": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "com.datatorrent.lib.io.fs.FileSplitter$TimeBasedDirectoryScanner": {
+                      "required": [
+                        "files",
+                        "recursive",
+                        "scanIntervalMillis",
+                        "trigger"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "files": {
+                          "type": "string"
+                        },
+                        "trigger": {
+                          "type": "boolean"
+                        },
+                        "scanIntervalMillis": {
+                          "type": "integer"
+                        },
+                        "recursive": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                },
+                "splitBy": {
+                  "type": "string"
+                },
+                "seedend": {
+                  "type": "integer"
+                },
+                "countkey": {
+                  "type": "boolean"
+                },
+                "activated": {
+                  "type": "boolean"
+                },
+                "idempotentStorageManager": {
+                  "type": "object",
+                  "properties": {
+                    "com.datatorrent.lib.io.IdempotentStorageManager$FSIdempotentStorageManager": {
+                      "required": [
+                        "recoveryPath"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "recoveryPath": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "com.datatorrent.lib.io.IdempotentStorageManager$NoopIdempotentStorageManager": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  }
+                },
+                "levelOneAlertTime": {
+                  "type": "integer"
+                },
+                "keyVals": {
+                  "required": [
+                    "java.util.HashMap"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "java.util.HashMap": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  }
+                },
+                "threshold": {
+                  "type": "integer"
+                },
+                "contentType": {
+                  "type": "string"
+                },
+                "n": {
+                  "type": "integer"
+                },
+                "scanIntervalMillis": {
+                  "type": "integer"
+                },
+                "port": {
+                  "type": "integer"
+                },
+                "minReaders": {
+                  "type": "integer"
+                },
+                "size": {
+                  "type": "integer"
+                },
+                "emitBatchSize": {
+                  "type": "integer"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "readerContext": {
+                  "required": [
+                    "com.datatorrent.lib.io.block.ReaderContext$FixedBytesReaderContext"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "com.datatorrent.lib.io.block.ReaderContext$FixedBytesReaderContext": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  }
+                },
+                "blocksThreshold": {
+                  "type": "integer"
+                },
+                "silent": {
+                  "type": "boolean"
+                },
+                "passrate": {
+                  "type": "integer"
+                },
+                "maxReaders": {
+                  "type": "integer"
+                },
+                "cumulative": {
+                  "type": "boolean"
+                },
+                "seedstart": {
+                  "type": "integer"
+                },
+                "splitTokenBy": {
+                  "type": "string"
+                },
+                "tuplesBlastIntervalMillis": {
+                  "type": "integer"
+                },
+                "maxRetryCount": {
+                  "type": "integer"
+                },
+                "rollingWindowCount": {
+                  "type": "integer"
+                },
+                "operationType": {
+                  "type": "string"
+                },
+                "key2": {
+                  "type": "string"
+                },
+                "tuplesPerWindow": {
+                  "type": "integer"
+                },
+                "percentage": {
+                  "type": "boolean"
+                },
+                "numRetries": {
+                  "type": "integer"
+                },
+                "key1": {
+                  "type": "string"
+                },
+                "store": {
+                  "required": [
+                    "com.datatorrent.lib.db.jdbc.JdbcTransactionalStore"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "com.datatorrent.lib.db.jdbc.JdbcTransactionalStore": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  }
+                },
+                "recipients": {
+                  "required": [
+                    "java.util.HashMap"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "java.util.HashMap": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  }
+                },
+                "userName": {
+                  "type": "string"
+                },
+                "useSsl": {
+                  "type": "boolean"
+                },
+                "tupleSize": {
+                  "type": "integer"
+                },
+                "smtpPort": {
+                  "type": "integer"
+                },
+                "fullJoin": {
+                  "type": "boolean"
+                },
+                "mult_by": {
+                  "type": "integer"
+                },
+                "intervalMillis": {
+                  "type": "integer"
+                },
+                "totalrate": {
+                  "type": "integer"
+                },
+                "inverse": {
+                  "type": "boolean"
+                },
+                "descending": {
+                  "type": "boolean"
+                },
+                "yNumberType": {
+                  "type": "string"
+                },
+                "base": {
+                  "type": "integer"
+                },
+                "percent": {
+                  "type": "boolean"
+                },
+                "waitMillisRetry": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "boolean"
+                },
+                "timeBucket": {
+                  "type": "string"
+                },
+                "ascending": {
+                  "type": "boolean"
+                },
+                "topValue": {
+                  "type": "integer"
+                },
+                "alertInterval": {
+                  "type": "integer"
+                },
+                "logRegex": {
+                  "type": "string"
+                },
+                "partitionCount": {
+                  "type": "integer"
+                },
+                "windowSize": {
+                  "type": "integer"
+                },
+                "collectStats": {
+                  "type": "boolean"
+                },
+                "maxvalue": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "integer"
+                },
+                "minvalue": {
+                  "type": "integer"
+                },
+                "delimiter": {
+                  "type": "string"
+                },
+                "delay": {
+                  "type": "integer"
+                },
+                "resultFormatter": {
+                  "required": [
+                    "com.datatorrent.lib.appdata.schemas.ResultFormatter"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "com.datatorrent.lib.appdata.schemas.ResultFormatter": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  }
+                },
+                "timeout": {
+                  "type": "integer"
+                },
+                "debug": {
+                  "type": "boolean"
+                },
+                "position": {
+                  "type": "integer"
+                },
+                "tuplesBlast": {
+                  "type": "integer"
+                },
+                "percentThreshold": {
+                  "type": "integer"
+                },
+                "levelTwoAlertTime": {
+                  "type": "integer"
+                },
+                "regexGroups": {
+                  "items": [
+                    {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  ],
+                  "type": "array"
+                },
+                "numberOfTuples": {
+                  "type": "integer"
+                }
+              }
+            },
+            "properties": {
+              "items": [
+                {
+                  "required": [
+                    "canGet",
+                    "canSet",
+                    "name",
+                    "type"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "uiType": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "typeLiteral": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "canGet": {
+                      "type": "boolean"
+                    },
+                    "typeArgs": {
+                      "items": [
+                        {
+                          "required": [
+                            "type"
+                          ],
+                          "type": "object",
+                          "properties": {
+                            "uiType": {
+                              "type": "string"
+                            },
+                            "itemType": {
+                              "required": [
+                                "type"
+                              ],
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "typeLiteral": {
+                              "type": "string"
+                            },
+                            "typeBounds": {
+                              "required": [
+                                "lower",
+                                "upper"
+                              ],
+                              "type": "object",
+                              "properties": {
+                                "upper": {
+                                  "items": [
+                                    {
+                                      "type": "string"
+                                    }
+                                  ],
+                                  "type": "array"
+                                },
+                                "lower": {
+                                  "items": [
+                                    {
+                                      "type": "string"
+                                    }
+                                  ],
+                                  "type": "array"
+                                }
+                              }
+                            },
+                            "typeArgs": {
+                              "items": [
+                                {
+                                  "required": [
+                                    "type"
+                                  ],
+                                  "type": "object",
+                                  "properties": {
+                                    "uiType": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "typeLiteral": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      ],
+                      "type": "array"
+                    },
+                    "canSet": {
+                      "type": "boolean"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "itemType": {
+                      "required": [
+                        "type"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "typeLiteral": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "type": "array"
+            },
+            "portTypeInfo": {
+              "items": [
+                {
+                  "required": [
+                    "name",
+                    "type"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "uiType": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "typeLiteral": {
+                      "type": "string"
+                    },
+                    "typeArgs": {
+                      "items": [
+                        {
+                          "required": [
+                            "type"
+                          ],
+                          "type": "object",
+                          "properties": {
+                            "uiType": {
+                              "type": "string"
+                            },
+                            "typeBounds": {
+                              "required": [
+                                "lower",
+                                "upper"
+                              ],
+                              "type": "object",
+                              "properties": {
+                                "upper": {
+                                  "items": [
+                                    {
+                                      "type": "string"
+                                    }
+                                  ],
+                                  "type": "array"
+                                },
+                                "lower": {
+                                  "items": [
+                                    {
+                                      "type": "string"
+                                    }
+                                  ],
+                                  "type": "array"
+                                }
+                              }
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "typeLiteral": {
+                              "type": "string"
+                            },
+                            "typeArgs": {
+                              "items": [
+                                {
+                                  "required": [
+                                    "type"
+                                  ],
+                                  "type": "object",
+                                  "properties": {
+                                    "uiType": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "typeLiteral": {
+                                      "type": "string"
+                                    },
+                                    "typeArgs": {
+                                      "items": [
+                                        {
+                                          "required": [
+                                            "type"
+                                          ],
+                                          "type": "object",
+                                          "properties": {
+                                            "uiType": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "type": "string"
+                                            },
+                                            "typeLiteral": {
+                                              "type": "string"
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "type": "array"
+                                    }
+                                  }
+                                }
+                              ],
+                              "type": "array"
+                            }
+                          }
+                        }
+                      ],
+                      "type": "array"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "itemType": {
+                      "required": [
+                        "type"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "type": "array"
+            },
+            "doclink": {
+              "type": "string"
+            },
+            "inputPorts": {
+              "items": [
+                {
+                  "required": [
+                    "name",
+                    "optional"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "optional": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ],
+              "type": "array"
+            },
+            "shortDesc": {
+              "type": "string"
+            },
+            "longDesc": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "type": "array"
+    }
+  }
+}

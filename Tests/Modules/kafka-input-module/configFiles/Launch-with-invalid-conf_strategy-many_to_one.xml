@@ -1,0 +1,15 @@
+<configuration>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.topic</name>
+     <value>Launch-with-invalid-conf_strategy-many_to_one</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.zookeeper</name>
+     <value>localhost:2181</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaBenchmarkApp.module.KafkaReader.prop.strategy</name>
+     <value>many_to_one</value>
+  </property>
+
+</configuration>

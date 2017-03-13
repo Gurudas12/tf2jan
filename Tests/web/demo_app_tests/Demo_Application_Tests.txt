@@ -1,0 +1,69 @@
+*** Settings ***
+Suite Setup       # Actions to make the UI accessible
+Suite Teardown
+Resource          demo_apps_resources.txt
+
+*** Variables ***
+${demo_apps_url}    http://node1.morado.com:3003
+${Twitter_URLs_Page_xpath}    //a[text()='Twitter URLs']
+${Twitter_Hashtags_Page_xpath}    //a[text()='Twitter Hashtags']
+${Mobile_Page_xpath}    //a[text()='Mobile']
+${Machine_Page_xpath}    //a[text()='Machine']
+${Ads_Page_xpath}    //a[text()='Ads']
+${Fraud_Page_xpath}    //a[text()='Fraud']
+
+*** Test Cases ***
+Twitter_URLs_Tests
+    [Setup]
+    Goto_Demo_Apps_UI_Console    ${demo_apps_url}    ff_dir=/home/correct_path_here/Automation/DT_Automation/Tests/ff_proxy
+    Click Element    xpath=${Twitter_URLs_Page_xpath}
+    Wait Until Page Contains    View Console
+    Wait Until Element Is Visible    xpath=//div[text()='WebSocket connection established.']
+    Sleep    2s
+    Verify_Event_Related_Data
+    [Teardown]    Close Browser
+
+Twitter_Hash_Tags_Tests
+    Goto_Demo_Apps_UI_Console    ${demo_apps_url}    ff_dir=/home/correct_path_here/Automation/DT_Automation/Tests/ff_proxy
+    Click Element    xpath=${Twitter_Hashtags_Page_xpath}
+    Wait Until Page Contains    View Console
+    Wait Until Element Is Visible    xpath=//div[text()='WebSocket connection established.']
+    Sleep    2s
+    Verify_Event_Related_Data
+    [Teardown]    Close Browser
+
+Mobile_Demo_Tests
+    Goto_Demo_Apps_UI_Console    ${demo_apps_url}    ff_dir=/home/correct_path_here/Automation/DT_Automation/Tests/ff_proxy
+    Click Element    xpath=${Mobile_Page_xpath}
+    Wait Until Page Contains    View Console
+    Comment    Wait Until Element Is Visible    xpath=//div[text()='WebSocket connection established.']
+    Sleep    2s
+    Verify_Event_Related_Data
+    [Teardown]    Close Browser
+
+Machine_Demo_Tests
+    Goto_Demo_Apps_UI_Console    ${demo_apps_url}    ff_dir=/home/correct_path_here/Automation/DT_Automation/Tests/ff_proxy
+    Click Element    xpath=${Machine_Page_xpath}
+    Wait Until Page Contains    View Console
+    Wait Until Element Is Visible    xpath=//div[text()='WebSocket connection established.']
+    Sleep    2s
+    Verify_Event_Related_Data
+    [Teardown]    Close Browser
+
+Ads_Demo_Tests
+    Goto_Demo_Apps_UI_Console    ${demo_apps_url}    ff_dir=/home/correct_path_here/Automation/DT_Automation/Tests/ff_proxy
+    Click Element    xpath=${Ads_Page_xpath}
+    Wait Until Page Contains    View Console
+    Wait Until Element Is Visible    xpath=//div[text()='WebSocket connection established.']
+    Sleep    2s
+    Verify_Event_Related_Data
+    [Teardown]    Close Browser
+
+Fraud_Demo_Tests
+    Goto_Demo_Apps_UI_Console    ${demo_apps_url}    ff_dir=/home/correct_path_here/Automation/DT_Automation/Tests/ff_proxy
+    Click Element    xpath=${Fraud_Page_xpath}
+    Wait Until Page Contains    View Console
+    Wait Until Element Is Visible    xpath=//div[text()='WebSocket connection established.']
+    Sleep    2s
+    Verify_Event_Related_Data
+    [Teardown]    Close Browser

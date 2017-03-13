@@ -1,0 +1,93 @@
+{
+    "properties": {
+        "apps": {
+            "items": [
+                {
+                    "properties": {
+                        "allocatedMB": {
+                            "type": "string"
+                        },
+                        "allocatedVCores": {
+                            "type": "string"
+                        },
+                        "applicationType": {
+                            "type": "string"
+                        },
+                        "canWrite": {
+                            "type": "boolean"
+                        },
+                        "currentAttemptId": {
+                            "type": "string"
+                        },
+                        "diagnostics": {
+                            "type": "string"
+                        },
+                        "elapsedTime": {
+                            "type": "string"
+                        },
+                        "finalStatus": {
+                            "type": "string"
+                        },
+                        "finishedTime": {
+                            "type": "string"
+                        },
+                        "id": {
+                            "type": "string"
+                        },
+                        "isSystemApp": {
+                            "type": "boolean"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "queue": {
+                            "type": "string"
+                        },
+                        "runningContainers": {
+                            "type": "string"
+                        },
+                        "startedTime": {
+                            "type": "string"
+                        },
+                        "state": {
+                            "type": "string",
+		            "enum": ["RUNNING", "FAILED", "ACCEPTED", "SUBMITTED", "KILLED", "FINISHED"]
+                        },
+                        "trackingUrl": {
+                            "type": "string"
+                        },
+                        "user": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "allocatedMB",
+                        "allocatedVCores",
+                        "applicationType",
+                        "canWrite",
+                        "currentAttemptId",
+                        "diagnostics",
+                        "elapsedTime",
+                        "finalStatus",
+                        "finishedTime",
+                        "id",
+                        "isSystemApp",
+                        "name",
+                        "queue",
+                        "runningContainers",
+                        "startedTime",
+                        "state",
+                        "trackingUrl",
+                        "user"
+                    ],
+                    "type": "object"
+                }
+            ],
+            "type": "array"
+        }
+    },
+    "required": [
+        "apps"
+    ],
+    "type": "object"
+}

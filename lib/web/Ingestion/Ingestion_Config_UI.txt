@@ -1,0 +1,124 @@
+*** Settings ***
+Library           Selenium2Library
+Resource          ../WebLib.txt
+
+*** Variables ***
+${Ingestion_Launch_Wizard}    //label[contains(text(),"Input data source")]
+${Select_Input_Data_Source}    //select[@name='inputProtocol']
+${Input_Data_Dir}    //input[@name='inputDirectory']
+${Add_More_Src_Dir}    //input[@type='button' and @value='+ Add directory']
+${Input_Filter}    //input[@name='inputFilter']
+${Select_Single_Run}    //input[@value='singlerun']
+${Select_Polling_Run}    //input[@value='polling']
+${Select_Output_Data_Source}    //select[@name='outputProtocol']
+${Output_Data_Dir}    //input[@name='targetDirectory']
+${Select_Dup_Str_On}    //input[@ng-model="ingestionUiObj.output.duplicate" and @ng-value="true"]
+${Select_Dup_Str_Off}    //input[@ng-model="ingestionUiObj.output.duplicate" and @ng-value="false"]
+${Select_OW_On}    //input[@ng-model="ingestionUiObj.output.overwrite" and @ng-value="true"]
+${Select_OW_Off}    //input[@ng-model="ingestionUiObj.output.overwrite" and @ng-value="false"]
+${Select_Op_Hrly_On}    //input[@ng-model="ingestionUiObj.output.hourly" and @ng-value="true"]
+${Select_Op_Hrly_Off}    //input[@ng-model="ingestionUiObj.output.hourly" and @ng-value="false"]
+${Select_Fast_Merge_Off}    //input[@ng-model="ingestionUiObj.output.fast_merge" and @ng-value="false"]
+${Select_Fast_Merge_On}    //input[@ng-model="ingestionUiObj.output.fast_merge" and @ng-value="true"]
+${Select_Compact_On}    //input[@ng-model="ingestionUiObj.output.compact" and @ng-value="true"]
+${Select_Compact_Off}    //input[@ng-model="ingestionUiObj.output.fast_merge" and @ng-value="false"]
+${Select_Compression_None}    //input[@ng-model="compressionSelection" and @value="none"]
+${Select_Compression_lzo}    //input[@ng-model="compressionSelection" and @value="lzo"]
+${Select_Compression_gzip}    //input[@ng-model="compressionSelection" and @value="gzip"]
+${Select_Encrypt_None}    //input[@ng-model="encryptionSelection" and @value="none"
+${Select_Encrypt_AES}    //input[@ng-model="encryptionSelection" and @value="AES"
+${Select_Encrypt_PKI}    //input[@ng-model="encryptionSelection" and @value="PKI"
+${Save_Config_XML}    //input[@name="saveConfigsWithFileName"]
+${Launch_Ingestion_App}    //span[text()='Launch']/..
+${Input_Kafka_Topic}    //input[@name="inputKafkaTopic"]
+${Input_Kafka_Quorum}    //input[@name="inputKafkaQuorum"]
+${Input_JMS_Broker}    //input[@name="inputJmsBroker"]
+${Input_JMS_Topic}    //input[@name="inputJmsTopic"]
+
+*** Keywords ***
+Launch_and_Configure_Ingestion
+    [Arguments]    ${src_scheme}    ${dest_scheme}    ${dest_dir}=${EMPTY}    ${kafka_topic}=${EMPTY}    ${kafka_zookeeper}=${EMPTY}    ${jms_url}=${EMPTY}
+    ...    ${jms_topic}=${EMPTY}    ${filter}=${EMPTY}    ${no_recurse}=${EMPTY}    ${scan}=${EMPTY}    ${appid_r}=${EMPTY}    ${overwrite}=ON
+    ...    ${otc}=ON    ${enc_type}=${EMPTY}    ${enc_key}=${EMPTY}    ${dec_key}=${EMPTY}    ${compression_type}=None    ${Duplicate_Str}=ON
+    ...    ${Opt_Hr_Files}=OFF    ${Compact_Files}=OFF    ${Fast_Merge}=OFF    ${Save_As_Config}=None
+    Select_App_From_Given_Pkg_List    Ingestion Application    Ingestion
+    Wait Until Element Is Visible    xpath=${Ingestion_Launch_Wizard}
+    Sleep    5s    #Ingestion wizard sometime takes time to launch
+    Log    ${kafka_topic}
+    Log    ${kafka_zookeeper}
+    Run Keyword If    '${src_scheme}'=='HDFS' \ \ \ or \ \ \ '${src_scheme}'=='FTP' \ \ \ or \ \ \ \ \ '${src_scheme}'=='File / NFS'    Launch_File_Based_Ingestion    ${src_scheme}    ${dest_scheme}    ${dest_dir}    ${filter}
+    ...    ${no_recurse}    ${scan}    ${appid_r}    ${overwrite}    ${otc}    ${enc_type}
+    ...    ${enc_key}    ${dec_key}
+    Run Keyword Unless    '${src_scheme}'=='HDFS' \ \ \ or \ \ \ '${src_scheme}'=='FTP' \ \ \ or \ \ \ \ \ '${src_scheme}'=='File / NFS'    Launch_Msg_Based_Ingestion    ${src_scheme}    ${dest_scheme}    dest_dir=${dest_dir}    kafka_topic=${kafka_topic}
+    ...    kafka_zookeeper=${kafka_zookeeper}    jms_url=${jms_url}    jms_topic=${jms_topic}
+    Run Keyword Unless    '${Save_As_Config}'=='None'    Input Text    ${Save_Config_XML}    ${Save_As_Config}
+    Click Element    ${Launch_Ingestion_App}
+    Wait Until Element Is Visible    xpath=${App_Launch_Success_Msg}    timeout=20s
+    ${app_id}    Get Text    //a[contains(text(),"application_")]
+    [Return]    ${app_id}
+
+Launch_File_Based_Ingestion
+    [Arguments]    ${src_scheme}    ${dest_scheme}    ${dest_dir}=${EMPTY}    ${filter}=${EMPTY}    ${no_recurse}=${EMPTY}    ${scan}=${EMPTY}
+    ...    ${appid_r}=${EMPTY}    ${overwrite}=ON    ${otc}=ON    ${enc_type}=${EMPTY}    ${enc_key}=${EMPTY}    ${dec_key}=${EMPTY}
+    ...    ${compression_type}=None    ${Duplicate_Str}=ON    ${Opt_Hr_Files}=OFF    ${Compact_Files}=OFF    ${Fast_Merge}=OFF    ${Save_As_Config}=None
+    Select From List    xpath=${Select_Input_Data_Source}    ${src_scheme}
+    ${ref_dir_list}=    Set Variable    @{Ingestion_Src_Dir}
+    ${Dir_List_Len}=    Get Length    ${ref_dir_list}
+    Log    ${Dir_List_Len}
+    : FOR    ${i}    IN RANGE    1    ${Dir_List_Len}
+    \    Click Element    ${Add_More_Src_Dir}
+    Sleep    5s
+    ${i}=    Set Variable    1
+    : FOR    ${dir}    IN    @{Ingestion_Src_Dir}
+    \    ${Input_Data_Dir}    Set Variable    //div[@ng-form='inputDirForm'][${i}]//input[@name='inputDirectory']    #//div[@ng-form='inputDirForm'][3]//input
+    \    Log    ${Input_Data_Dir}
+    \    Input Text    ${Input_Data_Dir}    ${dir}
+    \    ${i}    Set Variable    ${${i}+1}
+    Input Text    ${Input_Filter}    ${filter}
+    Log    ${otc}
+    Run Keyword If    '${otc}'=='ON'    Click Element    ${Select_Single_Run}
+    Run Keyword Unless    '${otc}'=='ON'    Click Element    ${Select_Polling_Run}
+    Config_File_Sources_As_Dest    ${dest_scheme}    ${dest_dir}    ${Duplicate_Str}    ${overwrite}    ${Opt_Hr_Files}    ${Fast_Merge}
+    ...    ${Compact_Files}    ${compression_type}
+
+Launch_Msg_Based_Ingestion
+    [Arguments]    ${src_scheme}    ${dest_scheme}    ${dest_dir}=${EMPTY}    ${kafka_topic}=${EMPTY}    ${kafka_zookeeper}=${EMPTY}    ${jms_url}=${EMPTY}
+    ...    ${jms_topic}=${EMPTY}
+    Select From List    xpath=${Select_Input_Data_Source}    ${src_scheme}
+    Log    ${kafka_topic}
+    Log    ${kafka_zookeeper}
+    Run Keyword If    '${src_scheme}'=='Kafka'    Config_Kafka_Sources    ${kafka_topic}    ${kafka_zookeeper}
+    Run Keyword Unless    '${src_scheme}'=='Kafka'    Config_JMS_Sources    ${jms_url}    ${jms_topic}
+    Run Keyword If    '${dest_scheme}'=='HDFS' \ \ \ or \ \ \ '${dest_scheme}'=='FTP' \ \ \ or \ \ \ \ \ '${dest_scheme}'=='File / NFS'    Config_File_Sources_As_Dest    ${dest_scheme}    ${dest_dir}    ${Duplicate_Str}    ${overwrite}
+    ...    ${Opt_Hr_Files}    ${Fast_Merge}    ${Compact_Files}    ${compression_type}
+
+Config_Kafka_Sources
+    [Arguments]    ${kafka_topic}    ${kafka_zookeeper}
+    Input Text    ${Input_Kafka_Topic}    ${kafka_topic}
+    Input Text    ${Input_Kafka_Quorum}    ${kafka_zookeeper}
+
+Config_JMS_Sources
+    [Arguments]    ${jms_url}    ${jms_topic}
+    Input Text    ${Input_JMS_Broker}    ${jms_url}
+    Input Text    ${Input_JMS_Topic}    ${jms_topic}
+
+Config_File_Sources_As_Dest
+    [Arguments]    ${dest_scheme}    ${dest_dir}    ${Duplicate_Str}    ${overwrite}    ${Opt_Hr_Files}    ${Fast_Merge}
+    ...    ${Compact_Files}    ${compression_type}
+    Select From List    ${Select_Output_Data_Source}    ${dest_scheme}
+    Input Text    ${Output_Data_Dir}    ${dest_dir}
+    Run Keyword If    '${Duplicate_Str}'=='ON'    Click Element    ${Select_Dup_Str_On}
+    Run Keyword Unless    '${Duplicate_Str}'=='ON'    Click Element    ${Select_Dup_Str_Off}
+    Log    ${overwrite}
+    Run Keyword If    '${overwrite}'=='ON'    Click Element    ${Select_OW_On}
+    Run Keyword Unless    '${overwrite}'=='ON'    Click Element    ${Select_OW_Off}
+    Comment    Run Keyword If    '${Opt_Hr_Files}'=='ON'    Click Element    ${Select_Op_Hrly_On}
+    Comment    Run Keyword Unless    '${Opt_Hr_Files}'=='ON'    Click Element    ${Select_Op_Hrly_Off}
+    Run Keyword If    '${Fast_Merge}'=='ON'    Click Element    ${Select_Fast_Merge_On}
+    Run Keyword Unless    '${Fast_Merge}'=='ON'    Click Element    ${Select_Fast_Merge_Off}
+    Run Keyword If    '${Compact_Files}'=='ON'    Click Element    ${Select_Compact_On}
+    Run Keyword Unless    '${Compact_Files}'=='ON'    Click Element    ${Select_Compact_Off}
+    Log    ${compression_type}
+    Run Keyword If    '${compression_type}'=='None'    Click Element    ${Select_Compression_None}
+    Run Keyword if    '${compression_type}'=='LZO'    Click Element    ${Select_Compression_lzo}
+    Run Keyword If    '${compression_type}'=='GZIP'    Click Element    ${Select_Compression_gzip}

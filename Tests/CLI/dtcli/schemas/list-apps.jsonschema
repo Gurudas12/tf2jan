@@ -1,0 +1,44 @@
+{
+  "required": [
+    "apps"
+  ], 
+  "type": "object", 
+  "properties": {
+    "apps": {
+      "items": [
+        {
+          "required": [
+            "finalStatus", 
+            "id", 
+            "name", 
+            "startTime", 
+            "state", 
+            "trackingUrl"
+          ], 
+          "type": "object", 
+          "properties": {
+            "name": {
+              "type": "string"
+            }, 
+            "trackingUrl": {
+              "type": "string"
+            }, 
+            "state": {
+              "type": "string"
+            }, 
+            "finalStatus": {
+              "type": "string"
+            }, 
+            "startTime": {
+              "type": "string"
+            }, 
+            "id": {
+              "type": "integer"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}

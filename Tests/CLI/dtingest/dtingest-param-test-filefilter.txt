@@ -1,0 +1,89 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${S3N}            s3n://${S3NUSER}:${S3NPSWD}@${S3NURL}
+${S3N_S}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_S}
+${S3N_D}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_D}
+
+*** Test Cases ***
+FLF_Copy_File_Filter_As_Star-Dot-Star
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/file.txt    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.*
+
+FLF_Copy_Dir_Filter_As_Star-Dot-Star
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.*
+
+FLF_Copy_Various_Files_Filter_As_Star-Dot-Jar
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/file.txt ${HDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/rt.jar ${HDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/search-mr-1.0.0-cdh5.0.0-beta-1-job.jar ${HDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/log.12451261    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.jar
+
+FLF_Copy_Mult_Dirs_Filter_As_Star-Dot-Jar
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/ ${HDFS}${BASEDIR}/ing-source-data/file-filter-input-dir-copy/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.jar
+
+FLF_Copy_File_And_Dirs_Filter_As_Star-Dot-Jar
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file ${HDFS}${BASEDIR}/ing-source-data/1gb.file.jar ${HDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.jar
+
+FLF_Copy_Blank_Dir_Filter_As_Star-Dot-None
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/blank-dir    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.none
+
+FLF_Copy_Dir_Filter_As_Non-existent-extension
+    [Tags]    sanity
+    Comment    When no file satisfies the filter criteria, no destination location is created.
+    Run Keyword And Expect Error    *DICTIONARIES DO NOT MATCH !!*Following keys missing from second dictionary: /file-filter-input-dir*    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.absent
+
+FLF_Copy_Dir_Filter_As_Existent-extension
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.EXT
+
+FLF_Copy_Files_Starting_With_STR
+    [Tags]    sanity
+    Comment    Need to change validation script in order to accomodate the bug fix (SPOI-5179)
+    Run Keyword And Expect Error    *DICTIONARIES DO NOT MATCH !!*Following keys missing from second dictionary: /file-filter-input-dir/file.EXT, /file-filter-input-dir/name-EXT-ension.txt, /file-filter-input-dir/nameEXT, /file-filter-input-dir/nameEXTension.txt, /file-filter-input-dir/newfile.EXT*    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=EXT*
+
+FLF_Copy_Files_Having_STR
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*EXT*
+
+FLF_Copy_Files_Ending_With_STR
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*EXT
+
+FLF_Filter_With_Complex_Regex
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=ABC*PQR*.txt
+
+FLF_Dir_N-Depth_With_Log_Extension
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.log
+
+FLF_Dir_N-Depth_With_Log_Extension_Filter_As_None
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec/    ${oHDFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}    filter=*.none
+
+FLF_Dummy_Test
+    [Tags]    sanity
+    Comment    This is just a placeholder
+
+FLF_Dir_N-Depth_With_Log_Extension_N2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/file-filter-input-dir-rec/    ${FTP}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}/    filter=*.log
+
+FLF_Dir_N-Depth_With_Log_Extension_F2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/file-filter-input-dir-rec/    ${S3N_D}/FileFilter/${TEST_NAME}/    filter=*.log
+
+FLF_Dir_N-Depth_With_Log_Extension_S2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/file-filter-input-dir-rec/    ${NFS}${BASEDIR}/ing-dest-data/FileFilter/${TEST_NAME}/    filter=*.log
+
+

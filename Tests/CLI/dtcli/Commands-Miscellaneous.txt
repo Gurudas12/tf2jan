@@ -1,0 +1,28 @@
+*** Settings ***
+Documentation     GLOBAL COMMANDS EXCEPT WHEN CHANGING LOGICAL PLAN
+Suite Setup       Dtcli Setup
+Resource          dtcli_resources.txt
+Library           OperatingSystem    # For accessing OS environment variables
+Library           String    # A test library for string manipulation and verification. String is Robot Framework's standard library for manipulating strings (e.g. Replace String Using Regexp, Split To Lines) and verifying their contents (e.g. Should Be String).
+
+*** Variables ***
+#${dtinstall}      /home/hduser/datatorrent/current/
+#${pkg_pi_demo}    ${dtinstall}${/}demos${/}pi-demo-3.0.0-RC2.apa
+#${pkg_dimensions_demo}    ${dtinstall}${/}demos${/}dimensions-demo-3.0.0-RC2.apa
+#${pkg_frauddetect_demo}    ${dtinstall}${/}demos${/}frauddetect-demo-3.0.0-RC2.apa
+#${pkg_machinedata_demo}    ${dtinstall}${/}demos${/}machinedata-demo-3.0.0-RC2.apa
+#${pkg_mobile_demo}    ${dtinstall}${/}demos${/}mobile-demo-3.0.0-RC2.apa
+#${pkg_twitter_demo}    ${dtinstall}${/}demos${/}twitter-demo-3.0.0-RC2.apa
+#${pkg_wordcount_demo}    ${dtinstall}${/}demos${/}wordcount-demo-3.0.0-RC2.apa
+#${pkg_yahoo_finance_demo}    ${dtinstall}${/}demos${/}yahoo-finance-demo-3.0.0-RC2.apa
+#${pkg_ingestion_apa}    ${dtinstall}${/}apps${/}ingestion-app-1.0.0-RC1.apa
+#${pkg_ingestion_jar}    /home/dttbc/IngestionAppTesting/.ingestion-app-2.2.0-SNAPSHOT.jar
+
+*** Test Cases ***
+dtcli-launch-pi-demo
+    Comment    TBD
+dtcli-launch-mobile-demo
+    Comment    TBD
+dtcli-launch-pidemo
+    Comment    TBD
+

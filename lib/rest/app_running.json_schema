@@ -1,0 +1,110 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema", 
+    "required": true, 
+    "type": "object", 
+    "id": "#", 
+    "properties": {
+        "apps": {
+            "items": {
+                "required": true, 
+                "type": "object", 
+                "id": "0", 
+                "properties": {
+                    "finishedTime": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "finishedTime"
+                    }, 
+                    "applicationType": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "applicationType"
+                    }, 
+                    "name": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "name"
+                    }, 
+                    "runningContainers": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "runningContainers"
+                    }, 
+                    "elapsedTime": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "elapsedTime"
+                    }, 
+                    "allocatedVCores": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "allocatedVCores"
+                    }, 
+                    "diagnostics": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "diagnostics"
+                    }, 
+                    "trackingUrl": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "trackingUrl"
+                    }, 
+                    "startedTime": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "startedTime"
+                    }, 
+                    "queue": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "queue"
+                    }, 
+                    "currentAttemptId": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "currentAttemptId"
+                    }, 
+                    "state": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "state"
+                    }, 
+                    "isSystemApp": {
+                        "required": true, 
+                        "type": "boolean", 
+                        "id": "isSystemApp"
+                    }, 
+                    "user": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "user"
+                    }, 
+                    "canWrite": {
+                        "required": true, 
+                        "type": "boolean", 
+                        "id": "canWrite"
+                    }, 
+                    "finalStatus": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "finalStatus"
+                    }, 
+                    "id": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "id"
+                    }, 
+                    "allocatedMB": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "allocatedMB"
+                    }
+                }
+            }, 
+            "required": true, 
+            "type": "array", 
+            "id": "apps"
+        }
+    }
+}

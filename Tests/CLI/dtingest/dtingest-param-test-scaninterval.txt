@@ -1,0 +1,79 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${S3N}            s3n://${S3NUSER}:${S3NPSWD}@${S3NURL}
+${S3N_S}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_S}
+${S3N_D}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_D}
+
+*** Test Cases ***
+SCN_File_1s-scan
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/file1.txt    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=1s    timeout=5
+
+SCN_Dir_1s-scan
+    [Tags]    sanity
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=1s
+
+SCN_Dir_30s-scan
+    [Tags]    sanity
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=0000000030s
+
+SCN_Dir_10m-scan
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=10m    timeout=20
+
+SCN_Dir_1h-scan
+    [Tags]    slow
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=1h    timeout=100
+
+SCN_Dir_0s-scan
+    [Tags]    sanity
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=000000s
+
+SCN_Dir_Decimal_Value
+    Run Keyword And Expect Error    *Enter valid number for scanInterval*    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=10.127s
+
+SCN_Dir_Negative_Value
+    [Tags]    sanity
+    Run Keyword And Expect Error    *Enter valid number for scanInterval*    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=-12.5s
+
+SCN_Dir_String_Value
+    [Tags]    sanity
+    Run Keyword And Expect Error    *Enter valid number for scanInterval*    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=ONEs
+
+SCN_Multiple_Files_And_Dirs_60s-scan
+    [Tags]    sanity
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/file1.txt ${HDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir ${HDFS}${BASEDIR}/ing-source-data/scan-interval-input/file2.txt    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    scan=60s    timeout=20
+
+SCN_Dir_Overwrite_OFF_Short_Scan_2s
+    [Tags]    sanity
+    Run Keyword And Expect Error    *DICTIONARIES DO NOT MATCH !!*Following keys have different values*    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    overwrite=OFF
+    ...    scan=2s    timeout=20
+    #In this scenario the files which were modified after first scan will not get copied again to destination. So file sizes wont match
+
+SCN_Dir_Overwrite_ON_Short_Scan_2s
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/generic-dir    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    overwrite=ON    scan=2s    timeout=20
+
+SCN_Dir_500-depth_Short_Scan_2s
+    [Tags]    slow
+    DTCP Launch With ScanInterval    ${iHDFS}${BASEDIR}/ing-source-data/scan-interval-input/dir-with-500-depth    ${oHDFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}    otc=OFF    overwrite=ON    scan=2s    timeout=20
+
+SCN_Dummy_Test
+    [Tags]    sanity
+    Comment    This is just a placeholder
+
+SCN_Dir_With_25-depth_Short_Scan_2s_N2F
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-25-depth/    ${FTP}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}/    otc=OFF    scan=2s    timeout=40
+
+SCN_Dir_With_25-depth_Short_Scan_2s_F2S
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/dir-with-25-depth/    ${S3N_D}/ScanInterval/${TEST_NAME}/    otc=OFF    scan=2s    timeout=40
+
+SCN_Dir_With_25-depth_Short_Scan_2s_S2N
+    DTCP Launch And Validate    ${S3N_S}/dir-with-25-depth/    ${NFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}/    otc=OFF    scan=2s    timeout=40
+
+

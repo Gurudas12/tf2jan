@@ -1,0 +1,16 @@
+*** Settings ***
+Suite Setup       Dtcli Setup
+Resource          aggregation-module-resources.txt
+
+*** Test Cases ***
+Launch-module-test1
+    [Setup]
+    ${config}=    Set Variable    ${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml
+    LaunchAggApp    ${config}
+    [Teardown]
+
+Launch-module-test2
+    [Setup]
+    ${config}=    Set Variable    ${TC_CONFIG_DIR_PATH}${/}${TEST_NAME}.xml
+    LaunchAggApp    ${config}
+    [Teardown]

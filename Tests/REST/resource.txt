@@ -1,0 +1,167 @@
+*** Settings ***
+Documentation     TO-DO
+Library           SSHLibrary    120 seconds
+Library           Collections    # Importing robots collections library
+Library           BuiltIn    # Importing Robots BuiltIn Library
+Library           json
+Library           os
+Library           ../../lib/helpers.py    # Importing Helpers
+Library           ../../lib/rest/DTREST.py    # Importing DTREST APIs
+Library           ../../lib/rest/jsonschema_generator.py
+
+*** Variables ***
+
+*** Keywords ***
+Login Server
+    [Arguments]    ${server}    ${uname}    ${psky}
+    [Documentation]    Log into the server: provided server name, user name & passkey/password
+    Open Connection    ${server}
+    Login With Public Key    ${uname}    ${psky}
+    Comment    Login    ${uname}    ${psky}
+
+REST Suite Setup
+    [Documentation]    *Suite setup for REST testcases: Launch required apps*
+    Login Server    ${dtserver}    ${sshuser}    ${sshkey}
+    ${appid}=    Launch Application    {"dt.attr.APPLICATION_NAME":"PiDemo-REST-Testing"}
+    Set Suite Variable    ${app_id}    ${appid}
+    Sleep    30s    reason="Wait for application to go from ACCEPTED->RUNNING."
+    Comment    Create recordings#1 for this run.
+    ${api}=    Set Variable    applications${/}${appid}${/}physicalPlan${/}operators${/}1${/}recordings${/}start
+    ${payload}=    Set Variable    { "numWindows": 10 }
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${payload}
+    Log    ${api_response}
+    Comment    Create recordings#2 for this run.
+    ${api}=    Set Variable    applications${/}${appid}${/}physicalPlan${/}operators${/}2${/}recordings${/}start
+    ${payload}=    Set Variable    { "numWindows": 20 }
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${payload}
+    Log    ${api_response}
+    Sleep    30s    reason="Sometimes it takes time to save recordings to HDFS."
+    [Return]    ${app_id}
+
+Launch Application
+    [Arguments]    ${payload}
+    ${packageName}=    Set Variable    pi-demo
+    ${packageVersion}=    Set Variable    3.4.0
+    ${appName}=    Set Variable    PiDemo
+    ${api}=    Set Variable    appPackages${/}${sshuser}${/}${packageName}${/}${packageVersion}${/}applications${/}${appName}${/}launch
+    ${api_response}=    post_api    ${base_get_url}    ${api}    ${payload}
+    ${app_id}=    Get App Id From String    ${api_response}
+    [Return]    ${app_id}
+
+Get App Id From String
+    [Arguments]    ${str}
+    ${match}    ${app_id}=    Should Match Regexp    ${str}    {"appId":"(\\w+)"}
+    [Return]    ${app_id}
+
+REST Suite Teardown
+    [Documentation]    *Suite teardown for REST testcases: Kill launched apps*
+    ${api}=    Set Variable    applications${/}${app_id}${/}kill
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+
+REST API Ping
+    [Arguments]    ${arg1}=about    ${arg2}=a2c    # Accepts end path and version \
+    [Documentation]    *test documentation for API Ping*
+    ${mpid}    getpid
+    Log Many    My PID    ${mpid}
+    ${api_response}=    get_api    ${base_get_url}    ${arg1}    True
+    ${dict_keys}=    Get Dictionary Keys    ${api_response}
+    Log Many    ${dict_keys}
+    ${dict_values}=    Get Dictionary Values    ${api_response}
+    Log    ${dict_values}
+    ${retver}=    Get From Dictionary    ${api_response}    version
+    Should Be Equal    ${retver}    ${arg2}    Versions Don't match
+    ${rethadoop}=    Get From Dictionary    ${api_response}    hadoopLocation
+
+REST API Cluster
+    [Arguments]    ${arg1}=cluster
+    [Documentation]    *Checks if about API is working*
+    ...    Expects versions to match
+    ${mpid}    getpid
+    ${cluster_keys}=    Create List    averageAge    cpuPercentage    currentMemoryAllocatedMB    maxMemoryAllocatedMB    numAppsFailed
+    ...    numAppsKilled    numAppsPending    numAppsRunning    numAppsSubmitted    numContainers    tuplesEmittedPSMA
+    ...    tuplesProcessedPSMA    numAppsFinished    numOperators
+    ${api_response}=    get_api    ${base_get_url}    ${arg1}    True
+    ${dict_keys}=    Get Dictionary Keys    ${api_response}
+    Log Many    ${dict_keys}
+    ${dict_values}=    Get Dictionary Values    ${api_response}
+    Log    ${dict_values}
+    List Should Contain Sub List    ${dict_keys}    ${cluster_keys}
+
+REST Get API Dict
+    [Arguments]    ${arg1}=about|${arg2}=True
+    [Documentation]    *Just returns python Dict as return value for the get call*
+    ${mpid}    getpid
+    ${api_response}=    get_api    ${base_get_url}    ${arg1}    ${arg2}
+    Log    ${api_response}
+    ${dict_keys}=    Get Dictionary Keys    ${api_response}
+    Log Many    ${dict_keys}
+    ${dict_values}=    Get Dictionary Values    ${api_response}
+    Log    ${dict_values}
+    ${type}=    GetType    ${dict_keys}
+    Log    ${type}
+    ${type}=    GetType    ${dict_values}
+    Log    ${type}
+    ${type}=    GetType    ${api_response}
+    Log    ${type}
+    [Return]    ${api_response}    # Returning API Response
+
+REST Check Headers
+    [Arguments]    ${arg1}
+    [Documentation]    *Check REST Headers*
+    ...
+    ...    validate content type application/json
+    ${content_type}=    Get From Dictionary    ${arg1}    content-type
+    Log Many    Content Type is:    ${content_type}
+    Should Be Equal    ${content_type}    application/json    Incorrect Content Type Returned
+
+Import AppPackages2
+    [Documentation]    *Just returns python Dict as return value for the get call*
+    ${mpid}    getpid
+    #    [Arguments]    ${arg1}=appPackages/import
+    ${api_response}=    importAppPackages    ${base_get_url}
+    Log    ${api_response}
+    #    ${dict_keys}=    Get Dictionary Keys    ${api_response}
+    #    Log Many    ${dict_keys}
+    #    ${dict_values}=    Get Dictionary Values    ${api_response}
+    #    Log    ${dict_values}
+    #    ${type}=    GetType    ${dict_keys}
+    #    Log    ${type}
+    #    ${type}=    GetType    ${dict_values}
+    #    Log    ${type}
+    #    ${type}=    GetType    ${api_response}
+    #    Log    ${type}
+    #    [Return]    ${api_response}    # Returning API Response
+
+Get Application Physical Plan Container Log
+    [Arguments]    ${base_get_url}    ${app_id}    ${container_Id}    ${log_name}    ${start}=0    ${end}=1000000000000
+    ...    ${grep}=INFO    ${includeOffset}=true
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}containers${/}${container_Id}${/}logs${/}${log_name}?start=${start}&end=${end}&grep=${grep}&includeOffset=${includeOffset}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    [Return]    ${api_response}
+
+Validate Application Physical Plan Container States
+    [Arguments]    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    ${state}    ${retCon}=${True}
+    ${api}=    Set Variable    applications/${app_id}/physicalPlan/containers?states=${state}
+    ${containers_from_api}=    getContainersForApp    ${base_get_url}    ${app_id}    ${state}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    ${containers_from_json}=    findMatchingStrings    ${api_response}    "id":\\s*"(container_\\w+)"
+    ${ret}=    Compare Lists    ${containers_from_json}    ${containers_from_api}
+    Should Be Equal    ${ret}    0    msg=Containers from API and JSON are not same.${\n}${containers_from_json}${\n}${\n}${containers_from_api}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_containers_schema.json
+    [Return]    ${containers_from_api}
+
+Check For Errors
+    [Arguments]    ${str}
+    Should Not Contain    ${str}    Not found
+    Should Not Contain    ${str}    Not Found
+    Should Not Contain    ${str}    not found
+    Should Not Contain    ${str}    error    #To avoid <"error": null,>
+    Should Not Contain    ${str}    Error
+    Should Not Contain    ${str}    ERROR
+    Should Not Contain    ${str}    Exception
+    Should Not Contain    ${str}    exception
+    Should Not Contain    ${str}    EXCEPTION
+    Should Not Contain    ${str}    not found

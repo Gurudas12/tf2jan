@@ -1,0 +1,2102 @@
+{
+  "required": [
+    "appJars", 
+    "appJsonFiles", 
+    "appPackageDescription", 
+    "appPackageDisplayName", 
+    "appPackageName", 
+    "appPackageVersion", 
+    "appPropertiesFiles", 
+    "applications", 
+    "classPath", 
+    "comment", 
+    "configs", 
+    "defaultProperties", 
+    "dtEngineVersion", 
+    "manifest", 
+    "requiredProperties"
+  ], 
+  "type": "object", 
+  "properties": {
+    "comment": {
+      "type": "null"
+    }, 
+    "appJsonFiles": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "requiredProperties": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "appPackageName": {
+      "type": "string"
+    }, 
+    "appPackageDescription": {
+      "type": "string"
+    }, 
+    "appPackageDisplayName": {
+      "type": "string"
+    }, 
+    "classPath": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "dtEngineVersion": {
+      "type": "string"
+    }, 
+    "manifest": {
+      "required": [
+        "entries", 
+        "mainAttributes"
+      ], 
+      "type": "object", 
+      "properties": {
+        "mainAttributes": {
+          "required": [
+            "Archiver-Version", 
+            "Build-Jdk", 
+            "Built-By", 
+            "Class-Path", 
+            "Created-By", 
+            "DT-App-Package-Description", 
+            "DT-App-Package-Display-Name", 
+            "DT-App-Package-Name", 
+            "DT-App-Package-Version", 
+            "DT-Engine-Version", 
+            "Manifest-Version"
+          ], 
+          "type": "object", 
+          "properties": {
+            "Class-Path": {
+              "type": "string"
+            }, 
+            "DT-App-Package-Description": {
+              "type": "string"
+            }, 
+            "Archiver-Version": {
+              "type": "string"
+            }, 
+            "Manifest-Version": {
+              "type": "string"
+            }, 
+            "DT-App-Package-Name": {
+              "type": "string"
+            }, 
+            "DT-Engine-Version": {
+              "type": "string"
+            }, 
+            "Build-Jdk": {
+              "type": "string"
+            }, 
+            "DT-App-Package-Version": {
+              "type": "string"
+            }, 
+            "Created-By": {
+              "type": "string"
+            }, 
+            "Built-By": {
+              "type": "string"
+            }, 
+            "DT-App-Package-Display-Name": {
+              "type": "string"
+            }
+          }
+        }, 
+        "entries": {
+          "type": "object", 
+          "properties": {}
+        }
+      }
+    }, 
+    "appPackageVersion": {
+      "type": "string"
+    }, 
+    "applications": {
+      "items": [
+        {
+          "required": [
+            "dag", 
+            "defaultProperties", 
+            "displayName", 
+            "error", 
+            "errorStackTrace", 
+            "file", 
+            "name", 
+            "requiredProperties", 
+            "type"
+          ], 
+          "type": "object", 
+          "properties": {
+            "requiredProperties": {
+              "items": [
+        	{
+	          "type": "string"
+        	}
+      	      ], 
+              "type": "array"
+            }, 
+            "dag": {
+              "required": [
+                "attributes", 
+                "operators", 
+                "streams"
+              ], 
+              "type": [
+                "null", 
+                "object"
+              ], 
+              "properties": {
+                "attributes": {
+                  "required": [
+                    "APPLICATION_DATA_LINK", 
+                    "APPLICATION_DOC_LINK", 
+                    "APPLICATION_ID", 
+                    "APPLICATION_NAME", 
+                    "APPLICATION_PATH", 
+                    "APP_PACKAGE_SOURCE", 
+                    "BUFFER_SPOOLING", 
+                    "CHECKPOINT_WINDOW_COUNT", 
+                    "CONTAINER_JVM_OPTIONS", 
+                    "CONTAINER_OPTS_CONFIGURATOR", 
+                    "DEBUG", 
+                    "ENABLE_STATS_RECORDING", 
+                    "GATEWAY_CONNECT_ADDRESS", 
+                    "GATEWAY_PASSWORD", 
+                    "GATEWAY_USER_NAME", 
+                    "GATEWAY_USE_SSL", 
+                    "HEARTBEAT_INTERVAL_MILLIS", 
+                    "HEARTBEAT_LISTENER_THREAD_COUNT", 
+                    "HEARTBEAT_TIMEOUT_MILLIS", 
+                    "MASTER_MEMORY_MB", 
+                    "METRICS_TRANSPORT", 
+                    "RESOURCE_ALLOCATION_TIMEOUT_MILLIS", 
+                    "RPC_LATENCY_COMPENSATION_SAMPLES", 
+                    "STATS_MAX_ALLOWABLE_WINDOWS_LAG", 
+                    "STREAMING_WINDOW_SIZE_MILLIS", 
+                    "STRING_CODECS", 
+                    "THROUGHPUT_CALCULATION_INTERVAL", 
+                    "THROUGHPUT_CALCULATION_MAX_SAMPLES", 
+                    "TUPLE_RECORDING_PART_FILE_SIZE", 
+                    "TUPLE_RECORDING_PART_FILE_TIME_MILLIS"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "HEARTBEAT_LISTENER_THREAD_COUNT": {
+                      "type": "string"
+                    }, 
+                    "THROUGHPUT_CALCULATION_INTERVAL": {
+                      "type": "string"
+                    }, 
+                    "CONTAINER_OPTS_CONFIGURATOR": {
+                      "type": "null"
+                    }, 
+                    "HEARTBEAT_INTERVAL_MILLIS": {
+                      "type": "string"
+                    }, 
+                    "STATS_MAX_ALLOWABLE_WINDOWS_LAG": {
+                      "type": "string"
+                    }, 
+                    "APPLICATION_NAME": {
+                      "type": "string"
+                    }, 
+                    "CHECKPOINT_WINDOW_COUNT": {
+                      "type": "string"
+                    }, 
+                    "STRING_CODECS": {
+                      "type": "null"
+                    }, 
+                    "TUPLE_RECORDING_PART_FILE_SIZE": {
+                      "type": "string"
+                    }, 
+                    "APPLICATION_PATH": {
+                      "type": "null"
+                    }, 
+                    "BUFFER_SPOOLING": {
+                      "type": "boolean"
+                    }, 
+                    "CONTAINER_JVM_OPTIONS": {
+                      "type": "null"
+                    }, 
+                    "GATEWAY_PASSWORD": {
+                      "type": "null"
+                    }, 
+                    "TUPLE_RECORDING_PART_FILE_TIME_MILLIS": {
+                      "type": "string"
+                    }, 
+                    "GATEWAY_USER_NAME": {
+                      "type": "null"
+                    }, 
+                    "GATEWAY_CONNECT_ADDRESS": {
+                      "type": "null"
+                    }, 
+                    "APPLICATION_DATA_LINK": {
+                      "type": "null"
+                    }, 
+                    "THROUGHPUT_CALCULATION_MAX_SAMPLES": {
+                      "type": "string"
+                    }, 
+                    "RPC_LATENCY_COMPENSATION_SAMPLES": {
+                      "type": "string"
+                    }, 
+                    "APPLICATION_DOC_LINK": {
+                      "type": "null"
+                    }, 
+                    "HEARTBEAT_TIMEOUT_MILLIS": {
+                      "type": "string"
+                    }, 
+                    "STREAMING_WINDOW_SIZE_MILLIS": {
+                      "type": "string"
+                    }, 
+                    "DEBUG": {
+                      "type": "boolean"
+                    }, 
+                    "ENABLE_STATS_RECORDING": {
+                      "type": "boolean"
+                    }, 
+                    "APPLICATION_ID": {
+                      "type": "null"
+                    }, 
+                    "APP_PACKAGE_SOURCE": {
+                      "type": "null"
+                    }, 
+                    "MASTER_MEMORY_MB": {
+                      "type": "string"
+                    }, 
+                    "METRICS_TRANSPORT": {
+                      "type": "null"
+                    }, 
+                    "GATEWAY_USE_SSL": {
+                      "type": "boolean"
+                    }, 
+                    "RESOURCE_ALLOCATION_TIMEOUT_MILLIS": {
+                      "type": "string"
+                    }
+                  }
+                }, 
+                "operators": {
+                  "items": [
+                    {
+                      "required": [
+                        "attributes", 
+                        "class", 
+                        "name", 
+                        "ports", 
+                        "properties"
+                      ], 
+                      "type": "object", 
+                      "properties": {
+                        "attributes": {
+                          "required": [
+                            "ACTIVATION_WINDOW_ID", 
+                            "APPLICATION_WINDOW_COUNT", 
+                            "AUTO_RECORD", 
+                            "CHECKPOINT_WINDOW_COUNT", 
+                            "COUNTERS_AGGREGATOR", 
+                            "CUSTOM_METRIC_AGGREGATOR", 
+                            "CUSTOM_METRIC_DIMENSIONS_SCHEME", 
+                            "JVM_OPTIONS", 
+                            "LOCALITY_HOST", 
+                            "LOCALITY_RACK", 
+                            "MEMORY_MB", 
+                            "PARTITIONER", 
+                            "PROCESSING_MODE", 
+                            "RECOVERY_ATTEMPTS", 
+                            "SLIDE_BY_WINDOW_COUNT", 
+                            "SPIN_MILLIS", 
+                            "STATELESS", 
+                            "STATS_LISTENERS", 
+                            "STORAGE_AGENT", 
+                            "TIMEOUT_WINDOW_COUNT", 
+                            "VCORES"
+                          ], 
+                          "type": "object", 
+                          "properties": {
+                            "VCORES": {
+                              "type": "string"
+                            }, 
+                            "STATELESS": {
+                              "type": "boolean"
+                            }, 
+                            "STORAGE_AGENT": {
+                              "type": "null"
+                            }, 
+                            "CUSTOM_METRIC_DIMENSIONS_SCHEME": {
+                              "type": "null"
+                            }, 
+                            "STATS_LISTENERS": {
+                              "type": "null"
+                            }, 
+                            "JVM_OPTIONS": {
+                              "type": "null"
+                            }, 
+                            "LOCALITY_RACK": {
+                              "type": "null"
+                            }, 
+                            "ACTIVATION_WINDOW_ID": {
+                              "type": "string"
+                            }, 
+                            "LOCALITY_HOST": {
+                              "type": "null"
+                            }, 
+                            "PARTITIONER": {
+                              "type": "null"
+                            }, 
+                            "TIMEOUT_WINDOW_COUNT": {
+                              "type": "string"
+                            }, 
+                            "PROCESSING_MODE": {
+                              "type": "string"
+                            }, 
+                            "RECOVERY_ATTEMPTS": {
+                              "type": "null"
+                            }, 
+                            "AUTO_RECORD": {
+                              "type": "boolean"
+                            }, 
+                            "COUNTERS_AGGREGATOR": {
+                              "type": [
+                                "null", 
+                                "object"
+                              ], 
+                              "properties": {}
+                            }, 
+                            "SPIN_MILLIS": {
+                              "type": "string"
+                            }, 
+                            "APPLICATION_WINDOW_COUNT": {
+                              "type": "string"
+                            }, 
+                            "MEMORY_MB": {
+                              "type": "string"
+                            }, 
+                            "CUSTOM_METRIC_AGGREGATOR": {
+                              "type": "null"
+                            }, 
+                            "SLIDE_BY_WINDOW_COUNT": {
+                              "type": "null"
+                            }, 
+                            "CHECKPOINT_WINDOW_COUNT": {
+                              "type": "string"
+                            }
+                          }
+                        }, 
+                        "properties": {
+                          "required": [
+                            "@class"
+                          ], 
+                          "type": "object", 
+                          "properties": {
+                            "bucketID": {
+                              "type": "string"
+                            }, 
+                            "keyNameAliases": {
+                              "type": "object", 
+                              "properties": {}
+                            }, 
+                            "publisherName": {
+                              "type": "null"
+                            }, 
+                            "tuplesPerWindowDeviation": {
+                              "type": "string"
+                            }, 
+                            "minAmount": {
+                              "type": "string"
+                            }, 
+                            "advertiserName": {
+                              "type": "null"
+                            }, 
+                            "blastCount": {
+                              "type": "string"
+                            }, 
+                            "eventSchemaJSON": {
+                              "type": "string"
+                            }, 
+                            "maxWalFileSize": {
+                              "type": "string"
+                            }, 
+                            "appDataURL": {
+                              "type": "string"
+                            }, 
+                            "unifier": {
+                              "required": [
+                                "@class", 
+                                "name"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "name": {
+                                  "type": "null"
+                                }, 
+                                "@class": {
+                                  "type": "string"
+                                }
+                              }
+                            }, 
+                            "@class": {
+                              "type": "string"
+                            }, 
+                            "maxAmount": {
+                              "type": "string"
+                            }, 
+                            "outputPort": {
+                              "required": [
+                                "@class", 
+                                "connected", 
+                                "unifier"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "connected": {
+                                  "type": "boolean"
+                                }, 
+                                "@class": {
+                                  "type": "string"
+                                }, 
+                                "unifier": {
+                                  "type": "null"
+                                }
+                              }
+                            }, 
+                            "locationName": {
+                              "type": "null"
+                            }, 
+                            "flushIntervalCount": {
+                              "type": "string"
+                            }, 
+                            "maxRegionId": {
+                              "type": "string"
+                            }, 
+                            "maxTuplesPerWindow": {
+                              "type": "string"
+                            }, 
+                            "keyToExpression": {
+                              "required": [
+                                "advertiser", 
+                                "location", 
+                                "publisher", 
+                                "time"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "advertiser": {
+                                  "type": "string"
+                                }, 
+                                "publisher": {
+                                  "type": "string"
+                                }, 
+                                "location": {
+                                  "type": "string"
+                                }, 
+                                "time": {
+                                  "type": "string"
+                                }
+                              }
+                            }, 
+                            "dimensionalSchemaStubJSON": {
+                              "type": "string"
+                            }, 
+                            "schemaID": {
+                              "type": "string"
+                            }, 
+                            "discountCycle": {
+                              "type": "string"
+                            }, 
+                            "tupleBlast": {
+                              "type": "string"
+                            }, 
+                            "codec": {
+                              "required": [
+                                "@class"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "@class": {
+                                  "type": "string"
+                                }
+                              }
+                            }, 
+                            "tuplesRateCycle": {
+                              "type": "string"
+                            }, 
+                            "readTimeoutMillis": {
+                              "type": "string"
+                            }, 
+                            "fileStore": {
+                              "required": [
+                                "@class", 
+                                "basePath", 
+                                "chunkSize", 
+                                "comparator", 
+                                "compressName", 
+                                "inputBufferSize", 
+                                "minBlockSize", 
+                                "outputBufferSize"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "compressName": {
+                                  "type": "string"
+                                }, 
+                                "chunkSize": {
+                                  "type": "string"
+                                }, 
+                                "outputBufferSize": {
+                                  "type": "string"
+                                }, 
+                                "basePath": {
+                                  "type": "string"
+                                }, 
+                                "comparator": {
+                                  "type": "string"
+                                }, 
+                                "minBlockSize": {
+                                  "type": "string"
+                                }, 
+                                "inputBufferSize": {
+                                  "type": "string"
+                                }, 
+                                "@class": {
+                                  "type": "string"
+                                }
+                              }
+                            }, 
+                            "numRetries": {
+                              "type": "string"
+                            }, 
+                            "configurationSchemaJSON": {
+                              "type": "string"
+                            }, 
+                            "updateEnumValues": {
+                              "type": "boolean"
+                            }, 
+                            "maxFileSize": {
+                              "type": "string"
+                            }, 
+                            "valLen": {
+                              "type": "string"
+                            }, 
+                            "cacheWindowDuration": {
+                              "type": "string"
+                            }, 
+                            "maxDiscountPercent": {
+                              "type": "string"
+                            }, 
+                            "aggregators": {
+                              "items": [
+                                {
+                                  "required": [
+                                    "@class", 
+                                    "dimension"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "dimension": {
+                                      "type": "string"
+                                    }, 
+                                    "@class": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              ], 
+                              "type": "array"
+                            }, 
+                            "numTuplesPerWindow": {
+                              "type": "string"
+                            }, 
+                            "sleepms": {
+                              "type": "string"
+                            }, 
+                            "active": {
+                              "type": "boolean"
+                            }, 
+                            "schemaRegistry": {
+                              "type": "null"
+                            }, 
+                            "cardinality": {
+                              "type": "string"
+                            }, 
+                            "maxProductId": {
+                              "type": "string"
+                            }, 
+                            "readModifyWriteMode": {
+                              "type": "boolean"
+                            }, 
+                            "waitMillisRetry": {
+                              "type": "string"
+                            }, 
+                            "topic": {
+                              "type": "null"
+                            }, 
+                            "maxCustomerId": {
+                              "type": "string"
+                            }, 
+                            "name": {
+                              "type": "string"
+                            }, 
+                            "maxChannelId": {
+                              "type": "string"
+                            }, 
+                            "partitionCount": {
+                              "type": "string"
+                            }, 
+                            "ioThreadMultiplier": {
+                              "type": "string"
+                            }, 
+                            "uri": {
+                              "type": "string"
+                            }, 
+                            "keyComparator": {
+                              "type": "object", 
+                              "properties": {}
+                            }, 
+                            "aggregateToExpression": {
+                              "required": [
+                                "clicks", 
+                                "cost", 
+                                "impressions", 
+                                "revenue"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "impressions": {
+                                  "type": "string"
+                                }, 
+                                "cost": {
+                                  "type": "string"
+                                }, 
+                                "clicks": {
+                                  "type": "string"
+                                }, 
+                                "revenue": {
+                                  "type": "string"
+                                }
+                              }
+                            }, 
+                            "resultFormatter": {
+                              "required": [
+                                "@class", 
+                                "byteFormat", 
+                                "byteFormatString", 
+                                "continuousFormatString", 
+                                "discreteFormatString", 
+                                "doubleFormat", 
+                                "doubleFormatString", 
+                                "floatFormat", 
+                                "floatFormatString", 
+                                "intFormat", 
+                                "intFormatString", 
+                                "longFormat", 
+                                "longFormatString", 
+                                "shortFormat", 
+                                "shortFormatString"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "shortFormat": {
+                                  "type": "null"
+                                }, 
+                                "doubleFormatString": {
+                                  "type": "null"
+                                }, 
+                                "longFormat": {
+                                  "type": "null"
+                                }, 
+                                "intFormat": {
+                                  "type": "null"
+                                }, 
+                                "floatFormat": {
+                                  "type": "null"
+                                }, 
+                                "intFormatString": {
+                                  "type": "null"
+                                }, 
+                                "byteFormatString": {
+                                  "type": "null"
+                                }, 
+                                "longFormatString": {
+                                  "type": "null"
+                                }, 
+                                "doubleFormat": {
+                                  "type": "null"
+                                }, 
+                                "discreteFormatString": {
+                                  "type": "null"
+                                }, 
+                                "shortFormatString": {
+                                  "type": "null"
+                                }, 
+                                "byteFormat": {
+                                  "type": "null"
+                                }, 
+                                "continuousFormatString": {
+                                  "type": "null"
+                                }, 
+                                "floatFormatString": {
+                                  "type": "null"
+                                }, 
+                                "@class": {
+                                  "type": "string"
+                                }
+                              }
+                            }, 
+                            "queries": {
+                              "type": "object", 
+                              "properties": {}
+                            }, 
+                            "flushSize": {
+                              "type": "string"
+                            }, 
+                            "aggregatorRegistry": {
+                              "required": [
+                                "@class", 
+                                "classToIncrementalAggregatorName", 
+                                "incrementalAggregatorIDToAggregator", 
+                                "incrementalAggregatorNameToID", 
+                                "nameToIncrementalAggregator", 
+                                "nameToOTFAggregators", 
+                                "otfaggregatorToIncrementalAggregators"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "classToIncrementalAggregatorName": {
+                                  "required": [
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorCount", 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorCumSum", 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorFirst", 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorLast", 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorMax", 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorMin", 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorSum"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorLast": {
+                                      "type": "string"
+                                    }, 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorCumSum": {
+                                      "type": "string"
+                                    }, 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorSum": {
+                                      "type": "string"
+                                    }, 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorMax": {
+                                      "type": "string"
+                                    }, 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorMin": {
+                                      "type": "string"
+                                    }, 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorCount": {
+                                      "type": "string"
+                                    }, 
+                                    "class com.datatorrent.lib.dimensions.aggregator.AggregatorFirst": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }, 
+                                "otfaggregatorToIncrementalAggregators": {
+                                  "required": [
+                                    "AVG"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "AVG": {
+                                      "items": [
+                                        {
+                                          "type": "string"
+                                        }
+                                      ], 
+                                      "type": "array"
+                                    }
+                                  }
+                                }, 
+                                "nameToIncrementalAggregator": {
+                                  "required": [
+                                    "COUNT", 
+                                    "CUM_SUM", 
+                                    "FIRST", 
+                                    "LAST", 
+                                    "MAX", 
+                                    "MIN", 
+                                    "SUM"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "COUNT": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "CUM_SUM": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "required": [
+                                            "@class", 
+                                            "compressedTypes", 
+                                            "fieldList", 
+                                            "fieldToType", 
+                                            "fields", 
+                                            "serdePayloadFix", 
+                                            "serdes", 
+                                            "typeToFieldToIndex", 
+                                            "typeToFields", 
+                                            "typeToSize", 
+                                            "types", 
+                                            "typesList"
+                                          ], 
+                                          "type": "object", 
+                                          "properties": {
+                                            "serdes": {
+                                              "items": [
+                                                {
+                                                  "required": [
+                                                    "@class"
+                                                  ], 
+                                                  "type": "object", 
+                                                  "properties": {
+                                                    "@class": {
+                                                      "type": "string"
+                                                    }
+                                                  }
+                                                }
+                                              ], 
+                                              "type": "array"
+                                            }, 
+                                            "typeToFields": {
+                                              "required": [
+                                                "OBJECT"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "OBJECT": {
+                                                  "items": [
+                                                    {
+                                                      "type": "string"
+                                                    }
+                                                  ], 
+                                                  "type": "array"
+                                                }
+                                              }
+                                            }, 
+                                            "typesList": {
+                                              "items": [
+                                                {
+                                                  "type": "string"
+                                                }
+                                              ], 
+                                              "type": "array"
+                                            }, 
+                                            "fields": {
+                                              "required": [
+                                                "@class", 
+                                                "fields", 
+                                                "fieldsList"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "fields": {
+                                                  "items": [
+                                                    {
+                                                      "type": "string"
+                                                    }
+                                                  ], 
+                                                  "type": "array"
+                                                }, 
+                                                "@class": {
+                                                  "type": "string"
+                                                }, 
+                                                "fieldsList": {
+                                                  "items": [
+                                                    {
+                                                      "type": "string"
+                                                    }
+                                                  ], 
+                                                  "type": "array"
+                                                }
+                                              }
+                                            }, 
+                                            "typeToSize": {
+                                              "required": [
+                                                "@class", 
+                                                "OBJECT"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "OBJECT": {
+                                                  "type": "string"
+                                                }, 
+                                                "@class": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            }, 
+                                            "@class": {
+                                              "type": "string"
+                                            }, 
+                                            "typeToFieldToIndex": {
+                                              "required": [
+                                                "OBJECT"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "OBJECT": {
+                                                  "required": [
+                                                    "@class", 
+                                                    "fdkeys", 
+                                                    "fdvalues", 
+                                                    "keys", 
+                                                    "values"
+                                                  ], 
+                                                  "type": "object", 
+                                                  "properties": {
+                                                    "fdvalues": {
+                                                      "type": "string"
+                                                    }, 
+                                                    "keys": {
+                                                      "type": "string"
+                                                    }, 
+                                                    "fdkeys": {
+                                                      "type": "string"
+                                                    }, 
+                                                    "@class": {
+                                                      "type": "string"
+                                                    }, 
+                                                    "values": {
+                                                      "type": "string"
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }, 
+                                            "fieldList": {
+                                              "items": [
+                                                {
+                                                  "type": "string"
+                                                }
+                                              ], 
+                                              "type": "array"
+                                            }, 
+                                            "serdePayloadFix": {
+                                              "required": [
+                                                "@class"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "@class": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            }, 
+                                            "types": {
+                                              "items": [
+                                                {
+                                                  "type": "string"
+                                                }
+                                              ], 
+                                              "type": "array"
+                                            }, 
+                                            "fieldToType": {
+                                              "required": [
+                                                "fdkeys", 
+                                                "fdvalues", 
+                                                "keys", 
+                                                "values"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "keys": {
+                                                  "type": "string"
+                                                }, 
+                                                "fdkeys": {
+                                                  "type": "string"
+                                                }, 
+                                                "values": {
+                                                  "type": "string"
+                                                }, 
+                                                "fdvalues": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            }, 
+                                            "compressedTypes": {
+                                              "items": [
+       						{
+					          "type": "string"
+					        }
+					      ], 
+                                              "type": "array"
+                                            }
+                                          }
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "LAST": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "MIN": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "MAX": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "SUM": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "FIRST": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }, 
+                                "incrementalAggregatorNameToID": {
+                                  "required": [
+                                    "COUNT", 
+                                    "CUM_SUM", 
+                                    "FIRST", 
+                                    "LAST", 
+                                    "MAX", 
+                                    "MIN", 
+                                    "SUM"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "COUNT": {
+                                      "type": "string"
+                                    }, 
+                                    "CUM_SUM": {
+                                      "type": "string"
+                                    }, 
+                                    "LAST": {
+                                      "type": "string"
+                                    }, 
+                                    "MIN": {
+                                      "type": "string"
+                                    }, 
+                                    "MAX": {
+                                      "type": "string"
+                                    }, 
+                                    "SUM": {
+                                      "type": "string"
+                                    }, 
+                                    "FIRST": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }, 
+                                "incrementalAggregatorIDToAggregator": {
+                                  "required": [
+                                    "0", 
+                                    "1", 
+                                    "2", 
+                                    "3", 
+                                    "4", 
+                                    "5", 
+                                    "6"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "1": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "0": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "3": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "2": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "5": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "4": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "type": "null"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }, 
+                                    "6": {
+                                      "required": [
+                                        "@class", 
+                                        "metaDataDescriptor"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "metaDataDescriptor": {
+                                          "required": [
+                                            "@class", 
+                                            "compressedTypes", 
+                                            "fieldList", 
+                                            "fieldToType", 
+                                            "fields", 
+                                            "serdePayloadFix", 
+                                            "serdes", 
+                                            "typeToFieldToIndex", 
+                                            "typeToFields", 
+                                            "typeToSize", 
+                                            "types", 
+                                            "typesList"
+                                          ], 
+                                          "type": "object", 
+                                          "properties": {
+                                            "serdes": {
+                                              "items": [
+                                                {
+                                                  "required": [
+                                                    "@class"
+                                                  ], 
+                                                  "type": "object", 
+                                                  "properties": {
+                                                    "@class": {
+                                                      "type": "string"
+                                                    }
+                                                  }
+                                                }
+                                              ], 
+                                              "type": "array"
+                                            }, 
+                                            "typeToFields": {
+                                              "required": [
+                                                "OBJECT"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "OBJECT": {
+                                                  "items": [
+                                                    {
+                                                      "type": "string"
+                                                    }
+                                                  ], 
+                                                  "type": "array"
+                                                }
+                                              }
+                                            }, 
+                                            "typesList": {
+                                              "items": [
+                                                {
+                                                  "type": "string"
+                                                }
+                                              ], 
+                                              "type": "array"
+                                            }, 
+                                            "fields": {
+                                              "required": [
+                                                "@class", 
+                                                "fields", 
+                                                "fieldsList"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "fields": {
+                                                  "items": [
+                                                    {
+                                                      "type": "string"
+                                                    }
+                                                  ], 
+                                                  "type": "array"
+                                                }, 
+                                                "@class": {
+                                                  "type": "string"
+                                                }, 
+                                                "fieldsList": {
+                                                  "items": [
+                                                    {
+                                                      "type": "string"
+                                                    }
+                                                  ], 
+                                                  "type": "array"
+                                                }
+                                              }
+                                            }, 
+                                            "typeToSize": {
+                                              "required": [
+                                                "@class", 
+                                                "OBJECT"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "OBJECT": {
+                                                  "type": "string"
+                                                }, 
+                                                "@class": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            }, 
+                                            "@class": {
+                                              "type": "string"
+                                            }, 
+                                            "typeToFieldToIndex": {
+                                              "required": [
+                                                "OBJECT"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "OBJECT": {
+                                                  "required": [
+                                                    "@class", 
+                                                    "fdkeys", 
+                                                    "fdvalues", 
+                                                    "keys", 
+                                                    "values"
+                                                  ], 
+                                                  "type": "object", 
+                                                  "properties": {
+                                                    "fdvalues": {
+                                                      "type": "string"
+                                                    }, 
+                                                    "keys": {
+                                                      "type": "string"
+                                                    }, 
+                                                    "fdkeys": {
+                                                      "type": "string"
+                                                    }, 
+                                                    "@class": {
+                                                      "type": "string"
+                                                    }, 
+                                                    "values": {
+                                                      "type": "string"
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }, 
+                                            "fieldList": {
+                                              "items": [
+                                                {
+                                                  "type": "string"
+                                                }
+                                              ], 
+                                              "type": "array"
+                                            }, 
+                                            "serdePayloadFix": {
+                                              "required": [
+                                                "@class"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "@class": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            }, 
+                                            "types": {
+                                              "items": [
+                                                {
+                                                  "type": "string"
+                                                }
+                                              ], 
+                                              "type": "array"
+                                            }, 
+                                            "fieldToType": {
+                                              "required": [
+                                                "fdkeys", 
+                                                "fdvalues", 
+                                                "keys", 
+                                                "values"
+                                              ], 
+                                              "type": "object", 
+                                              "properties": {
+                                                "keys": {
+                                                  "type": "string"
+                                                }, 
+                                                "fdkeys": {
+                                                  "type": "string"
+                                                }, 
+                                                "values": {
+                                                  "type": "string"
+                                                }, 
+                                                "fdvalues": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            }, 
+                                            "compressedTypes": {
+                                              "items": [
+        {
+          "type": "string"
+        }
+      ], 
+                                              "type": "array"
+                                            }
+                                          }
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }, 
+                                "nameToOTFAggregators": {
+                                  "required": [
+                                    "AVG"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "AVG": {
+                                      "required": [
+                                        "@class", 
+                                        "childAggregators", 
+                                        "outputType"
+                                      ], 
+                                      "type": "object", 
+                                      "properties": {
+                                        "childAggregators": {
+                                          "items": [
+                                            {
+                                              "type": "string"
+                                            }
+                                          ], 
+                                          "type": "array"
+                                        }, 
+                                        "outputType": {
+                                          "type": "string"
+                                        }, 
+                                        "@class": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }, 
+                                "@class": {
+                                  "type": "string"
+                                }
+                              }
+                            }, 
+                            "valueNameAliases": {
+                              "required": [
+                                "sales"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "sales": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }, 
+                        "ports": {
+                          "items": [
+                            {
+                              "required": [
+                                "attributes", 
+                                "name", 
+                                "type"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "attributes": {
+                                  "required": [
+                                    "AUTO_RECORD", 
+                                    "BUFFER_MEMORY_MB", 
+                                    "IS_OUTPUT_UNIFIED", 
+                                    "PARTITION_PARALLEL", 
+                                    "QUEUE_CAPACITY", 
+                                    "SPIN_MILLIS", 
+                                    "STREAM_CODEC", 
+                                    "UNIFIER_LIMIT", 
+                                    "UNIFIER_SINGLE_FINAL"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "QUEUE_CAPACITY": {
+                                      "type": "string"
+                                    }, 
+                                    "UNIFIER_SINGLE_FINAL": {
+                                      "type": "boolean"
+                                    }, 
+                                    "UNIFIER_LIMIT": {
+                                      "type": "string"
+                                    }, 
+                                    "BUFFER_MEMORY_MB": {
+                                      "type": "string"
+                                    }, 
+                                    "IS_OUTPUT_UNIFIED": {
+                                      "type": "boolean"
+                                    }, 
+                                    "PARTITION_PARALLEL": {
+                                      "type": "boolean"
+                                    }, 
+                                    "STREAM_CODEC": {
+                                      "type": "null"
+                                    }, 
+                                    "AUTO_RECORD": {
+                                      "type": "boolean"
+                                    }, 
+                                    "SPIN_MILLIS": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }, 
+                                "type": {
+                                  "type": "string"
+                                }, 
+                                "name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          ], 
+                          "type": "array"
+                        }, 
+                        "name": {
+                          "type": "string"
+                        }, 
+                        "class": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ], 
+                  "type": "array"
+                }, 
+                "streams": {
+                  "items": [
+                    {
+                      "required": [
+                        "name", 
+                        "sinks", 
+                        "source"
+                      ], 
+                      "type": "object", 
+                      "properties": {
+                        "source": {
+                          "required": [
+                            "operatorName", 
+                            "portName"
+                          ], 
+                          "type": "object", 
+                          "properties": {
+                            "portName": {
+                              "type": "string"
+                            }, 
+                            "operatorName": {
+                              "type": "string"
+                            }
+                          }
+                        }, 
+                        "locality": {
+                          "type": "string"
+                        }, 
+                        "sinks": {
+                          "items": [
+                            {
+                              "required": [
+                                "operatorName", 
+                                "portName"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "portName": {
+                                  "type": "string"
+                                }, 
+                                "operatorName": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          ], 
+                          "type": "array"
+                        }, 
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ], 
+                  "type": "array"
+                }
+              }
+            }, 
+            "displayName": {
+              "type": "string"
+            }, 
+            "name": {
+              "type": "string"
+            }, 
+            "errorStackTrace": {
+              "type": [
+                "null", 
+                "string"
+              ]
+            }, 
+            "file": {
+              "type": "string"
+            }, 
+            "error": {
+              "type": [
+                "null", 
+                "string"
+              ]
+            }, 
+            "type": {
+              "type": "string"
+            }, 
+            "defaultProperties": {
+              "required": [
+                "16384", 
+                "dt.application.AdsDimensionsCustomBenchmark.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL", 
+                "dt.application.AdsDimensionsCustomBenchmark.operator.InputGenerator.attr.PARTITIONER", 
+                "dt.application.AdsDimensionsCustomBenchmark.operator.InputGenerator.numTuplesPerWindow", 
+                "dt.application.AdsDimensionsCustomBenchmark.port.*.attr.QUEUE_CAPACITY", 
+                "dt.application.AdsDimensionsDemoFast.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL", 
+                "dt.application.AdsDimensionsDemoFast.operator.InputGenerator.attr.PARTITIONER", 
+                "dt.application.AdsDimensionsDemoFast.operator.InputGenerator.numTuplesPerWindow", 
+                "dt.application.AdsDimensionsDemoFast.operator.Query.topic", 
+                "dt.application.AdsDimensionsDemoFast.operator.QueryResult.numRetries", 
+                "dt.application.AdsDimensionsDemoFast.operator.QueryResult.topic", 
+                "dt.application.AdsDimensionsDemoFast.operator.Store.fileStore.basePathPrefix", 
+                "dt.application.AdsDimensionsDemoFast.port.*.attr.QUEUE_CAPACITY", 
+                "dt.application.AdsDimensionsDemoGeneric.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL", 
+                "dt.application.AdsDimensionsDemoGeneric.operator.InputGenerator.attr.PARTITIONER", 
+                "dt.application.AdsDimensionsDemoGeneric.operator.InputGenerator.numTuplesPerWindow", 
+                "dt.application.AdsDimensionsDemoGeneric.operator.Query.topic", 
+                "dt.application.AdsDimensionsDemoGeneric.operator.QueryResult.numRetries", 
+                "dt.application.AdsDimensionsDemoGeneric.operator.QueryResult.topic", 
+                "dt.application.AdsDimensionsDemoGeneric.operator.Store.fileStore.basePathPrefix", 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL", 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.InputGenerator.attr.PARTITIONER", 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.InputGenerator.numTuplesPerWindow", 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.Query.topic", 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.QueryResult.numRetries", 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.QueryResult.topic", 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.Store.fileStore.basePathPrefix", 
+                "dt.application.AdsDimensionsFlexibleBenchmark.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL", 
+                "dt.application.AdsDimensionsFlexibleBenchmark.operator.InputGenerator.attr.PARTITIONER", 
+                "dt.application.AdsDimensionsFlexibleBenchmark.operator.InputGenerator.numTuplesPerWindow", 
+                "dt.application.AdsDimensionsFlexibleBenchmark.port.*.attr.QUEUE_CAPACITY", 
+                "dt.application.AdsDimensionsStatsBenchmark.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL", 
+                "dt.application.AdsDimensionsStatsBenchmark.operator.InputGenerator.attr.PARTITIONER", 
+                "dt.application.AdsDimensionsStatsBenchmark.operator.InputGenerator.numTuplesPerWindow", 
+                "dt.application.AdsDimensionsStatsBenchmark.port.*.attr.QUEUE_CAPACITY", 
+                "dt.application.SalesDemo.operator.DimensionsComputation.attr.PARTITIONER", 
+                "dt.application.SalesDemo.operator.InputGenerator.maxTuplesPerWindow", 
+                "dt.application.SalesDemo.operator.InputGenerator.tuplesPerWindowDeviation", 
+                "dt.application.SalesDemo.operator.Query.topic", 
+                "dt.application.SalesDemo.operator.QueryResult.numRetries", 
+                "dt.application.SalesDemo.operator.QueryResult.topic", 
+                "dt.application.SalesDemo.operator.Store.fileStore.basePathPrefix", 
+                "dt.attr.APPLICATION_DATA_LINK", 
+                "dt.attr.CONTAINER_JVM_OPTIONS", 
+                "dt.operator.*.attr.MEMORY_MB"
+              ], 
+              "type": "object", 
+              "properties": {
+                "dt.application.AdsDimensionsDemoFast.operator.QueryResult.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoFast.operator.InputGenerator.numTuplesPerWindow": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsCustomBenchmark.port.*.attr.QUEUE_CAPACITY": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGeneric.operator.QueryResult.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsStatsBenchmark.operator.InputGenerator.numTuplesPerWindow": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsStatsBenchmark.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsFlexibleBenchmark.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL": {
+                  "type": "string"
+                }, 
+                "dt.application.SalesDemo.operator.Store.fileStore.basePathPrefix": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGeneric.operator.Query.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsStatsBenchmark.port.*.attr.QUEUE_CAPACITY": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGeneric.operator.QueryResult.numRetries": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsStatsBenchmark.operator.InputGenerator.attr.PARTITIONER": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsCustomBenchmark.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.Query.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.SalesDemo.operator.QueryResult.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoFast.port.*.attr.QUEUE_CAPACITY": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGeneric.operator.InputGenerator.attr.PARTITIONER": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGeneric.operator.InputGenerator.numTuplesPerWindow": {
+                  "type": "string"
+                }, 
+                "dt.operator.*.attr.MEMORY_MB": {
+                  "type": "string"
+                }, 
+                "16384": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoFast.operator.InputGenerator.attr.PARTITIONER": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoFast.operator.Store.fileStore.basePathPrefix": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoFast.operator.QueryResult.numRetries": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGeneric.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL": {
+                  "type": "string"
+                }, 
+                "dt.application.SalesDemo.operator.InputGenerator.maxTuplesPerWindow": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.QueryResult.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGeneric.operator.Store.fileStore.basePathPrefix": {
+                  "type": "string"
+                }, 
+                "dt.attr.CONTAINER_JVM_OPTIONS": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsCustomBenchmark.operator.InputGenerator.numTuplesPerWindow": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsFlexibleBenchmark.operator.InputGenerator.attr.PARTITIONER": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.QueryResult.numRetries": {
+                  "type": "string"
+                }, 
+                "dt.application.SalesDemo.operator.DimensionsComputation.attr.PARTITIONER": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.InputGenerator.numTuplesPerWindow": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.Store.fileStore.basePathPrefix": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsFlexibleBenchmark.operator.InputGenerator.numTuplesPerWindow": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoFast.operator.Query.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoFast.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsDemoGenericManualEntry.operator.InputGenerator.attr.PARTITIONER": {
+                  "type": "string"
+                }, 
+                "dt.application.SalesDemo.operator.InputGenerator.tuplesPerWindowDeviation": {
+                  "type": "string"
+                }, 
+                "dt.application.SalesDemo.operator.QueryResult.numRetries": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsCustomBenchmark.operator.InputGenerator.attr.PARTITIONER": {
+                  "type": "string"
+                }, 
+                "dt.attr.APPLICATION_DATA_LINK": {
+                  "type": "string"
+                }, 
+                "dt.application.SalesDemo.operator.Query.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.AdsDimensionsFlexibleBenchmark.port.*.attr.QUEUE_CAPACITY": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }, 
+    "appPropertiesFiles": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "appJars": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "configs": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "defaultProperties": {
+      "required": [
+        "16384", 
+        "dt.application.AdsDimensionsCustomBenchmark.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL", 
+        "dt.application.AdsDimensionsCustomBenchmark.operator.InputGenerator.attr.PARTITIONER", 
+        "dt.application.AdsDimensionsCustomBenchmark.operator.InputGenerator.numTuplesPerWindow", 
+        "dt.application.AdsDimensionsCustomBenchmark.port.*.attr.QUEUE_CAPACITY", 
+        "dt.application.AdsDimensionsDemoFast.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL", 
+        "dt.application.AdsDimensionsDemoFast.operator.InputGenerator.attr.PARTITIONER", 
+        "dt.application.AdsDimensionsDemoFast.operator.InputGenerator.numTuplesPerWindow", 
+        "dt.application.AdsDimensionsDemoFast.operator.Query.topic", 
+        "dt.application.AdsDimensionsDemoFast.operator.QueryResult.numRetries", 
+        "dt.application.AdsDimensionsDemoFast.operator.QueryResult.topic", 
+        "dt.application.AdsDimensionsDemoFast.operator.Store.fileStore.basePathPrefix", 
+        "dt.application.AdsDimensionsDemoFast.port.*.attr.QUEUE_CAPACITY", 
+        "dt.application.AdsDimensionsDemoGeneric.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL", 
+        "dt.application.AdsDimensionsDemoGeneric.operator.InputGenerator.attr.PARTITIONER", 
+        "dt.application.AdsDimensionsDemoGeneric.operator.InputGenerator.numTuplesPerWindow", 
+        "dt.application.AdsDimensionsDemoGeneric.operator.Query.topic", 
+        "dt.application.AdsDimensionsDemoGeneric.operator.QueryResult.numRetries", 
+        "dt.application.AdsDimensionsDemoGeneric.operator.QueryResult.topic", 
+        "dt.application.AdsDimensionsDemoGeneric.operator.Store.fileStore.basePathPrefix", 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL", 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.InputGenerator.attr.PARTITIONER", 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.InputGenerator.numTuplesPerWindow", 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.Query.topic", 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.QueryResult.numRetries", 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.QueryResult.topic", 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.Store.fileStore.basePathPrefix", 
+        "dt.application.AdsDimensionsFlexibleBenchmark.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL", 
+        "dt.application.AdsDimensionsFlexibleBenchmark.operator.InputGenerator.attr.PARTITIONER", 
+        "dt.application.AdsDimensionsFlexibleBenchmark.operator.InputGenerator.numTuplesPerWindow", 
+        "dt.application.AdsDimensionsFlexibleBenchmark.port.*.attr.QUEUE_CAPACITY", 
+        "dt.application.AdsDimensionsStatsBenchmark.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL", 
+        "dt.application.AdsDimensionsStatsBenchmark.operator.InputGenerator.attr.PARTITIONER", 
+        "dt.application.AdsDimensionsStatsBenchmark.operator.InputGenerator.numTuplesPerWindow", 
+        "dt.application.AdsDimensionsStatsBenchmark.port.*.attr.QUEUE_CAPACITY", 
+        "dt.application.SalesDemo.operator.DimensionsComputation.attr.PARTITIONER", 
+        "dt.application.SalesDemo.operator.InputGenerator.maxTuplesPerWindow", 
+        "dt.application.SalesDemo.operator.InputGenerator.tuplesPerWindowDeviation", 
+        "dt.application.SalesDemo.operator.Query.topic", 
+        "dt.application.SalesDemo.operator.QueryResult.numRetries", 
+        "dt.application.SalesDemo.operator.QueryResult.topic", 
+        "dt.application.SalesDemo.operator.Store.fileStore.basePathPrefix", 
+        "dt.attr.APPLICATION_DATA_LINK", 
+        "dt.attr.CONTAINER_JVM_OPTIONS", 
+        "dt.operator.*.attr.MEMORY_MB"
+      ], 
+      "type": "object", 
+      "properties": {
+        "dt.application.AdsDimensionsDemoFast.operator.QueryResult.topic": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoFast.operator.InputGenerator.numTuplesPerWindow": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsCustomBenchmark.port.*.attr.QUEUE_CAPACITY": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGeneric.operator.QueryResult.topic": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsStatsBenchmark.operator.InputGenerator.numTuplesPerWindow": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsStatsBenchmark.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsFlexibleBenchmark.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL": {
+          "type": "string"
+        }, 
+        "dt.application.SalesDemo.operator.Store.fileStore.basePathPrefix": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGeneric.operator.Query.topic": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsStatsBenchmark.port.*.attr.QUEUE_CAPACITY": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGeneric.operator.QueryResult.numRetries": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsStatsBenchmark.operator.InputGenerator.attr.PARTITIONER": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsCustomBenchmark.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.Query.topic": {
+          "type": "string"
+        }, 
+        "dt.application.SalesDemo.operator.QueryResult.topic": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoFast.port.*.attr.QUEUE_CAPACITY": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGeneric.operator.InputGenerator.attr.PARTITIONER": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGeneric.operator.InputGenerator.numTuplesPerWindow": {
+          "type": "string"
+        }, 
+        "dt.operator.*.attr.MEMORY_MB": {
+          "type": "string"
+        }, 
+        "16384": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoFast.operator.InputGenerator.attr.PARTITIONER": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoFast.operator.Store.fileStore.basePathPrefix": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoFast.operator.QueryResult.numRetries": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGeneric.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL": {
+          "type": "string"
+        }, 
+        "dt.application.SalesDemo.operator.InputGenerator.maxTuplesPerWindow": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.QueryResult.topic": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGeneric.operator.Store.fileStore.basePathPrefix": {
+          "type": "string"
+        }, 
+        "dt.attr.CONTAINER_JVM_OPTIONS": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsCustomBenchmark.operator.InputGenerator.numTuplesPerWindow": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsFlexibleBenchmark.operator.InputGenerator.attr.PARTITIONER": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.QueryResult.numRetries": {
+          "type": "string"
+        }, 
+        "dt.application.SalesDemo.operator.DimensionsComputation.attr.PARTITIONER": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.InputGenerator.numTuplesPerWindow": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.Store.fileStore.basePathPrefix": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsFlexibleBenchmark.operator.InputGenerator.numTuplesPerWindow": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoFast.operator.Query.topic": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.DimensionsComputation.port.input.attr.PARTITION_PARALLEL": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoFast.operator.DimensionsComputation.port.data.attr.PARTITION_PARALLEL": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsDemoGenericManualEntry.operator.InputGenerator.attr.PARTITIONER": {
+          "type": "string"
+        }, 
+        "dt.application.SalesDemo.operator.InputGenerator.tuplesPerWindowDeviation": {
+          "type": "string"
+        }, 
+        "dt.application.SalesDemo.operator.QueryResult.numRetries": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsCustomBenchmark.operator.InputGenerator.attr.PARTITIONER": {
+          "type": "string"
+        }, 
+        "dt.attr.APPLICATION_DATA_LINK": {
+          "type": "string"
+        }, 
+        "dt.application.SalesDemo.operator.Query.topic": {
+          "type": "string"
+        }, 
+        "dt.application.AdsDimensionsFlexibleBenchmark.port.*.attr.QUEUE_CAPACITY": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

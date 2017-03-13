@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+  <property>
+    <name>dt.attr.MASTER_MEMORY_MB</name>
+    <value>2048</value>
+  </property>
+  <property>
+    <name>dt.application.MobileDemo.attr.APPLICATION_NAME</name>
+    <value>Auto_Name_MobileDemo</value>
+    <!-- value>MobileDemo</value -->
+  </property>
+  <property>
+    <name>dt.application.MobileDemo.operator.LocationFinder.range</name>
+    <value>40</value>
+    <!-- value>20</value -->
+  </property>
+  <property>
+    <name>dt.application.MobileDemo.operator.LocationFinder.threshold</name>
+    <value>160</value>
+    <!-- value>80</value -->
+  </property>
+  <property>
+    <name>dt.application.MobileDemo.operator.Receiver.outputport.integer_data.attr.QUEUE_CAPACITY</name>
+    <value>33333</value>
+    <!-- value>32768</value -->
+  </property>
+</configuration>

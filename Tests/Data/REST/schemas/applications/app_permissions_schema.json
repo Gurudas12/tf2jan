@@ -1,0 +1,48 @@
+{
+  "required": [
+    "readOnly", 
+    "readWrite"
+  ], 
+  "type": "object", 
+  "properties": {
+    "readWrite": {
+      "required": [
+        "everyone", 
+        "roles", 
+        "users"
+      ], 
+      "type": "object", 
+      "properties": {
+        "everyone": {
+          "type": "boolean"
+        }, 
+        "users": {
+          "type": "array"
+        }, 
+        "roles": {
+          "type": "array"
+        }
+      }
+    }, 
+    "readOnly": {
+      "required": [
+        "everyone", 
+        "roles", 
+        "users"
+      ], 
+      "type": "object", 
+      "properties": {
+        "everyone": {
+          "type": "boolean"
+        }, 
+        "users": {
+          "type": "array"
+        }, 
+        "roles": {
+          "type": "array"
+        }
+      }
+    }
+  }
+}
+

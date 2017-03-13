@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20160621 08:58:00.082" generator="Robot 2.8.7 (Python 2.7.6 on linux2)">
+<suite source="/var/dt/tf/Tests/REST/REST.txt" id="s1" name="REST">
+<kw type="setup" name="resource.REST Suite Setup">
+<doc>*Suite setup for REST testcases: Launch required apps*</doc>
+<arguments>
+</arguments>
+<kw type="kw" name="resource.Login Server">
+<doc>Log into the server: provided server name, user name &amp; passkey/password</doc>
+<arguments>
+<arg>${dtserver}</arg>
+<arg>${sshuser}</arg>
+<arg>${sshkey}</arg>
+</arguments>
+<kw type="kw" name="Open Connection">
+<doc></doc>
+<arguments>
+<arg>${server}</arg>
+</arguments>
+<msg timestamp="20160621 08:58:00.379" level="FAIL">No keyword with name 'Open Connection' found.</msg>
+<status status="FAIL" endtime="20160621 08:58:00.379" starttime="20160621 08:58:00.379"></status>
+</kw>
+<status status="FAIL" endtime="20160621 08:58:00.379" starttime="20160621 08:58:00.371"></status>
+</kw>
+<status status="FAIL" endtime="20160621 08:58:00.379" starttime="20160621 08:58:00.370"></status>
+</kw>
+<test id="s1-t1" name="REST API VERSION">
+<doc>*ConfigProperties*</doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20160621 08:58:00.381" critical="yes" starttime="20160621 08:58:00.379">Parent suite setup failed:
+No keyword with name 'Open Connection' found.</status>
+</test>
+<doc>*DT Gateway REST Test case Suite*</doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20160621 08:58:00.384" starttime="20160621 08:58:00.083">Suite setup failed:
+No keyword with name 'Open Connection' found.</status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" pass="0" id="s1" name="REST">REST</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

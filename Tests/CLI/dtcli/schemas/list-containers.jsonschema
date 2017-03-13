@@ -1,0 +1,77 @@
+{
+  "required": [
+    "containers"
+  ], 
+  "type": "object", 
+  "properties": {
+    "containers": {
+      "items": [
+        {
+          "required": [
+            "containerLogsUrl", 
+            "finishedTime", 
+            "gcCollectionCount", 
+            "gcCollectionTime", 
+            "host", 
+            "id", 
+            "jvmName", 
+            "lastHeartbeat", 
+            "memoryMBAllocated", 
+            "memoryMBFree", 
+            "numOperators", 
+            "rawContainerLogsUrl", 
+            "startedTime", 
+            "state"
+          ], 
+          "type": "object", 
+          "properties": {
+            "finishedTime": {
+              "type": "string"
+            }, 
+            "containerLogsUrl": {
+              "type": "string"
+            }, 
+            "gcCollectionCount": {
+              "type": "string"
+            }, 
+            "memoryMBFree": {
+              "type": "string"
+            }, 
+            "startedTime": {
+              "type": "string"
+            }, 
+            "gcCollectionTime": {
+              "type": "string"
+            }, 
+            "state": {
+              "type": "string"
+            }, 
+            "jvmName": {
+              "type": "string"
+            }, 
+            "rawContainerLogsUrl": {
+              "type": "string"
+            }, 
+            "lastHeartbeat": {
+              "type": "string"
+            }, 
+            "host": {
+              "type": "string"
+            }, 
+            "memoryMBAllocated": {
+              "type": "string"
+            }, 
+            "id": {
+              "type": "string"
+            }, 
+            "numOperators": {
+              "type": "string"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}
+

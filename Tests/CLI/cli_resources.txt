@@ -1,0 +1,145 @@
+*** Settings ***
+Library           String
+Library           SSHLibrary    120 seconds    # For executing dtcp command: modify to 30 seconds
+Library           OperatingSystem    # For accessing OS environment variables
+Library           ../../lib/rest/DTREST.py
+Resource          dtcli/dtcli_resources.txt
+
+*** Variables ***
+
+*** Keywords ***
+Write Read Prompt
+    [Arguments]    ${cmd_to_write}    ${time_out}=60 s    ${prompt}=$    #${time_out}=100 s
+    [Documentation]    This keyword takes command to be written on promt in order to execute it using SSHLibrary.Write keyword. It returns the output written on the STDOUT using SSHLibrary.Read method after specified wait. Default timeout is 500 seconds.
+    Log    ${prompt}
+    Write    ${cmd_to_write}
+    Set Client Configuration    prompt=${prompt}
+    Set Client Configuration    timeout=${time_out}
+    ${stdout}=    Read Until Prompt    #loglevel=DEBUG
+    @{lines}=    Split To Lines    ${stdout}    end=-1
+    ${stdout}=    Catenate    SEPARATOR=\n    @{lines}
+    Set Client Configuration    timeout=500 s
+    [Return]    ${stdout}
+
+Login Server
+    [Arguments]    ${server}    ${uname}    ${psky}
+    [Documentation]    Log into the server: provided server name, user name & passkey/password
+    Open Connection    ${server}
+    Login With Public Key    ${uname}    ${psky}
+    Comment    Login    ${uname}    ${psky}
+
+Add To PATH
+    [Arguments]    ${addToPath}
+    ${old_path}=    Write Read Prompt    echo $PATH
+    ${new_path}=    Catenate    SEPARATOR=:    ${addToPath}    ${old_path}
+    ${command}=    Catenate    SEPARATOR==    export PATH    ${new_path}
+    ${retval}=    Write Read Prompt    ${command}
+
+Remove Color Codes
+    [Arguments]    ${strin}
+    Create File    /tmp/del_dtcli    ${strin}
+    Comment    ${strout}    Execute Command    perl -pe 's/\\e\\[?.*?[\\@-~]//g' /tmp/del_dtcli
+    ${strout}=    Run    sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" /tmp/del_dtcli
+    [Return]    ${strout}
+
+Get App Status
+    [Arguments]    ${appid}
+    [Documentation]    Works when not connected on dtcli
+    ${appinfo_stdout}=    Write Read Prompt    echo "get-app-info ${app_id}" | dtcli    time_out=120 s
+    ${match}    ${status}=    Should Match Regexp    ${appinfo_stdout}    "finalStatus": "(\\w+)"
+    [Return]    ${status}
+
+Poll For App Status
+    [Arguments]    ${appid}    ${timeout}
+    : FOR    ${i}    IN RANGE    1    ${timeout}
+    \    Sleep    1 minutes    App not finished yet....rechecking!
+    \    ${status}=    Get App Status    ${appid}
+    \    Exit For Loop If    '${status}'=='SUCCEEDED' or '${status}'=='FAILED' or '${status}'=='KILLED'
+    \    Log    Waiting for ingestion app to copy the data : ${i} minutes & counting
+    Return From Keyword    ${status}
+
+Poll For App Status Using Tuples Count
+    [Arguments]    ${appid}    ${timeout}    ${testFaultTolerance}=${False}    ${testDynamicScaling}=${False}
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    connect    ${appid}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    : FOR    ${i}    IN RANGE    1    ${timeout}+1
+    \    Sleep    1m    Sleeping for 1min : <<${i}>>
+    \    ${tP}=    Get App Info Using Key    ${appid}    tuplesProcessedPSMA
+    \    ${tE}=    Get App Info Using Key    ${appid}    tuplesEmittedPSMA
+    \    ${ttP}=    Get App Info Using Key    ${appid}    totalTuplesProcessed
+    \    ${ttE}=    Get App Info Using Key    ${appid}    totalTuplesEmitted
+    \    Return From Keyword If    '${tP}'=='0' and '${tE}'=='0' and '${ttP}'!='0' and '${ttE}'!='0'    +DONE
+    \    #Just for checking effect of killing containers on final data output
+    \    Run Keyword If    ${i}%3==0 and (${testFaultTolerance}==${True} or ${testDynamicScaling}==${True})    Kill Container Test    ${appid}    ${OPERATOR_NAME}    wait=30s
+    Log    App did not finish in TIMEOUT=${timeout} duration. Returning...    level=WARN
+    Return From Keyword    -done
+
+Terminate App
+    [Arguments]    ${app_id}    ${wait}=${EMPTY}
+    [Documentation]    Works when not connected on dtcli
+    Run Keyword If    '${wait}' != '${EMPTY}'    Sleep    ${wait}
+    ${status}=    Get App Status    ${app_id}
+    Run Keyword If    '${status}'=='FAILED' or '${status}'=='KILLED'    Fail    msg=App got ${status}. Please check the yarn logs.
+    Run Keyword If    '${status}' != 'SUCCEEDED'    Log    App did not succeed automatically (${wait}). Shutting it down manually.
+    Run Keyword If    '${status}' != 'SUCCEEDED'    Write Read Prompt    echo "shutdown-app \ ${app_id}" | dtcli
+    Comment    Extra check for killing apps if it does not shutdown; to reduce cluster overhead
+    Sleep    15s
+    ${status}=    Get App Status    ${app_id}
+    Run Keyword If    '${status}' != 'SUCCEEDED'    Log    Shutdown did not work for ${app_id}. Killing the app.    level=WARN
+    Run Keyword If    '${status}' != 'SUCCEEDED'    Write Read Prompt    echo "kill-app \ ${app_id}" | dtcli
+
+Dtcli Launch App And Exit
+    [Arguments]    ${pkg_path}    ${config}    ${exactMatch}
+    Dtcli Enter    -vvvv
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_path}    ${config}    ${exactMatch}
+    Dtcli Exit
+    [Return]    ${app_id}    ${cmd_stdout}
+
+Dtcli Launch App And Expect Error
+    [Arguments]    ${app-jar}    ${conf}    ${error}
+    Dtcli Enter    -vvvv
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${app-jar}    ${conf}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Dtcli Exit
+    Should Contain    ${cmd_stdout}    ${error}
+
+Kill Container Using OpName
+    [Arguments]    ${app_id}    ${op_name}    ${wait}=1m
+    ${container_id}=    Get Container Id From Operator Name    ${base_get_url}    ${app_id}    ${op_name}
+    ${cmd_stdout}=    Write Read Prompt    kill-container ${container_id}    prompt=) >
+    Sleep    ${wait}
+    [Return]    ${container_id}
+
+Kill All Containers Using OpName
+    [Arguments]    ${app_id}    ${op_name}    ${wait}=1m
+    @{c_ids}=    Get Container Ids From Operator Name    ${base_get_url}    ${app_id}    ${op_name}
+    : FOR    ${container_id}    IN    @{c_ids}
+    \    ${cmd_stdout}=    Write Read Prompt    kill-container ${container_id}    prompt=) >
+    Sleep    ${wait}
+    [Return]    ${container_id}
+
+Get Container Logs
+    [Arguments]    ${base_get_url}    ${app_id}    ${container_Id}    ${log_name}    ${start}=0    ${end}=1000000000000
+    ...    ${grep}=INFO    ${includeOffset}=true
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}containers${/}${container_Id}${/}logs${/}${log_name}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Return From Keyword    ${api_response}
+
+Get Yarn Logs
+    [Arguments]    ${app_id}
+    ${cmd}=    Set Variable    yarn logs -applicationId ${app_id}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}
+    Return From Keyword    ${cmd_stdout}
+
+Set Testcase Variables
+    [Arguments]    ${var_dict}
+    @{k}=    Get Dictionary Keys    ${var_dict}
+    : FOR    ${prop_name}    IN    @{k}
+    \    ${prop_value}=    Get From Dictionary    ${var_dict}    ${prop_name}
+    \    Set Test Variable    ${${prop_name}}    ${prop_value}
+
+Get Value From Splits
+    [Arguments]    ${str}    ${sep}    ${index}
+    @{splits}=    Split String    ${str}    ${sep}
+    ${ret}=    Get From List    ${splits}    ${index}
+    [Return]    ${ret}

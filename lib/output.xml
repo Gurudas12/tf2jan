@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20150612 07:38:02.625" generator="Robot 2.8.7 (Python 2.7.6 on linux2)">
+<suite source="/var/dt/tf/Tests" id="s1" name="Tests">
+<suite source="/var/dt/tf/Tests/REST" id="s1-s1" name="REST">
+<suite source="/var/dt/tf/Tests/REST/licenses.txt" id="s1-s1-s1" name="Licenses">
+<test id="s1-s1-s1-t1" name="REST API Ping">
+<kw type="kw" name="resource.REST API Ping">
+<doc>*test documentation for API Ping*</doc>
+<arguments>
+<arg>about</arg>
+<arg>${dt_version}</arg>
+</arguments>
+<kw type="kw" name="${mpid} = getpid">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20150612 07:38:05.795" level="FAIL">No keyword with name 'getpid' found.</msg>
+<status status="FAIL" endtime="20150612 07:38:05.795" starttime="20150612 07:38:05.794"></status>
+</kw>
+<status status="FAIL" endtime="20150612 07:38:05.795" starttime="20150612 07:38:05.790"></status>
+</kw>
+<doc>Test API ping</doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20150612 07:38:05.796" critical="yes" starttime="20150612 07:38:02.751">No keyword with name 'getpid' found.</status>
+</test>
+<doc>*DT Gateway REST Test case Suite*</doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20150612 07:38:08.734" starttime="20150612 07:38:02.680"></status>
+</suite>
+<suite source="/var/dt/tf/Tests/REST/REST.txt" id="s1-s1-s2" name="REST">
+<test id="s1-s1-s2-t1" name="REST API Ping">
+<kw type="kw" name="${myvarsdict} = LoadYaml">
+<doc></doc>
+<arguments>
+<arg>/var/dt/tf/etc/environments/MyNewTestEnvironment.yaml</arg>
+</arguments>
+<msg timestamp="20150612 07:38:11.691" level="FAIL">No keyword with name 'LoadYaml' found.</msg>
+<status status="FAIL" endtime="20150612 07:38:11.691" starttime="20150612 07:38:11.691"></status>
+</kw>
+<doc>Test API ping</doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20150612 07:38:11.692" critical="yes" starttime="20150612 07:38:08.755">No keyword with name 'LoadYaml' found.</status>
+</test>
+<doc>*DT Gateway REST Test case Suite*</doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20150612 07:38:14.689" starttime="20150612 07:38:08.739"></status>
+</suite>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20150612 07:38:14.693" starttime="20150612 07:38:02.676"></status>
+</suite>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20150612 07:38:14.698" starttime="20150612 07:38:02.633"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="2" pass="0">Critical Tests</stat>
+<stat fail="2" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="2" pass="0" id="s1" name="Tests">Tests</stat>
+<stat fail="2" pass="0" id="s1-s1" name="REST">Tests.REST</stat>
+<stat fail="1" pass="0" id="s1-s1-s1" name="Licenses">Tests.REST.Licenses</stat>
+<stat fail="1" pass="0" id="s1-s1-s2" name="REST">Tests.REST.REST</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20150612 07:38:02.700" level="ERROR">Error in file '/var/dt/tf/Tests/REST/resource.txt': Importing test library '/var/dt/tf/lib/helpers.py' failed: TypeError: 'module' object is not callable
+Traceback (most recent call last):
+  File "/var/dt/tf/lib/helpers.py", line 54, in &lt;module&gt;
+    HookInit = HookFW("/tmp/bbc.txt",2,10)
+PYTHONPATH:
+  /usr/local/lib/python2.7/dist-packages/robot/libraries
+  /usr/local/lib/python2.7/dist-packages
+  /var/dt/tf/lib
+  /usr/lib/python2.7
+  /usr/lib/python2.7/plat-x86_64-linux-gnu
+  /usr/lib/python2.7/lib-tk
+  /usr/lib/python2.7/lib-old
+  /usr/lib/python2.7/lib-dynload
+  /usr/lib/python2.7/dist-packages
+  .
+  ./integration/
+  ./integration/</msg>
+<msg timestamp="20150612 07:38:02.708" level="ERROR">Error in file '/var/dt/tf/Tests/REST/resource.txt': Importing test library '/var/dt/tf/lib/rest/DTREST.py' failed: TypeError: 'module' object is not callable
+Traceback (most recent call last):
+  File "/var/dt/tf/lib/rest/DTREST.py", line 11, in &lt;module&gt;
+    import helpers
+  File "/var/dt/tf/lib/helpers.py", line 54, in &lt;module&gt;
+    HookInit = HookFW("/tmp/bbc.txt",2,10)
+PYTHONPATH:
+  /usr/local/lib/python2.7/dist-packages/robot/libraries
+  /usr/local/lib/python2.7/dist-packages
+  /var/dt/tf/lib
+  /usr/lib/python2.7
+  /usr/lib/python2.7/plat-x86_64-linux-gnu
+  /usr/lib/python2.7/lib-tk
+  /usr/lib/python2.7/lib-old
+  /usr/lib/python2.7/lib-dynload
+  /usr/lib/python2.7/dist-packages
+  .
+  ./integration/
+  ./integration/
+  ../
+  ./integration/</msg>
+<msg timestamp="20150612 07:38:08.745" level="ERROR">Error in file '/var/dt/tf/Tests/REST/resource.txt': Importing test library '/var/dt/tf/lib/helpers.py' failed: TypeError: 'module' object is not callable
+Traceback (most recent call last):
+  File "/var/dt/tf/lib/helpers.py", line 54, in &lt;module&gt;
+    HookInit = HookFW("/tmp/bbc.txt",2,10)
+PYTHONPATH:
+  /usr/local/lib/python2.7/dist-packages/robot/libraries
+  /usr/local/lib/python2.7/dist-packages
+  /var/dt/tf/lib
+  /usr/lib/python2.7
+  /usr/lib/python2.7/plat-x86_64-linux-gnu
+  /usr/lib/python2.7/lib-tk
+  /usr/lib/python2.7/lib-old
+  /usr/lib/python2.7/lib-dynload
+  /usr/lib/python2.7/dist-packages
+  .
+  ./integration/
+  ./integration/
+  ../
+  ./integration/
+  ./integration/</msg>
+<msg timestamp="20150612 07:38:08.750" level="ERROR">Error in file '/var/dt/tf/Tests/REST/resource.txt': Importing test library '/var/dt/tf/lib/rest/DTREST.py' failed: TypeError: 'module' object is not callable
+Traceback (most recent call last):
+  File "/var/dt/tf/lib/rest/DTREST.py", line 11, in &lt;module&gt;
+    import helpers
+  File "/var/dt/tf/lib/helpers.py", line 54, in &lt;module&gt;
+    HookInit = HookFW("/tmp/bbc.txt",2,10)
+PYTHONPATH:
+  /usr/local/lib/python2.7/dist-packages/robot/libraries
+  /usr/local/lib/python2.7/dist-packages
+  /var/dt/tf/lib
+  /usr/lib/python2.7
+  /usr/lib/python2.7/plat-x86_64-linux-gnu
+  /usr/lib/python2.7/lib-tk
+  /usr/lib/python2.7/lib-old
+  /usr/lib/python2.7/lib-dynload
+  /usr/lib/python2.7/dist-packages
+  .
+  ./integration/
+  ./integration/
+  ../
+  ./integration/
+  ./integration/
+  ../
+  ./integration/</msg>
+</errors>
+</robot>

@@ -1,0 +1,33 @@
+{
+  "required": [
+    "logs"
+  ], 
+  "type": "object", 
+  "properties": {
+    "logs": {
+      "items": [
+        {
+          "required": [
+            "length", 
+            "name", 
+            "rawUrl"
+          ], 
+          "type": "object", 
+          "properties": {
+            "length": {
+              "type": "string"
+            }, 
+            "rawUrl": {
+              "type": "string"
+            }, 
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}
+

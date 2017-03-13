@@ -1,0 +1,31 @@
+{
+  "required": [
+    "class", 
+    "name"
+  ], 
+  "type": "object", 
+  "properties": {
+    "name": {
+      "type": "string","minLength":1,
+      "not" : {
+        "enum" : ["null"]
+      }
+    }, 
+    "maxvalue": {
+      "type": "integer"
+    }, 
+    "minvalue": {
+      "type": "integer"
+    }, 
+    "tuplesBlastIntervalMillis": {
+      "type": "integer"
+    }, 
+    "tuplesBlast": {
+      "type": "integer"
+    }, 
+    "class": {
+      "type": "string"
+    }
+  }
+}
+

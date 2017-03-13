@@ -1,0 +1,427 @@
+{
+    "properties": {
+        "attributes": {
+            "properties": {
+                "APPLICATION_DATA_LINK": {
+                    "type": "null"
+                },
+                "APPLICATION_DOC_LINK": {
+                    "type": "null"
+                },
+                "APPLICATION_ID": {
+                    "type": "string"
+                },
+                "APPLICATION_NAME": {
+                    "type": "string"
+                },
+                "APPLICATION_PATH": {
+                    "type": "string"
+                },
+                "APP_PACKAGE_SOURCE": {
+                    "anyOf": [
+                       { "type": "string" },
+                       { "properties": {}, "type": "object" }
+                     ]
+                },
+                "BUFFER_SPOOLING": {
+                    "type": "boolean"
+                },
+                "CHECKPOINT_WINDOW_COUNT": {
+                    "type": "string"
+                },
+                "CONTAINER_JVM_OPTIONS": {
+                    "type": "null"
+                },
+                "CONTAINER_OPTS_CONFIGURATOR": {
+                    "oneof": [
+                                    {"type": "string"},
+                                    {"properties": {},"type": "object"}
+                             ]
+                },
+                "DEBUG": {
+                    "type": "boolean"
+                },
+                "ENABLE_STATS_RECORDING": {
+                    "type": "boolean"
+                },
+                "GATEWAY_CONNECT_ADDRESS": {
+                    "type": "string"
+                },
+                "GATEWAY_PASSWORD": {
+                    "type": "null"
+                },
+                "GATEWAY_USER_NAME": {
+                    "type": "null"
+                },
+                "GATEWAY_USE_SSL": {
+                    "type": "boolean"
+                },
+                "HEARTBEAT_INTERVAL_MILLIS": {
+                    "type": "string"
+                },
+                "HEARTBEAT_LISTENER_THREAD_COUNT": {
+                    "type": "string"
+                },
+                "HEARTBEAT_TIMEOUT_MILLIS": {
+                    "type": "string"
+                },
+                "MASTER_MEMORY_MB": {
+                    "type": "string"
+                },
+                "METRICS_TRANSPORT": {
+                    "type": "null"
+                },
+                "RESOURCE_ALLOCATION_TIMEOUT_MILLIS": {
+                    "type": "string"
+                },
+                "RPC_LATENCY_COMPENSATION_SAMPLES": {
+                    "type": "string"
+                },
+                "STATS_MAX_ALLOWABLE_WINDOWS_LAG": {
+                    "type": "string"
+                },
+                "STREAMING_WINDOW_SIZE_MILLIS": {
+                    "type": "string"
+                },
+                "STRING_CODECS": {
+                    "type": "null"
+                },
+                "THROUGHPUT_CALCULATION_INTERVAL": {
+                    "type": "string"
+                },
+                "THROUGHPUT_CALCULATION_MAX_SAMPLES": {
+                    "type": "string"
+                },
+                "TUPLE_RECORDING_PART_FILE_SIZE": {
+                    "type": "string"
+                },
+                "TUPLE_RECORDING_PART_FILE_TIME_MILLIS": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "APPLICATION_DATA_LINK",
+                "APPLICATION_DOC_LINK",
+                "APPLICATION_ID",
+                "APPLICATION_NAME",
+                "APPLICATION_PATH",
+                "APP_PACKAGE_SOURCE",
+                "BUFFER_SPOOLING",
+                "CHECKPOINT_WINDOW_COUNT",
+                "CONTAINER_JVM_OPTIONS",
+                "CONTAINER_OPTS_CONFIGURATOR",
+                "DEBUG",
+                "ENABLE_STATS_RECORDING",
+                "GATEWAY_CONNECT_ADDRESS",
+                "GATEWAY_PASSWORD",
+                "GATEWAY_USER_NAME",
+                "GATEWAY_USE_SSL",
+                "HEARTBEAT_INTERVAL_MILLIS",
+                "HEARTBEAT_LISTENER_THREAD_COUNT",
+                "HEARTBEAT_TIMEOUT_MILLIS",
+                "MASTER_MEMORY_MB",
+                "METRICS_TRANSPORT",
+                "RESOURCE_ALLOCATION_TIMEOUT_MILLIS",
+                "RPC_LATENCY_COMPENSATION_SAMPLES",
+                "STATS_MAX_ALLOWABLE_WINDOWS_LAG",
+                "STREAMING_WINDOW_SIZE_MILLIS",
+                "STRING_CODECS",
+                "THROUGHPUT_CALCULATION_INTERVAL",
+                "THROUGHPUT_CALCULATION_MAX_SAMPLES",
+                "TUPLE_RECORDING_PART_FILE_SIZE",
+                "TUPLE_RECORDING_PART_FILE_TIME_MILLIS"
+            ],
+            "type": "object"
+        },
+        "operators": {
+            "items": [
+                {
+                    "properties": {
+                        "attributes": {
+                            "properties": {
+                                "ACTIVATION_WINDOW_ID": {
+                                    "type": "string"
+                                },
+                                "APPLICATION_WINDOW_COUNT": {
+                                    "type": "string"
+                                },
+                                "AUTO_RECORD": {
+                                    "type": "boolean"
+                                },
+                                "CHECKPOINT_WINDOW_COUNT": {
+                                    "type": "string"
+                                },
+                                "COUNTERS_AGGREGATOR": {
+                                    "anyOf": [
+                                          { "type": "null" },
+                                          { "properties": {}, "type": "object" }
+                                    ]
+                                },
+                                "CUSTOM_METRIC_AGGREGATOR": {
+                                    "type": "null"
+                                },
+                                "CUSTOM_METRIC_DIMENSIONS_SCHEME": {
+                                    "type": "null"
+                                },
+                                "JVM_OPTIONS": {
+                                   "oneof": [
+                                    {"type": "string"},
+                                    {"properties": {},"type": "object"}
+                                   ]
+                                },
+                                "LOCALITY_HOST": {
+                                    "type": "null"
+                                },
+                                "LOCALITY_RACK": {
+                                    "type": "null"
+                                },
+                                "MEMORY_MB": {
+                                    "type": "string"
+                                },
+                                "PARTITIONER": {
+                                    "type": "null"
+                                },
+                                "PROCESSING_MODE": {
+                                    "type": "string"
+                                },
+                                "RECOVERY_ATTEMPTS": {
+                                    "type": "null"
+                                },
+                                "SLIDE_BY_WINDOW_COUNT": {
+                                    "type": "null"
+                                },
+                                "SPIN_MILLIS": {
+                                    "type": "string"
+                                },
+                                "STATELESS": {
+                                    "type": "boolean"
+                                },
+                                "STATS_LISTENERS": {
+                                    "type": "null"
+                                },
+                                "STORAGE_AGENT": {
+                                    "properties": {
+                                        "path": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "path"
+                                    ],
+                                    "type": "object"
+                                },
+                                "TIMEOUT_WINDOW_COUNT": {
+                                    "type": "string"
+                                },
+                                "VCORES": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "ACTIVATION_WINDOW_ID",
+                                "APPLICATION_WINDOW_COUNT",
+                                "AUTO_RECORD",
+                                "CHECKPOINT_WINDOW_COUNT",
+                                "COUNTERS_AGGREGATOR",
+                                "CUSTOM_METRIC_AGGREGATOR",
+                                "CUSTOM_METRIC_DIMENSIONS_SCHEME",
+                                "JVM_OPTIONS",
+                                "LOCALITY_HOST",
+                                "LOCALITY_RACK",
+                                "MEMORY_MB",
+                                "PARTITIONER",
+                                "PROCESSING_MODE",
+                                "RECOVERY_ATTEMPTS",
+                                "SLIDE_BY_WINDOW_COUNT",
+                                "SPIN_MILLIS",
+                                "STATELESS",
+                                "STATS_LISTENERS",
+                                "STORAGE_AGENT",
+                                "TIMEOUT_WINDOW_COUNT",
+                                "VCORES"
+                            ],
+                            "type": "object"
+                        },
+                        "class": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "ports": {
+                            "items": [
+                                {
+                                    "properties": {
+                                        "attributes": {
+                                            "properties": {
+                                                "AUTO_RECORD": {
+                                                    "type": "boolean"
+                                                },
+                                                "BUFFER_MEMORY_MB": {
+                                                    "type": "string"
+                                                },
+                                                "IS_OUTPUT_UNIFIED": {
+                                                    "type": "boolean"
+                                                },
+                                                "PARTITION_PARALLEL": {
+                                                    "type": "boolean"
+                                                },
+                                                "QUEUE_CAPACITY": {
+                                                    "type": "string"
+                                                },
+                                                "SPIN_MILLIS": {
+                                                    "type": "string"
+                                                },
+                                                "STREAM_CODEC": {
+                                                    "type": "null"
+                                                },
+                                                "UNIFIER_LIMIT": {
+                                                    "type": "string"
+                                                },
+                                                "UNIFIER_SINGLE_FINAL": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "AUTO_RECORD",
+                                                "BUFFER_MEMORY_MB",
+                                                "IS_OUTPUT_UNIFIED",
+                                                "PARTITION_PARALLEL",
+                                                "QUEUE_CAPACITY",
+                                                "SPIN_MILLIS",
+                                                "STREAM_CODEC",
+                                                "UNIFIER_LIMIT",
+                                                "UNIFIER_SINGLE_FINAL"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "attributes",
+                                        "name",
+                                        "type"
+                                    ],
+                                    "type": "object"
+                                }
+                            ],
+                            "type": "array"
+                        },
+                        "properties": {
+                            "properties": {
+                                "@class": {
+                                    "type": "string"
+                                },
+                                "base": {
+                                    "type": "string"
+                                },
+                                "debug": {
+                                    "type": "boolean"
+                                },
+                                "maxvalue": {
+                                    "type": "string"
+                                },
+                                "minvalue": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "silent": {
+                                    "type": "boolean"
+                                },
+                                "stringFormat": {
+                                    "type": "null"
+                                },
+                                "tuplesBlast": {
+                                    "type": "string"
+                                },
+                                "tuplesBlastIntervalMillis": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "@class",
+                                "name"
+                            ],
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "attributes",
+                        "class",
+                        "name",
+                        "ports",
+                        "properties"
+                    ],
+                    "type": "object"
+                }
+            ],
+            "type": "array"
+        },
+        "streams": {
+            "items": [
+                {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "sinks": {
+                            "items": [
+                                {
+                                    "properties": {
+                                        "operatorName": {
+                                            "type": "string"
+                                        },
+                                        "portName": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "operatorName",
+                                        "portName"
+                                    ],
+                                    "type": "object"
+                                }
+                            ],
+                            "type": "array"
+                        },
+                        "source": {
+                            "properties": {
+                                "operatorName": {
+                                    "type": "string"
+                                },
+                                "portName": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "operatorName",
+                                "portName"
+                            ],
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "sinks",
+                        "source"
+                    ],
+                    "type": "object"
+                }
+            ],
+            "type": "array"
+        }
+    },
+    "required": [
+        "attributes",
+        "operators",
+        "streams"
+    ],
+    "type": "object"
+}

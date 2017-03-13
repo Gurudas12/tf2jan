@@ -1,0 +1,54 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${S3N_S}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_S}
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+
+*** Test Cases ***
+S2H_Copy_At_Non-Existent_Location
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}/non/existent/path
+
+S2H_Copy_5GB_File
+    [Tags]    slow
+    DTCP Launch And Validate    ${S3N_S}/5gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_0KB_File
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/0kb.file    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_Blank_Dir
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/blank-dir    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_Dir_500-Depth
+    [Tags]    slow
+    DTCP Launch And Validate    ${S3N_S}/dir-with-500-depth/    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_2_File_2_Dir_Sources
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/generic.file1 ${S3N_S}/same-dir-str1 ${S3N_S}/same-dir-str2 ${S3N_S}/generic.file2    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_2_Dir_With_Same_Name
+    DTCP Launch And Validate    ${S3N_S}/dir-with-same-name1/COMMON-NAME ${S3N_S}/dir-with-same-name2/COMMON-NAME    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_Dir_With_Large_Num_Of_Small_Files
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${S3N_S}/dir-with-large-num-of-small-files/    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_Dir_With_Recursive_Random_Str
+    [Tags]    sanity    slow
+    DTCP Launch And Validate    ${S3N_S}/dir-with-rec-random-str/    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_Dir_With_Symlink
+    DTCP Launch And Validate    ${S3N_S}/dir-with-symlink    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_Existing_File_At_dest-diff-sized
+    DTCP Launch And Validate    ${S3N_S}/existing-file-at-destination-diff-size.file    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}
+
+S2H_Copy_Existing_Dir_At_dest-diff-sized
+    DTCP Launch And Validate    ${S3N_S}/existing-dir-at-destination-diff-size    ${oHDFS}${BASEDIR}/ing-dest-data/s3n-to-hdfs/${TEST_NAME}

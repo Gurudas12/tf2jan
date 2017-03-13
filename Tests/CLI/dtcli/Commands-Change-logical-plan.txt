@@ -1,0 +1,42 @@
+*** Settings ***
+Documentation     GLOBAL COMMANDS EXCEPT WHEN CHANGING LOGICAL PLAN
+Suite Setup       Dtcli Setup
+Resource          dtcli_resources.txt
+Library           OperatingSystem    # For accessing OS environment variables
+Library           String    # A test library for string manipulation and verification. String is Robot Framework's standard library for manipulating strings (e.g. Replace String Using Regexp, Split To Lines) and verifying their contents (e.g. Should Be String).
+
+*** Variables ***
+#${dtinstall}      /home/hduser/datatorrent/current/
+#${pkg_pi_demo}    ${dtinstall}${/}demos${/}pi-demo-3.0.0-RC2.apa
+#${pkg_dimensions_demo}    ${dtinstall}${/}demos${/}dimensions-demo-3.0.0-RC2.apa
+#${pkg_frauddetect_demo}    ${dtinstall}${/}demos${/}frauddetect-demo-3.0.0-RC2.apa
+#${pkg_machinedata_demo}    ${dtinstall}${/}demos${/}machinedata-demo-3.0.0-RC2.apa
+#${pkg_mobile_demo}    ${dtinstall}${/}demos${/}mobile-demo-3.0.0-RC2.apa
+#${pkg_twitter_demo}    ${dtinstall}${/}demos${/}twitter-demo-3.0.0-RC2.apa
+#${pkg_wordcount_demo}    ${dtinstall}${/}demos${/}wordcount-demo-3.0.0-RC2.apa
+#${pkg_yahoo_finance_demo}    ${dtinstall}${/}demos${/}yahoo-finance-demo-3.0.0-RC2.apa
+#${pkg_ingestion_apa}    ${dtinstall}${/}apps${/}ingestion-app-1.0.0-RC1.apa
+#${pkg_ingestion_jar}    /home/dttbc/IngestionAppTesting/.ingestion-app-2.2.0-SNAPSHOT.jar
+
+*** Test Cases ***
+dtcli-CLP_help_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    help
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    begin-logical-plan-change    prompt=logical-plan-change (${app_id}) >
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    #Get individual command help:
+    ${cmd_stdout1}=    Write Read Prompt    ${cmd} create-operator    prompt=) >
+    ${cmd_stdout1}=    Remove Color Codes    ${cmd_stdout1}
+    Should Contain    ${cmd_stdout1}    This usage is only valid when changing logical plan (via begin-logical-plan-change)${\n}create-operator operator-name class-name${\n}
+    [Teardown]    Dtcli Exit    app_id=${app_id}    abort=${True}
+
+dtcli-CLP_add-stream-sink_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    add-stream-sink
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    begin-logical-plan-change    prompt=logical-plan-change (${app_id}) >
+    Verify Usage    ${cmd}    Usage: add-stream-sink <stream-name> <to-operator-name> <to-port-name>    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}    abort=${True}

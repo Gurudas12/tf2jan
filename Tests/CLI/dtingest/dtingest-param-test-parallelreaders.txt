@@ -1,0 +1,50 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${S3N_S}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_S}
+${S3N_D}          s3n://${S3NUSER}:${S3NPSWD}@${S3BCKT_D}
+
+*** Test Cases ***
+PAR_Copy_File_Parallel-5_With_OTC
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/ParallelRead/${TEST_NAME}    readers=5
+
+PAR_Copy_File_Parallel-5_Without_OTC
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/ParallelRead/${TEST_NAME}    readers=5    otc=OFF
+
+PAR_Copy_File_Parallel-1
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/ParallelRead/${TEST_NAME}    readers=1
+
+PAR_Copy_File_Parallel-10
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/ParallelRead/${TEST_NAME}    readers=10
+
+PAR_Copy_File_Parallel-100
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/generic.file    ${oHDFS}${BASEDIR}/ing-dest-data/ParallelRead/${TEST_NAME}    readers=100
+
+PAR_Dummy_Test
+    [Tags]    sanity
+    Comment    This is just a placeholder
+
+PAR_Dir_With_5-depth_N2F
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-5-depth/    ${FTP}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}/    readers=7
+
+PAR_Dir_With_5-depth_F2S
+    [Tags]    sanity
+    DTCP Launch And Validate    ${FTP}${BASEDIR}/ing-source-data/dir-with-5-depth/    ${S3N_D}/ScanInterval/${TEST_NAME}/    readers=9
+
+PAR_Dir_With_5-depth_S2N
+    [Tags]    sanity
+    DTCP Launch And Validate    ${S3N_S}/dir-with-5-depth/    ${NFS}${BASEDIR}/ing-dest-data/ScanInterval/${TEST_NAME}/    readers=11
+

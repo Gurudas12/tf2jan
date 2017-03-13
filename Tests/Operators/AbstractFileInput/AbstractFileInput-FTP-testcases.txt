@@ -1,0 +1,53 @@
+*** Settings ***
+Suite Setup       Dtcli Setup
+Resource          AbstractFileInput-resources.txt
+Library           Collections
+
+*** Test Cases ***
+FTP_Copy_1GB
+    [Tags]    SANITY
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${FTP_INDIR}/1gb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+FTP_Copy_dir-with-different-file-types
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${FTP_INDIR}/dir-with-different-file-types    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+FTP_Copy_dir-with-15-depth
+    [Tags]    SPOI-9544
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${FTP_INDIR}/dir-with-15-depth    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+FTP_Test-For-Fault-Tolerance_bigdata
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${FTP_INDIR}/1gb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}    testFaultTolerance=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+FTP_Test-For-Dynamic-Scalability_bigdata
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${FTP_INDIR}/1gb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}
+    RUNit    ${params}    testDynamicScaling=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+FTP_Test_scanIntervalMillis-from-logs-1m
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${FTP_INDIR}/1mb.file    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanIntervalMillis=60000    dt.operator.read.prop.partitionCount=1
+    RUNit    ${params}    validateData=${False}
+    Sleep    2m    Scan is 1minute. So at least 2 "scanning" messages should appear in log.
+    ${cid}=    Get Container Id From Operator Name    ${base_get_url}    ${app_id}    ${OPERATOR_NAME}
+    ${dt_log}=    Get Container Logs    ${base_get_url}    ${app_id}    ${cid}    dt.log
+    Check Time Difference Between Log Lines    ${dt_log}    AbstractFileInputOperator: Scanning    60    #in seconds
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+FTP_Test_filePatternRegexp-contains-EXT
+    [Setup]    Dtcli Enter
+    ${params}=    Create Dictionary    dt.operator.read.prop.directory=${FTP_INDIR}/file-filter-input-dir    dt.operator.write.prop.filePath=${HDFS_OUTDIR}/${TEST_NAME}    dt.operator.read.prop.scanner.filePatternRegexp=.*EXT.*
+    RUNit    ${params}    filefilter=*EXT*
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}

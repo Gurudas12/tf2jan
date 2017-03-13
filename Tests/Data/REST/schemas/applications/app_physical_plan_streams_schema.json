@@ -1,0 +1,66 @@
+{
+  "required": [
+    "streams"
+  ], 
+  "type": "object", 
+  "properties": {
+    "streams": {
+      "items": [
+        {
+          "required": [
+            "locality", 
+            "logicalName", 
+            "sinks", 
+            "source"
+          ], 
+          "type": "object", 
+          "properties": {
+            "source": {
+              "required": [
+                "operatorId", 
+                "portName"
+              ], 
+              "type": "object", 
+              "properties": {
+                "portName": {
+                  "type": "string"
+                }, 
+                "operatorId": {
+                  "type": "string"
+                }
+              }
+            }, 
+            "logicalName": {
+              "type": "string"
+            }, 
+            "sinks": {
+              "items": [
+                {
+                  "required": [
+                    "operatorId", 
+                    "portName"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "portName": {
+                      "type": "string"
+                    }, 
+                    "operatorId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ], 
+              "type": "array"
+            }, 
+            "locality": {
+              "type": "null"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}
+

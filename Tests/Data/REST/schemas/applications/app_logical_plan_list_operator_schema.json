@@ -1,0 +1,336 @@
+{
+    "properties": {
+        "operators": {
+            "items": [
+                {
+                    "properties": {
+                        "autoMetrics": {
+                            "type": "null"
+                        },
+                        "checkpointTimeMA": {
+                            "type": "string"
+                        },
+                        "className": {
+                            "type": "string"
+                        },
+                        "containerIds": {
+                            "items": [
+                                {
+                                    "type": "string"
+                                }
+                            ],
+                            "type": "array"
+                        },
+                        "counters": {
+                            "properties": {
+                                "BLOCKS": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                },
+                                "BYTES": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                },
+                                "PROCESSED_FILES": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                },
+                                "RECORDS": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                },
+                                "THRESHOLD": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                },
+                                "TIME": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                },
+                                "TIME_TAKEN_FOR_COMPRESSION": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                },
+                                "TOTAL_BYTES_WRITTEN": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                },
+                                "TOTAL_TIME_WRITING_MILLISECONDS": {
+                                    "properties": {
+                                        "avg": {
+                                            "type": "string"
+                                        },
+                                        "max": {
+                                            "type": "string"
+                                        },
+                                        "min": {
+                                            "type": "string"
+                                        },
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "avg",
+                                        "max",
+                                        "min",
+                                        "sum"
+                                    ],
+                                    "type": "object"
+                                }
+                            },
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        },
+                        "cpuPercentageMA": {
+                            "type": "string"
+                        },
+                        "currentWindowId": {
+                            "type": "string"
+                        },
+                        "failureCount": {
+                            "type": "string"
+                        },
+                        "hosts": {
+                            "items": [
+                                {
+                                    "type": "string"
+                                }
+                            ],
+                            "type": "array"
+                        },
+                        "lastHeartbeat": {
+                            "type": "string"
+                        },
+                        "latencyMA": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "partitions": {
+                            "items": [
+                                {
+                                    "type": "string"
+                                }
+                            ],
+                            "type": "array"
+                        },
+                        "recoveryWindowId": {
+                            "type": "string"
+                        },
+                        "status": {
+                            "properties": {
+                                "ACTIVE": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "ACTIVE"
+                            ],
+                            "type": "object"
+                        },
+                        "totalTuplesEmitted": {
+                            "type": "string"
+                        },
+                        "totalTuplesProcessed": {
+                            "type": "string"
+                        },
+                        "tuplesEmittedPSMA": {
+                            "type": "string"
+                        },
+                        "tuplesProcessedPSMA": {
+                            "type": "string"
+                        },
+                        "unifiers": {
+                            "items": [],
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "autoMetrics",
+                        "checkpointTimeMA",
+                        "className",
+                        "containerIds",
+                        "counters",
+                        "cpuPercentageMA",
+                        "currentWindowId",
+                        "failureCount",
+                        "hosts",
+                        "lastHeartbeat",
+                        "latencyMA",
+                        "name",
+                        "partitions",
+                        "recoveryWindowId",
+                        "status",
+                        "totalTuplesEmitted",
+                        "totalTuplesProcessed",
+                        "tuplesEmittedPSMA",
+                        "tuplesProcessedPSMA",
+                        "unifiers"
+                    ],
+                    "type": "object"
+                }
+            ],
+            "type": "array"
+        }
+    },
+    "required": [
+        "operators"
+    ],
+    "type": "object"
+}

@@ -1,0 +1,596 @@
+*** Settings ***
+Documentation     *DT Gateway REST Test case Suite*
+Suite Setup       REST Suite Setup
+Suite Teardown    REST Suite Teardown
+Resource          resource.txt    # Importing resources
+Library           String
+Library           OperatingSystem
+Library           ../../lib/rest/DTREST.py
+Library           ../../lib/rest/JsonValidator.py
+
+*** Variables ***
+
+*** Test Cases ***
+REST API Ping
+    [Documentation]    Test API ping
+    #    ${myvarsdict}=    LoadYaml    /var/dt/tf/etc/environments/MyNewTestEnvironment.yaml
+    #    Log Many    ${myvarsdict}
+    REST API Ping    about    ${dt_version}    True
+    #REST API VERSION
+    #Comment    REST Cluster Metrics
+    #    [Documentation]    test case to test api cluster
+    #    REST API Cluster    cluster/metrics
+
+REST API VERSION
+    [Documentation]    *ConfigProperties*
+    REST Get API Dict    config/properties
+    ${appPackages}=    getAppPackages    ${base_get_url}
+    Log Many    ${appPackages}
+
+REST Import AppPackages
+    [Documentation]    *Import App Packages*
+    importAppPackages    ${base_get_url}
+
+Check Cluster Metrics Json
+    ${api_response}=    get_api    http://node17.morado.com:9090/ws/v2    cluster/metrics
+    Log    ${api_response}
+    Log Many    Validate jsonschema from file    ${api_response}    ${tc_schemas}${TEST NAME}${/}schema.json
+    Validate jsonschema from file    ${api_response}    ${tc_schemas}${TEST NAME}${/}schema.json
+
+Check Running Applications Json
+    ${api_response}=    get_api    http://node17.morado.com:9090/ws/v2    applications?states=RUNNING
+    Log    ${api_response}
+    #Log Many    Validate jsonschema from file    ${api_response}    ${tc_schemas}${TEST NAME}${/}schema.json
+    Validate jsonschema from file    ${api_response}    /var/dt/tf/Tests/Data/REST/schemas/applications/app_state_schema.json
+
+Launch PiDemo
+    ${api_response}=    post_api    http://node17.morado.com:9090/ws/v2    appPackages/dtadmin/pi-demo/3.0.0/applications/PiDemo/launch    {"dt.attr.APPLICATION_NAME":"PiDemoQATestLaunch1"}
+    Log    ${api_response}
+
+Launch PiDemo With Same Name
+    ${api_response}=    post_api    http://node17.morado.com:9090/ws/v2    appPackages/dtadmin/pi-demo/3.0.0/applications/PiDemo/launch    {"dt.attr.APPLICATION_NAME":"PiDemoQATestLaunch"}
+    Log    ${api_response}
+    ${api_response}=    Run Keyword And Expect Error    *    post_api    http://node17.morado.com:9090/ws/v2    appPackages/dtadmin/pi-demo/3.0.0/applications/PiDemo/launch    {"dt.attr.APPLICATION_NAME":"PiDemoQATestLaunch"}
+    Log    ${api_response}
+
+Upload Benchmarks
+    ${api_response}=    post_AppPackage    http://node17.morado.com:9090/ws/v2    malhar-benchmark-3.0.0-RC5.apa    /var/dt/tf/    False    appPackages?filename=
+    Log    ${api_response}
+    #Log Many    Validate jsonschema from file    ${api_response}    ${tc_schemas}${TEST NAME}${/}schema.json
+
+Check Application Info Json
+    ${api_response}=    get_api    http://node37.morado.com:9091/ws/v2    applications/application_1436251522066_0008
+    Log    ${api_response}
+    #Log Many    Validate jsonschema from file    ${api_response}    ${tc_schemas}${TEST NAME}${/}schema.json
+    Validate jsonschema from file    ${api_response}    /var/dt/tf/Tests/Data/REST/schemas/applications/app_info_schema.json
+
+Check Application Logical Plan Json
+    ${api_response}=    get_api    http://node37.morado.com:9091/ws/v2    applications/application_1436251522066_0186/logicalPlan
+    Log ${api_response}
+    #Log Many    Validate jsonschema from file    ${api_response}    ${tc_schemas}${TEST NAME}${/}schema.json
+    Validate jsonschema from file    ${api_response}    /var/dt/tf/Tests/Data/REST/schemas/applications/app_logical_plan_schema.json
+
+Check Application Logical Plan Attributes
+    ${api_response}=    get_api    ${base_get_url}    applications/${app_id}/logicalPlan/attributes
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}/applications/app_logical_plan_attr_schema.json
+
+Check Application Logical Plan Operators
+    ${api_response}=    get_api    ${base_get_url}    applications/${app_id}/logicalPlan/operators
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}/applications/app_logical_plan_list_operator_schema.json
+
+Check Info Of Logical operator Picalc
+    ${api_response}=    get_api    ${base_get_url}    applications/${app_id}/logicalPlan/operators/picalc
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${tc_schemas}/Check_PiCalc_Logical_Info/app_logical_plan_picalc_schema.json
+    #Generate Schema Running Applications
+    #    Record    http://node37.morado.com:9092/ws/v2/applications?states=RUNNING    ${REST_JSON_Schema_loc}/apps_running_schema.json
+    #Validate JSON Running Applications
+    #    validate    http://node19.morado.com:9090/ws/v2/about    ${REST_JSON_Schema_loc}/apps_running_schema.json
+
+Check Application Physical Plan
+    ${api}=    Set Variable    applications/${app_id}/physicalPlan
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_schema.json
+
+Check Application Physical Plan Containers
+    ${api}=    Set Variable    applications/${app_id}/physicalPlan/containers
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_containers_schema.json
+
+Check Application Physical Plan Container
+    ${containers}=    getContainersForApp    ${base_get_url}    ${app_id}
+    ${container_Id}=    Get From List    ${containers}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}containers${/}${container_Id}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_container_schema.json
+
+Check Application Physical Plan Container Logs
+    ${containers}=    getContainersForApp    ${base_get_url}    ${app_id}
+    ${container_Id}=    Get From List    ${containers}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}containers${/}${container_Id}${/}logs
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_container_logs_schema.json
+
+Check Application Physical Plan Container Log dtlog
+    [Documentation]    Add extra TCs for downloading big log files with different range values
+    ${containers}=    getContainersForApp    ${base_get_url}    ${app_id}
+    ${container_Id}=    Get From List    ${containers}    -1
+    ${api_response}=    Get Application Physical Plan Container Log    ${base_get_url}    ${app_id}    ${container_Id}    log_name=dt.log    start=10
+    ...    end=1000000000000    grep=INFO    includeOffset=true
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_container_logs_details_schema.json
+
+Check Application Physical Plan Container Log stderr
+    ${containers}=    getContainersForApp    ${base_get_url}    ${app_id}
+    ${container_Id}=    Get From List    ${containers}    -1
+    ${api_response}=    Get Application Physical Plan Container Log    ${base_get_url}    ${app_id}    ${container_Id}    log_name=stderr    start=0
+    ...    end=100999    grep=WARN    includeOffset=false
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_container_logs_details_schema.json
+
+Check Application Physical Plan Container Log stdout
+    ${containers}=    getContainersForApp    ${base_get_url}    ${app_id}
+    ${container_Id}=    Get From List    ${containers}    -1
+    ${api_response}=    Get Application Physical Plan Container Log    ${base_get_url}    ${app_id}    ${container_Id}    log_name=stdout    start=5
+    ...    end=9999    grep=DEBUG    includeOffset=true
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_container_logs_details_schema.json
+
+Depr Check Application Physical Plan Container States
+    ${state}=    Set Variable    ACTIVE
+    ${api}=    Set Variable    applications/${app_id}/physicalPlan/containers?states=ACTIVE
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_containers_schema.json
+    ${containers_from_json}=    findMatchingStrings    ${api_response}    "id":\\s*"(container_\\w+)"
+    ${containers_from_api}=    getContainersForApp    ${base_get_url}    ${app_id}    ${state}
+    ${ret}=    Compare Lists    ${containers_from_json}    ${containers_from_api}
+    Should Be Equal    ${ret}    0    msg=Containers from API and JSON are not same.
+
+Check Application Physical Plan Container States
+    #NEW
+    ${containers}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=NEW
+    #ALLOCATED
+    ${containers}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=ALLOCATED
+    #ACTIVE
+    ${containers}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=ACTIVE
+    #KILLED
+    ${containers}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=KILLED
+    #IN-VA_LID_S-TA_TE
+    ${containers}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=IN-VA_LID_S-TA_TE
+    #ACTIVE,ALLOCATED
+    ${containers}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=ACTIVE,ALLOCATED
+    #ACTIVE,KILLED vs. KILLED,ACTIVE
+    ${containers1}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=ACTIVE,KILLED
+    ${containers2}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=KILLED,ACTIVE
+    ${ret}=    Compare Lists    ${containers1}    ${containers2}
+    Should Be Equal    ${ret}    0    msg=Containers from 'ACTIVE,KILLED' and 'KILLED,ACTIVE' calls are not same.
+    #NEW,KILLED,ALLOCATED,ACTIVE vs. ALL_CONTAINERS
+    ${containers1}=    Validate Application Physical Plan Container States    ${REST_JSON_Schema_loc}    ${base_get_url}    ${app_id}    state=NEW,KILLED,ALLOCATED,ACTIVE
+    ${api_response}=    get_api    ${base_get_url}    applications/${app_id}/physicalPlan/containers
+    ${containers2}=    findMatchingStrings    ${api_response}    "id":\\s*"(container_\\w+)"
+    ${ret}=    Compare Lists    ${containers1}    ${containers2}
+    Should Be Equal    ${ret}    0    msg=Containers from 'ACTIVE,KILLED' and 'KILLED,ACTIVE' calls are not same.
+
+Check Application Physical Plan Container Stats Meta
+    ${api}=    Set Variable    applications/${app_id}/physicalPlan/containers/stats/meta
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    #ISSUES:
+    #1. Currently returns 404. Automate once fixed (no bug logged yet)
+
+Check Application Physical Plan Container Stats
+    ${startTime}=    Set Variable    1
+    ${endTime}=    Set Variable    100000000000
+    ${api}=    Set Variable    applications/${app_id}/physicalPlan/containers/stats?startTime=${startTime}&endTime=${endTime}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    #ISSUES:
+    #1. Currently returns message: "This container is not found". Automate once fixed (no bug logged yet)
+
+Check Application Physical Plan Operators
+    ${api}=    Set Variable    applications/${app_id}/physicalPlan/operators
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operators_schema.json
+
+Check Application Physical Plan Operator
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_schema.json
+
+Check Application Physical Plan Operator DeployHistory
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}deployHistory
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_deployHistory_schema.json
+
+Check Application Physical Plan Operator Ports
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}ports
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_ports_schema.json
+
+Check Application Physical Plan Operator Port
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${ports}=    getOperatorPortsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${port_name}=    Get From List    ${ports}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}ports${/}${port_name}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_port_schema.json
+
+Check Application Physical Plan Operator Properties
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}properties
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_properties_schema.json
+    #ISSUES:
+    #1. Sometime returns ('Invalid status code returned: ', 500). Bug not logged yet.
+    #2. Change schema in test case as its not generic.
+
+Check Application Physical Plan Operator Recordings
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}recordings
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_recordings_schema.json
+    #ISSUES:
+    #Inconsistent with dtcli.
+    #Returns only the recordings which are not ended. All recordings should be returned.
+
+Check Application Physical Plan Operator Recording
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${rec_Id}=    Get From List    ${recs}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}recordings${/}${rec_Id}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_recording_schema.json
+    #ISSUES:
+    #1. windowIdRanges shows same value for low and high
+
+Check Application Physical Plan Operator Recording Tuples
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${rec_Id}=    Get From List    ${recs}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}recordings${/}${rec_Id}${/}tuples
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_recording_tuples_schema.json
+    #ISSUES:
+    #1. Returns only first 1000 tuples, no documentation says this, either doc it or return full list
+
+Check Application Physical Plan Operator Recording Tuples Query
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${rec_Id}=    Get From List    ${recs}    -1
+    ${wins}=    getOperatorRecordingWindowsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ${rec_Id}
+    ${win_Id}=    Get From List    ${wins}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}recordings${/}${rec_Id}${/}tuples
+    # for 'offset'
+    ${api_response}=    get_api    ${base_get_url}    ${api}?offset=2
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_recording_tuples_schema.json
+    # for 'startWindow'
+    ${api_response}=    get_api    ${base_get_url}    ${api}?startWindow=2
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_recording_tuples_schema.json
+    # for 'limit'
+    ${api_response}=    get_api    ${base_get_url}    ${api}?limit=4
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_recording_tuples_schema.json
+    # for 'ports'
+    ${api_response}=    get_api    ${base_get_url}    ${api}?ports=4
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_recording_tuples_schema.json
+    # for 'executeEmptyWindow'
+    ${api_response}=    get_api    ${base_get_url}    ${api}?executeEmptyWindow
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_operator_recording_tuples_schema.json
+    #ISSUES:
+    #1. Recording info is not consistent, if the recording is stopped, same info shd be returned every time
+    #2. When startWindow is specified, windows which are before that are returned with blank json
+    #3. When startWindow is specified, duplicate window ids are returned
+    #4. When offset is specified, duplicate windows with same content are returned
+    #5. When limit is specified, one extra window with blank tuple info is returned
+    #6. What are the values for 'executeEmptyWindow'?
+
+Delete Application Physical Plan Recording
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ended=true
+    ${rec_Id}=    Get From List    ${recs}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}recordings${/}${rec_Id}
+    ${api_response}=    delete_api    ${base_get_url}    ${api}
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ended=true
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    List Should Not Contain Value    ${recs}    ${rec_Id}    msg="Deleted recording should not be present in list!"
+
+Post Application Physical Plan Container Kill
+    ${containers}=    getContainersForApp    ${base_get_url}    ${app_id}    state=ACTIVE
+    ${container_Id}=    Get From List    ${containers}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}containers${/}${container_Id}${/}kill
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+    Sleep    5s    reason="Wait for container list to refresh."
+    ${containers}=    getContainersForApp    ${base_get_url}    ${app_id}    state=KILLED
+    List Should Contain Value    ${containers}    ${container_Id}    msg="Killed container should be present in list!"
+
+Post Application Physical Plan Operator Port Recording Start
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${ports}=    getOperatorPortsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${port_name}=    Get From List    ${ports}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    Log    ${recs}
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}ports${/}${port_name}${/}recordings${/}start
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+    ${rec_Id}=    getValueFromJson    ${api_response}    id
+    Sleep    5s    reason="Wait for recordings list to refresh."
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    Log    ${recs}
+    List Should Contain Value    ${recs}    ${rec_Id}    msg="New recording should be present in list!"
+    #When executed twice in a row, first time: recording appears in response, second time: does not
+
+Post Application Physical Plan Operator Port Recording Start WithPayload
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${ports}=    getOperatorPortsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${port_name}=    Get From List    ${ports}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    Log    ${recs}
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}ports${/}${port_name}${/}recordings${/}start
+    ${payload}=    Set Variable    { "numWindows": 10 }
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${payload}
+    Log    ${api_response}
+    ${rec_Id}=    getValueFromJson    ${api_response}    id
+    Sleep    5s    reason="Wait for recordings list to refresh."
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    Log    ${recs}
+    List Should Contain Value    ${recs}    ${rec_Id}    msg="New recording should be present in list!"
+    #When executed twice in a row, first time: recording appears in response, second time: does not
+
+Post Application Physical Plan Operator Port Recording Stop
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${ports}=    getOperatorPortsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${port_name}=    Get From List    ${ports}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ended=true
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ended=false
+    Log    ${recs}
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}ports${/}${port_name}${/}recordings${/}stop
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+    Sleep    5s    reason="Wait for recordings list to refresh."
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ended=false
+    Log    ${recs}
+    Should Be Empty    ${recs}    msg="List should not contain any running recording! Recordings: ${recs} are still on!"
+    #ISSUES:
+    #Recordings do not get stopped
+    #For DTCLI: stop-recording does not work sometimes (when recording is on for a while)
+
+Post Application Physical Plan Operator Properties
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${operator_props}=    getOperatorProperties    ${base_get_url}    ${app_id}    ${operator_Id}
+    Comment    Getting properties
+    ${prop_key}=    Set Variable    name
+    ${orig_prop_val}=    get from dictionary    ${operator_props}    ${prop_key}
+    Comment    Setting properties
+    ${new_prop_val}=    Generate Random String
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}properties
+    ${payload}=    Set Variable    { "${prop_key}" : "${new_prop_val}" }
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${payload}
+    Log    ${api_response}
+    Comment    Getting modified properties
+    ${operator_props}=    getOperatorProperties    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${changed_prop_val}=    get from dictionary    ${operator_props}    ${prop_key}
+    #ISSUES:
+    #Gives 500 Internal Server Error
+
+Post Application Physical Plan Operators Recording Start
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    Log    ${recs}
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}recordings${/}start
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+    ${rec_Id}=    getValueFromJson    ${api_response}    id
+    Sleep    5s    reason="Wait for recordings list to refresh."
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    Log    ${recs}
+    List Should Contain Value    ${recs}    ${rec_Id}    msg="New recording should be present in list!"
+    #When executed twice in a row, first time: recording appears in response, second time: does not
+
+Post Application Physical Plan Operators Recording Start WithPayload
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    Log    ${recs}
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}recordings${/}start
+    ${payload}=    Set Variable    { "numWindows": 15 }
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${payload}
+    Log    ${api_response}
+    ${rec_Id}=    getValueFromJson    ${api_response}    id
+    Sleep    5s    reason="Wait for recordings list to refresh."
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    Log    ${recs}
+    List Should Contain Value    ${recs}    ${rec_Id}    msg="New recording should be present in list!"
+    #When executed twice in a row, first time: recording appears in response, second time: does not
+
+Post Application Physical Plan Operators Recording Stop
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_Id}=    Get From List    ${operators}    -1
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ended=true
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ended=false
+    Log    ${recs}
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}operators${/}${operator_Id}${/}recordings${/}stop
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+    Sleep    5s    reason="Wait for recordings list to refresh."
+    ${recs}=    getOperatorRecordingsForApp    ${base_get_url}    ${app_id}    ${operator_Id}    ended=false
+    Log    ${recs}
+    Should Be Empty    ${recs}    msg="List should not contain any running recording! Recordings: ${recs} are still on!"
+    #ISSUES:
+    #Recordings do not get stopped
+    #For DTCLI: stop-recording does not work sometimes (when recording is on for a while)
+
+Get Config HadoopExecutable
+    ${api}=    Set Variable    config${/}hadoopExecutable
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    ${hadoop_loc_from_api}=    getValueFromJson    ${api_response}    value
+    ${api}=    Set Variable    about
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    ${hadoop_loc_from_about}=    getValueFromJson    ${api_response}    hadoopLocation
+    Should Be Equal    ${hadoop_loc_from_api}    ${hadoop_loc_from_about}    msg="Should have same value!"
+
+Get Config IPAddresses
+    ${api}=    Set Variable    config${/}ipAddresses
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}config${/}config_ipAddresses_schema.json
+    Should Contain    ${api_response}    "127.0.0.1"    msg="Assuming that localhost IP is always listed"
+
+Get Config Issues
+    ${api}=    Set Variable    config${/}issues
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}config${/}config_issues_schema.json
+
+Get Config Properties
+    ##get all properties
+    ${api}=    Set Variable    config${/}properties
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}config${/}config_properties_schema.json
+    ##with {PROPERTY_NAME}
+    ${dict}=    createDictFromJson    ${api_response}
+    ${dict_keys}=    Get Dictionary Keys    ${dict}
+    ${prop_name}=    Get From List    ${dict_keys}    0
+    ${prop_val_from_json}=    getValueFromJson    ${api_response}    ${prop_name}
+    ${api}=    Set Variable    config${/}properties${/}${prop_name}
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    #validation
+    ${prop_val_from_api}=    createDictFromJson    ${api_response}
+    Dictionaries Should Be Equal    ${prop_val_from_json}    ${prop_val_from_api}
+
+Post Config Restart
+    ${api}=    Set Variable    config${/}restart
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+    ${api}=    Set Variable    config${/}ipAddresses
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Sleep    2s
+    Log    ${api_response}
+    ${api}=    Set Variable    config${/}ipAddresses
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Sleep    5s
+    Log    ${api_response}
+    ${api}=    Set Variable    config${/}ipAddresses
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Sleep    7s
+    ${api}=    Set Variable    config${/}ipAddresses
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Sleep    10s
+    ${api}=    Set Variable    config${/}ipAddresses
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Sleep    15s
+    ${api}=    Set Variable    config${/}ipAddresses
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+
+Get Application Physical Plan Streams
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}streams
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_streams_schema.json
+
+Get Application Physical Plan Recordings
+    ${api}=    Set Variable    applications${/}${app_id}${/}recordings
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_recordings_schema.json
+
+Get Application Logical Plan Operator Attributes
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_id}=    Get From List    ${operators}    -1
+    ${operator_name}=    getOperatorNameFromId    ${base_get_url}    ${app_id}    ${operator_id}
+    ${api}=    Set Variable    applications${/}${app_id}${/}logicalPlan${/}operators${/}${operator_name}${/}attributes
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Check For Errors    ${api_response}
+
+Get Application Logical Plan Operator Port Attributes
+    ${operators}=    getOperatorsForApp    ${base_get_url}    ${app_id}
+    ${operator_id}=    Get From List    ${operators}    -1
+    ${operator_name}=    getOperatorNameFromId    ${base_get_url}    ${app_id}    ${operator_id}
+    ${ports}=    getOperatorPortsForApp    ${base_get_url}    ${app_id}    ${operator_id}
+    ${port_name}=    Get From List    ${ports}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}logicalPlan${/}operators${/}${operator_name}${/}ports${/}${port_name}${/}attributes
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Check For Errors    ${api_response}
+
+Get Application Physical Plan Container StackTrace
+    ${containers}=    getContainersForApp    ${base_get_url}    ${app_id}
+    ${container_Id}=    Get From List    ${containers}    -1
+    ${api}=    Set Variable    applications${/}${app_id}${/}physicalPlan${/}containers${/}${container_Id}${/}stackTrace
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_physical_plan_container_stracktrace_schema.json
+
+Post Application Kill
+    ${temp_app_id}=    Launch Application    {"dt.attr.APPLICATION_NAME":"PiDemo-REST-Kill-Testing"}
+    Sleep    30s    reason="Wait for application to run."
+    ${api}=    Set Variable    applications${/}${temp_app_id}${/}kill
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+    Sleep    10s    reason="Wait for applications list to refresh."
+    ${apps_killed}=    getAppsByState    ${base_get_url}    state=KILLED
+    List Should Contain Value    ${apps_killed}    ${temp_app_id}    msg="Killed app should be present in the list!"
+
+Post Application Shutdown
+    ${temp_app_id}=    Launch Application    {"dt.attr.APPLICATION_NAME":"PiDemo-REST-Shutdown-Testing"}
+    Sleep    30s    reason="Wait for application to run."
+    ${api}=    Set Variable    applications${/}${temp_app_id}${/}shutdown
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${empty}
+    Log    ${api_response}
+    Sleep    10s    reason="Wait for applications list to refresh."
+    ${apps_shutdown}=    getAppsByState    ${base_get_url}    state=FINISHED
+    List Should Contain Value    ${apps_shutdown}    ${temp_app_id}    msg="Shutdown app should be present in the list!"
+
+Get Application Permissions
+    ${api}=    Set Variable    applications${/}${app_id}${/}permissions
+    ${api_response}=    get_api    ${base_get_url}    ${api}
+    Log    ${api_response}
+    Validate jsonschema from file    ${api_response}    ${REST_JSON_Schema_loc}${/}applications${/}app_permissions_schema.json

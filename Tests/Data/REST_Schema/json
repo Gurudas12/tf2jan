@@ -1,0 +1,78 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema", 
+    "required": true, 
+    "type": "object", 
+    "id": "#", 
+    "properties": {
+        "tuplesProcessedPSMA": {
+            "required": true, 
+            "type": "number", 
+            "id": "tuplesProcessedPSMA"
+        }, 
+        "numAppsFailed": {
+            "required": true, 
+            "type": "number", 
+            "id": "numAppsFailed"
+        }, 
+        "numContainers": {
+            "required": true, 
+            "type": "number", 
+            "id": "numContainers"
+        }, 
+        "numAppsRunning": {
+            "required": true, 
+            "type": "number", 
+            "id": "numAppsRunning"
+        }, 
+        "numAppsPending": {
+            "required": true, 
+            "type": "number", 
+            "id": "numAppsPending"
+        }, 
+        "tuplesEmittedPSMA": {
+            "required": true, 
+            "type": "number", 
+            "id": "tuplesEmittedPSMA"
+        }, 
+        "averageAge": {
+            "required": true, 
+            "type": "number", 
+            "id": "averageAge"
+        }, 
+        "cpuPercentage": {
+            "required": true, 
+            "type": "number", 
+            "id": "cpuPercentage"
+        }, 
+        "currentMemoryAllocatedMB": {
+            "required": true, 
+            "type": "number", 
+            "id": "currentMemoryAllocatedMB"
+        }, 
+        "maxMemoryAllocatedMB": {
+            "required": true, 
+            "type": "number", 
+            "id": "maxMemoryAllocatedMB"
+        }, 
+        "numAppsSubmitted": {
+            "required": true, 
+            "type": "number", 
+            "id": "numAppsSubmitted"
+        }, 
+        "numAppsFinished": {
+            "required": true, 
+            "type": "number", 
+            "id": "numAppsFinished"
+        }, 
+        "numAppsKilled": {
+            "required": true, 
+            "type": "number", 
+            "id": "numAppsKilled"
+        }, 
+        "numOperators": {
+            "required": true, 
+            "type": "number", 
+            "id": "numOperators"
+        }
+    }
+}

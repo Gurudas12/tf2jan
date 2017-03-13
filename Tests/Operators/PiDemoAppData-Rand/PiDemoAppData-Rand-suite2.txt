@@ -1,0 +1,14 @@
+*** Settings ***
+Suite Setup       Dtcli Setup
+Test Template     Run Parameter Test
+Resource          PiDemoAppData-Rand-resources.txt
+
+*** Test Cases ***    PNAME
+Test PiDemoAppData rand minvalue 112
+                      dt.application.PiDemoAppData.operator.rand.minvalue    112
+
+Test PiDemoAppData rand minvalue 121
+                      dt.application.PiDemoAppData.operator.rand.minvalue    121
+
+Test PiDemoAppData rand minvalue 117
+                      dt.application.PiDemoAppData.operator.rand.minvalue    117

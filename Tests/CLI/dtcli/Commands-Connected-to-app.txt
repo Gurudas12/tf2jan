@@ -1,0 +1,707 @@
+*** Settings ***
+Documentation     GLOBAL COMMANDS EXCEPT WHEN CHANGING LOGICAL PLAN
+Suite Setup       Dtcli Setup
+Resource          dtcli_resources.txt
+Library           OperatingSystem    # For accessing OS environment variables
+Library           String    # A test library for string manipulation and verification. String is Robot Framework's standard library for manipulating strings (e.g. Replace String Using Regexp, Split To Lines) and verifying their contents (e.g. Should Be String).
+
+*** Variables ***
+#${dtinstall}     /home/hduser/datatorrent/current/
+#${pkg_pi_demo}    ${dtinstall}${/}demos${/}pi-demo-3.0.0-RC2.apa
+#${pkg_dimensions_demo}    ${dtinstall}${/}demos${/}dimensions-demo-3.0.0-RC2.apa
+#${pkg_frauddetect_demo}    ${dtinstall}${/}demos${/}frauddetect-demo-3.0.0-RC2.apa
+#${pkg_machinedata_demo}    ${dtinstall}${/}demos${/}machinedata-demo-3.0.0-RC2.apa
+#${pkg_mobile_demo}    ${dtinstall}${/}demos${/}mobile-demo-3.0.0-RC2.apa
+#${pkg_twitter_demo}    ${dtinstall}${/}demos${/}twitter-demo-3.0.0-RC2.apa
+#${pkg_wordcount_demo}    ${dtinstall}${/}demos${/}wordcount-demo-3.0.0-RC2.apa
+#${pkg_yahoo_finance_demo}    ${dtinstall}${/}demos${/}yahoo-finance-demo-3.0.0-RC2.apa
+#${pkg_ingestion_apa}    ${dtinstall}${/}apps${/}ingestion-app-1.0.0-RC1.apa
+#${pkg_ingestion_jar}    /home/dttbc/IngestionAppTesting/.ingestion-app-2.2.0-SNAPSHOT.jar
+
+*** Test Cases ***
+dtcli_get-app-attributes_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-app-attributes
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}get-app-attributes [attribute-name]${\n}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-app-attributes_complete
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-app-attributes
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Should Contain    ${cmd_stdout}    "com.datatorrent.api.Context.DAGContext.APPLICATION_NAME": "PiDemo"
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-app-attributes_with-attr-name
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-app-attributes
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout1}=    Write Read Prompt    ${cmd}    prompt=) >
+    ${cmd_stdout2}=    Write Read Prompt    ${cmd} com.datatorrent.api.Context.DAGContext.APPLICATION_ID    prompt=) >
+    ${cmd_stdout2}=    Replace String Using Regexp    ${cmd_stdout2}    {|}    ${EMPTY}
+    Should Contain    ${cmd_stdout1}    ${cmd_stdout2}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-app-info_within-app_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-app-info
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}get-app-info [app-id]
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-app-info_within-app_json
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-info
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    "finalStatus": "UNDEFINED"
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-app-info_within-app.jsonschema
+    ${cmd_stdout1}=    Write Read Prompt    ${cmd} ${app_id}    prompt=) >
+    #Process time flags
+    ${cmd_stdout}=    Replace String Using Regexp    ${cmd_stdout}    "elapsedTime": "\\d+"    ${EMPTY}
+    ${cmd_stdout1}=    Replace String Using Regexp    ${cmd_stdout1}    "elapsedTime": "\\d+"    ${EMPTY}
+    Should Be Equal    ${cmd_stdout}    ${cmd_stdout1}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-app-info_within-app_wrong-app-id
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    get-app-info
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${app_id_X}=    Set Variable    application_1437446364060_000X
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id_X}    prompt=) >
+    Should Contain    ${cmd_stdout}    Streaming application with id ${app_id_X} is not found.
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_list-operators_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    list-operators
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}list-operators [pattern]${\n}    List operators
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_list-operators_json
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    list-operators
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/list-operators.jsonschema
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_list-operators_with-pattern_json
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    list-operators
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ACTIVE    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/list-operators.jsonschema
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_list-containers_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    list-containers
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}list-operators [pattern]${\n}    List operators
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_list-containers_json
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    list-containers
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/list-containers.jsonschema
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_list-containers_with-pattern_json
+    [Tags]    improvement
+    [Setup]    Dtcli Enter
+    Comment    ${cmd}=    Set Variable    list-containers
+    Comment    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo
+    ...    kill=${False}
+    Comment    Sleep    10s
+    Comment    ${cmd_stdout}=    Write Read Prompt    ${cmd} ACTIVE    prompt=) >
+    Comment    Check String For Errors    ${cmd_stdout}
+    Comment    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/list-operators.jsonschema
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_kill-app_within-app_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    kill-app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}kill-app [app-id ...]${\n}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_kill-app_within-app_single
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    kill-app
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Should Contain    ${cmd_stdout}    Killed application ${app_id}${\n}Kill app requested
+    [Teardown]    Dtcli Exit
+
+dtcli_kill-app_within-app_multiple
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    kill-app
+    ${app_id1}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo -D dt.application.PiDemo.attr.APPLICATION_NAME=PiDemo_1001    PiDemo_1001    kill=${False}
+    ${app_id2}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo -D dt.application.PiDemo.attr.APPLICATION_NAME=PiDemo_1002    PiDemo_1002    kill=${False}
+    ${app_id3}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo -D dt.application.PiDemo.attr.APPLICATION_NAME=PiDemo_1003    PiDemo_1003    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id1} ${app_id2} ${app_id3}    prompt=) >
+    Should Contain    ${cmd_stdout}    Killed application ${app_id1}
+    Should Contain    ${cmd_stdout}    Killed application ${app_id2}
+    Should Contain    ${cmd_stdout}    Killed application ${app_id3}
+    Should Contain    ${cmd_stdout}    Kill app requested
+    [Teardown]    Dtcli Exit
+
+dtcli_kill-app_within-app_wrong-app-id
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    kill-app
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${app_id_X}=    Set Variable    application_1437446364060_000X
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id_X}    prompt=) >
+    Should Contain    ${cmd_stdout}    Streaming application with id ${app_id_X} is not found.
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_shutdown-app_within-app_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    shutdown-app
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}shutdown-app [app-id ...]${\n}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_shutdown-app_within-app_single
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    shutdown-app
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Should Contain    ${cmd_stdout}    Shutdown requested: {}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_shutdown-app_within-app_multiple
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    shutdown-app
+    ${app_id1}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo -D dt.application.PiDemo.attr.APPLICATION_NAME=PiDemo_1001    PiDemo_1001    kill=${False}
+    ${app_id2}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo -D dt.application.PiDemo.attr.APPLICATION_NAME=PiDemo_1002    PiDemo_1002    kill=${False}
+    ${app_id3}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo -D dt.application.PiDemo.attr.APPLICATION_NAME=PiDemo_1003    PiDemo_1003    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id1} ${app_id2} ${app_id3}    prompt=) >
+    Should Contain    ${cmd_stdout}    Shutdown requested: {}
+    [Teardown]    Dtcli Exit    app_id=${app_id1}${SPACE}${app_id2}${SPACE}${app_id3}${SPACE}
+
+dtcli_shutdown-app_within-app_wrong-app-id
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    shutdown-app
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${app_id_X}=    Set Variable    application_1437446364060_000X
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${app_id_X}    prompt=) >
+    Should Contain    ${cmd_stdout}    Streaming application with id ${app_id_X} is not found.
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_kill-container_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    kill-container
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: kill-container <container-id> [<container-id> ... ]    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_kill-container_single
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    kill-container
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    list-containers    prompt=) >
+    ${containers}=    Get Containers    ${cmd_stdout}    ACTIVE
+    ${cont_1}=    Get From List    ${containers}    0
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${cont_1}    prompt=) >
+    Should Contain    ${cmd_stdout}    Kill container requested: {}
+    Sleep    5
+    ${containers}=    Get Containers    ${cmd_stdout}    ACTIVE
+    List Should Not Contain Value    ${containers}    ${cont_1}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_kill-container_multiple
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    kill-container
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout}=    Write Read Prompt    list-containers    prompt=) >
+    ${containers1}=    Get Containers    ${cmd_stdout}    ACTIVE
+    ${conts}=    Catenate    SEPARATOR=${SPACE}    ${containers1}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${conts}    prompt=) >
+    Should Contain    ${cmd_stdout}    Kill container requested: {}
+    Sleep    5
+    ${containers2}=    Get Containers    ${cmd_stdout}    ACTIVE
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_dump-properties-file_within-app-usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    dump-properties-file
+    ${ingestion_FS_op}=    Set Variable    com.datatorrent.apps.ingestion.io.input.IngestionFileSplitter
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: dump-properties-file <out-file> [<jar-file>] [<class-name>]    prompt=) >
+    #EXAMPLES:
+    Comment    EXAMPLE: Ingestion    default    #bug
+    ${outfile_path}=    Set Variable    /tmp/dtcli_dump-properties-file_within-app.out
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${outfile_path}    prompt=dt>
+    Should Contain    ${cmd_stdout}    PlaceHolder: Until usage is decided
+    Comment    Add more testcases    once usage is decided
+    Comment    With jar file path
+    Comment    With class name
+    Comment    cat file and check schema
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-operator-attributes_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-operator-attributes
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-operator-attributes <operator-name> [<attribute-name>]    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-operator-attributes_with-opName
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-operator-attributes
+    ${opName}=    Set Variable    picalc
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${opName}    prompt=) >
+    Should Contain    ${cmd_stdout}    Should contain everything from show-logical-plan    #Currently not showing it
+    Comment    Create json schema for all req attribs from 2-3 e.g.    Validate it
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-operator-attributes_with-attrName
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-operator-attributes
+    ${opName}=    Set Variable    picalc
+    ${attrName}=    Set Variable    MEMORY_MB    #Should not be com.datatorrent.api.Context.OperatorContext.MEMORY_MB
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout1}=    Write Read Prompt    ${cmd} ${opName}    prompt=) >
+    ${cmd_stdout2}=    Write Read Prompt    ${cmd} ${opName} \ ${attrName}    prompt=) >
+    ${cmd_stdout2}=    Replace String Using Regexp    ${cmd_stdout2}    {|}    ${EMPTY}
+    Should Contain    ${cmd_stdout1}    ${cmd_stdout2}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-operator-properties_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-operator-properties
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-operator-properties <operator-name> [<property-name>]    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-operator-properties_with-opName
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-operator-properties
+    ${opName}=    Set Variable    picalc
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${opName}    prompt=) >
+    Should Contain    ${cmd_stdout}    Should contain everything from show-logical-plan    #Currently not showing it
+    Comment    Create json schema for all req attribs from 2-3 e.g.    Validate it
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-operator-properties_with-attrName
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-operator-properties
+    ${opName}=    Set Variable    picalc
+    ${propName}=    Set Variable    class
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout1}=    Write Read Prompt    ${cmd} ${opName}    prompt=) >
+    ${cmd_stdout2}=    Write Read Prompt    ${cmd} ${opName} ${propName}    prompt=) >
+    ${cmd_stdout2}=    Replace String Using Regexp    ${cmd_stdout2}    {|}    ${EMPTY}
+    Should Contain    ${cmd_stdout1}    ${cmd_stdout2}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-physical-operator-properties_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-physical-operator-properties
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-physical-operator-properties [options] <operator-id>    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-physical-operator-properties_with-opId
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-physical-operator-properties
+    ${opId}=    Set Variable    2
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${opId}    prompt=) >
+    Should Contain    ${cmd_stdout}    Errors out for now: Failed web service request for appid    #Fails sometimes
+    Comment    Create json schema for all req attribs from 2-3 e.g.    Validate it
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-physical-operator-properties_with-options
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-physical-operator-properties
+    ${opId}=    Set Variable    2
+    ${propName}=    Set Variable    -propertyName class
+    ${wait}=    Set Variable    -waitTime 10
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Sleep    10s
+    ${cmd_stdout1}=    Write Read Prompt    ${cmd} ${opId}    prompt=) >
+    Comment    With property name
+    ${cmd_stdout2}=    Write Read Prompt    ${cmd} ${opId} ${propName}    prompt=) >
+    ${cmd_stdout2}=    Replace String Using Regexp    ${cmd_stdout2}    {|}    ${EMPTY}
+    Should Contain    ${cmd_stdout1}    ${cmd_stdout2}
+    Comment    With wait time
+    Comment    With property name & wait time
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-port-attributes_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-port-attributes
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    #USAGE Check:
+    Verify Usage    ${cmd}    Usage: get-port-attributes <operator-name> <port-name> [<attribute-name>]    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-port-attributes_with-opName
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-port-attributes
+    ${opName}=    Set Variable    picalc
+    ${portName}=    Set Variable    input
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${opName} ${portName}    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    Comment    Should be compared with 'show-physical-plan' once the bug is fixed for show-physical-plan
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-port-attributes_with-attrName
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-port-attributes
+    ${opName}=    Set Variable    picalc
+    ${portName}=    Set Variable    input
+    ${attrName}=    Set Variable    UNIFIER_LIMIT
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${opName} ${portName} ${attrName}    prompt=) >
+    Check String For Errors    ${cmd_stdout}    # Bug: Does not contain only relevant attr ; gives whole json
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_start-recording_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    start-recording
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Verify Usage    ${cmd}    Usage: start-recording <operator-id> [<port-name>] [<num-windows>]    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_start-recording_with-opId
+    [Setup]    Dtcli Enter    -vvvv
+    ${start}=    Set Variable    start-recording
+    ${stop}=    Set Variable    stop-recording
+    ${opId}=    Set Variable    2
+    ${portName}=    Set Variable    input
+    ${numWin}=    Set Variable    10
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${start} ${opId}    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    ${match}    ${rec_id}=    Should Match Regexp    ${cmd_stdout}    {"id": "(\\w+)"}
+    ${cmd_stdout}=    Write Read Prompt    ${stop} ${opId}    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_start-recording_with-portName
+    [Setup]    Dtcli Enter    -vvvv
+    ${start}=    Set Variable    start-recording
+    ${stop}=    Set Variable    stop-recording
+    ${opId}=    Set Variable    2
+    ${portName}=    Set Variable    input
+    ${numWin}=    Set Variable    10
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${start} ${opId} ${portName}    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    ${match}    ${rec_id}=    Should Match Regexp    ${cmd_stdout}    {"id": "(\\w+)"}
+    ${cmd_stdout}=    Write Read Prompt    ${stop} ${opId}    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_start-recording_with-numWin
+    [Setup]    Dtcli Enter    -vvvv
+    ${start}=    Set Variable    start-recording
+    ${stop}=    Set Variable    stop-recording
+    ${opId}=    Set Variable    2
+    ${portName}=    Set Variable    input
+    ${numWin}=    Set Variable    10
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${start} ${opId} ${portName} ${numWin}    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    ${match}    ${rec_id}=    Should Match Regexp    ${cmd_stdout}    {"id": "(\\w+)"}
+    ${cmd_stdout}=    Write Read Prompt    ${stop} ${opId}    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_stop-recording_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    stop-recording
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Verify Usage    ${cmd}    Usage: stop-recording <operator-id> [<port-name>]    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_stop-recording_with-opId
+    [Setup]    Dtcli Enter    -vvvv
+    ${start}=    Set Variable    start-recording
+    ${stop}=    Set Variable    stop-recording
+    ${get}=    Set Variable    get-recording-info
+    ${opId}=    Set Variable    2
+    ${portName}=    Set Variable    input
+    ${numWin}=    Set Variable    10
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${start} ${opId}    prompt=) >
+    ${match}    ${rec_id}=    Should Match Regexp    ${cmd_stdout}    {"id": "(\\w+)"}
+    Sleep    10
+    ${cmd_stdout}=    Write Read Prompt    ${get} ${opId} ${rec_id}
+    Should Contain    ${cmd_stdout}    "ended": false
+    ${cmd_stdout}=    Write Read Prompt    ${stop} ${opId}    prompt=) >
+    ${cmd_stdout}=    Write Read Prompt    ${get} ${opId} ${rec_id}
+    Should Contain    ${cmd_stdout}    "ended": true
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_stop-recording_with-portName
+    [Setup]    Dtcli Enter    -vvvv
+    ${start}=    Set Variable    start-recording
+    ${stop}=    Set Variable    stop-recording
+    ${get}=    Set Variable    get-recording-info
+    ${opId}=    Set Variable    2
+    ${portName1}=    Set Variable    input
+    ${portName2}=    Set Variable    input
+    ${numWin}=    Set Variable    10
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${start} ${opId} ${portName1}    prompt=) >
+    ${match}    ${rec_id1}=    Should Match Regexp    ${cmd_stdout}    {"id": "(\\w+)"}
+    ${cmd_stdout}=    Write Read Prompt    ${start} ${opId} ${portName2}    prompt=) >
+    ${match}    ${rec_id2}=    Should Match Regexp    ${cmd_stdout}    {"id": "(\\w+)"}
+    Sleep    10
+    ${cmd_stdout}=    Write Read Prompt    ${stop} ${opId} ${portName1}    prompt=) >
+    ${cmd_stdout}=    Write Read Prompt    ${get} ${opId} ${rec_id1}
+    Should Contain    ${cmd_stdout}    "ended": true
+    ${cmd_stdout}=    Write Read Prompt    ${get} ${opId} ${rec_id2}
+    Should Contain    ${cmd_stdout}    "ended": false
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-recording-info_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    get-recording-info
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}get-recording-info [operator-id] [start-time]
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-recording-info_no-rec
+    [Setup]    Dtcli Enter    -vvvv
+    ${get}=    Set Variable    get-recording-info
+    ${cmd_stdout}=    Write Read Prompt    ${get}
+    Should Contain    ${cmd_stdout}    java.io.FileNotFoundException: File does not exist:
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_get-recording-info_with-opId
+    [Setup]    Dtcli Enter    -vvvv
+    ${start}=    Set Variable    start-recording
+    ${stop}=    Set Variable    stop-recording
+    ${get}=    Set Variable    get-recording-info
+    ${opId}=    Set Variable    2
+    ${portName}=    Set Variable    input
+    ${numWin}=    Set Variable    10
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${start} ${opId}    prompt=) >
+    ${match}    ${rec_id}=    Should Match Regexp    ${cmd_stdout}    {"id": "(\\w+)"}
+    Sleep    10
+    #As is schema:
+    ${cmd_stdout}=    Write Read Prompt    ${get}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-recording-info.jsonschema
+    #With opId schema:
+    ${cmd_stdout}=    Write Read Prompt    ${get} ${opId}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-recording-info.jsonschema
+    #With rec-id schema:
+    ${cmd_stdout}=    Write Read Prompt    ${get} ${opId} ${rec_id}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/get-recording-info.jsonschema
+    #Check json for status
+    ${cmd_stdout}=    Write Read Prompt    ${get} ${opId} ${rec_id}
+    Should Contain    ${cmd_stdout}    "ended": false
+    ${cmd_stdout}=    Write Read Prompt    ${stop} ${opId}    prompt=) >
+    ${cmd_stdout}=    Write Read Prompt    ${get} ${opId} ${rec_id}
+    Should Contain    ${cmd_stdout}    "ended": true
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_set-operator-property_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    set-operator-property
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Verify Usage    ${cmd}    Usage: set-operator-property <operator-name> <property-name> <property-value>    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_set-operator-property_example
+    [Setup]    Dtcli Enter
+    ${set}=    Set Variable    set-operator-property
+    ${get}=    Set Variable    get-operator-properties
+    ${opName}=    Set Variable    picalc
+    ${propName}=    Set Variable    name
+    ${propVal}=    Set Variable    PI-CALCULATOR
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${get_stdout}=    Write Read Prompt    ${get} ${opName} ${propName}    prompt=) >
+    ${match}    ${old_prop_val}=    Should Match Regexp    ${get_stdout}    {"${propName}": "(\\w+)"}
+    ${set_stdout}=    Write Read Prompt    ${set} ${opName} ${propName} ${propVal}    prompt=) >
+    ${expected}=    Replace String    ${get_stdout}    ${old_prop_val}    ${propVal}
+    ${actual}=    Write Read Prompt    ${get} ${opName} ${propName}    prompt=) >
+    Should Be Equal    ${expected}    ${actual}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_set-physical-operator-property_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    set-physical-operator-property
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Verify Usage    ${cmd}    Usage: set-physical-operator-property <operator-id> <property-name> <property-value>    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_set-physical-operator-property_example
+    [Setup]    Dtcli Enter
+    ${set}=    Set Variable    set-physical-operator-property
+    ${get}=    Set Variable    get-physical-operator-properties
+    ${opId}=    Set Variable    2
+    ${propName}=    Set Variable    name
+    ${propVal}=    Set Variable    PI-CALCULATOR-PYSICAL
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${get_stdout}=    Write Read Prompt    ${get} ${opId} ${propName}    prompt=) >
+    ${match}    ${old_prop_val}=    Should Match Regexp    ${get_stdout}    {"${propName}": "(\\w+)"}
+    ${set_stdout}=    Write Read Prompt    ${set} ${opId} ${propName} ${propVal}    prompt=) >
+    ${expected}=    Replace String    ${get_stdout}    ${old_prop_val}    ${propVal}
+    ${actual}=    Write Read Prompt    ${get} ${opId} ${propName}    prompt=) >
+    Should Be Equal    ${expected}    ${actual}
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_show-physical-plan_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    show-physical-plan
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}show-physical-plan${\n}    Show physical plan
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_show-physical-plan_example
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    show-physical-plan
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Comment    Currently not working
+    Comment    Add json schema validation here
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_show-logical-plan_within-app_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    show-logical-plan
+    #USAGE Check:
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    help ${cmd}    prompt=) >
+    ${cmd_stdout}=    Remove Color Codes    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    This usage is valid when connected to an app except when changing logical plan${\n}show-logical-plan [options] [jar-file/app-package-file] [class-name]${\n}    Show logical plan of an app class${\n}    Options:${\n} \ \ \ \ \ \ \ \ \ \ \ -exactMatch \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Only consider exact match${\n} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for app name${\n} \ \ \ \ \ \ \ \ \ \ \ -ignorepom \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Do not run maven to find${\n} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the dependency${\n} \ \ \ \ \ \ \ \ \ \ \ -libjars <comma separated list of jars> \ \ \ Specify comma separated${\n} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jar/resource files to${\n} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ include in the classpath.
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_show-logical-plan_within-app_json
+    [Setup]    Dtcli Enter
+    ${cmd}=    Set Variable    show-logical-plan
+    ${exactMatch}=    Set Variable    -exactMatch
+    ${ignorepom}=    Set Variable    -ignorepom
+    ${libjars}=    Set Variable    NULL, NULL, NULL
+    ${libjars}=    Set Variable    -libjars ${libjars}
+    ${ingestion_FS_op}=    Set Variable    com.datatorrent.apps.ingestion.io.input.IngestionFileSplitter
+    #EXAMPLES:
+    ${app_id}    ${cmd_stdout}=    App Launch    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${pkg_ingestion_apa}    prompt=) >
+    Check String For Errors    ${cmd_stdout}
+    Validate Jsonschema From File    ${cmd_stdout}    ${CURDIR}${/}schemas/show-logical-plan_within-app.jsonschema
+    Comment    Add more tests once    the final usage is determined
+    Comment    ${cmd_stdout}=    Write Read Prompt    ${cmd} ${exactMatch} ${ignorepom} ${pkg_ingestion_apa} ${ingestion_FS_op}    prompt=dt>
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_wait_usage
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    wait
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=dt>
+    Should Contain    ${cmd_stdout}    "${cmd}" is valid only when connected to an application. Type "connect <appid>" to connect to an application.
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    Verify Usage    ${cmd}    Usage: wait <timeout>    prompt=) >
+    [Teardown]    Dtcli Exit    app_id=${app_id}
+
+dtcli_wait_example
+    [Setup]    Dtcli Enter    -vvvv
+    ${cmd}=    Set Variable    wait
+    ${app_id}    ${cmd_stdout}=    App Launch And Validate    ${pkg_pi_demo}    -exactMatch PiDemo    PiDemo    kill=${False}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd} 5    prompt=) >
+    Should Contain X Times    ${cmd_stdout}    current status is:    5
+    Should Contain    ${cmd_stdout}    Reached specified timeout. Killing application
+    Should Contain    ${cmd_stdout}    Killed application ${app_id}
+    Should Contain    ${cmd_stdout}    Application terminated unsuccessfully.
+    ${cmd_stdout}=    Write Read Prompt    get-app-info    prompt=) >
+    Should Contain    ${cmd_stdout}    "state": "KILLED"
+    Should Contain    ${cmd_stdout}    "finalStatus": "KILLED"
+    [Teardown]    Dtcli Exit    app_id=${app_id}

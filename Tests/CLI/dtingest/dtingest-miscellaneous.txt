@@ -1,0 +1,54 @@
+*** Settings ***
+Suite Setup       DTCP Setup
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt    #Suite Teardown    Notify User    #test
+
+*** Variables ***
+${iHDFS}           hdfs://${iNN}:${iNNPORT}
+${oHDFS}           hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:${FTPPORT}
+${RHDFS}          hdfs://node20.morado.com:8020
+${RHDFS1}          hdfs://node5.morado.com:8020
+
+*** Test Cases ***
+Check-Summary_summary_info.log
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-for-summary-info-data/for-successful-files    ${oHDFS}${BASEDIR}/ing-dest-data/Miscellaneous/${TEST_NAME}
+
+Check-Summary_successful_files.log
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-for-summary-info-data/for-successful-files    ${oHDFS}${BASEDIR}/ing-dest-data/Miscellaneous/${TEST_NAME}
+
+Check-Summary_skipped_files.log
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-for-summary-info-data/for-skipped-files    ${oHDFS}${BASEDIR}/ing-dest-data/Miscellaneous/${TEST_NAME}
+
+Copy_Files_with_Special_Chars_in_Name
+    [Tags]    sanity
+    DTCP Launch And Validate    ${NFS}${BASEDIR}/ing-source-data/dir-with-special-char-filenames    ${oHDFS}${BASEDIR}/ing-dest-data/Miscellaneous/${TEST_NAME}
+
+Copy_From_Remote_Cluster_Same_User
+    [Tags]    sanity
+    DTCP Launch And Validate    ${RHDFS}${BASEDIR}/ing-source-data/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Miscellaneous/${TEST_NAME}
+
+Copy_From_Remote_Cluster_Different_User
+    [Tags]    sanity
+    DTCP Launch And Validate    ${RHDFS}/user/yogi/ingestion/output/1gb.file    ${oHDFS}${BASEDIR}/ing-dest-data/Miscellaneous/${TEST_NAME}
+
+Copy_To_Remote_Cluster_Same_User
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${RHDFS}${BASEDIR}/ing-dest-data/Miscellaneous/${TEST_NAME}
+
+Copy_To_Remote_Cluster_Different_User
+    [Tags]    sanity
+    DTCP Launch And Validate    ${iHDFS}${BASEDIR}/ing-source-data/1gb.file    ${RHDFS}/user/yogi/ingestion/output/${TEST_NAME}
+
+Copy_From_Remote_Cluster_To_Same_Remote_Cluster
+    [Tags]    sanity
+    DTCP Launch And Validate    ${RHDFS}${BASEDIR}/ing-source-data/1gb.file    ${RHDFS}${BASEDIR}/ing-dest-data/${TEST_NAME}
+
+Copy_From_Remote_Cluster_To_Other_Remote_Cluster
+    [Tags]    sanity
+    DTCP Launch And Validate    ${RHDFS}${BASEDIR}/ing-source-data/1gb.file    ${RHDFS1}${BASEDIR}/ing-dest-data/${TEST_NAME}
+

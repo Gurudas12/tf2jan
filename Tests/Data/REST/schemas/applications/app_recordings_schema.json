@@ -1,0 +1,144 @@
+{
+  "required": [
+    "recordings"
+  ], 
+  "type": "object", 
+  "properties": {
+    "recordings": {
+      "items": [
+        {
+          "required": [
+            "appId", 
+            "containerId", 
+            "ended", 
+            "id", 
+            "operatorId", 
+            "ports", 
+            "properties", 
+            "startTime", 
+            "totalTuples", 
+            "windowIdRanges"
+          ], 
+          "type": "object", 
+          "properties": {
+            "windowIdRanges": {
+              "items": [
+                {
+                  "required": [
+                    "high", 
+                    "low"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "high": {
+                      "type": "integer"
+                    }, 
+                    "low": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              ], 
+              "type": "array"
+            }, 
+            "operatorId": {
+              "type": "string"
+            }, 
+            "id": {
+              "type": "string"
+            }, 
+            "ended": {
+              "type": "boolean"
+            }, 
+            "containerId": {
+              "type": "string"
+            }, 
+            "totalTuples": {
+              "type": "string"
+            }, 
+            "startTime": {
+              "type": "string"
+            }, 
+            "appId": {
+              "type": "string"
+            }, 
+            "properties": {
+              "required": [
+                "class", 
+                "name"
+              ], 
+              "type": "object", 
+              "properties": {
+                "debug": {
+                  "type": "string"
+                }, 
+                "silent": {
+                  "type": "string"
+                }, 
+                "name": {
+                  "required": [
+                    "string"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "string": {
+                      "type": "string"
+                    }
+                  }
+                }, 
+                "stringFormat": {
+                  "required": [
+                    "string"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "string": {
+                      "type": "string"
+                    }
+                  }
+                }, 
+                "class": {
+                  "type": "string"
+                }
+              }
+            }, 
+            "ports": {
+              "items": [
+                {
+                  "required": [
+                    "id", 
+                    "name", 
+                    "streamName", 
+                    "tupleCount", 
+                    "type"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "streamName": {
+                      "type": "string"
+                    }, 
+                    "type": {
+                      "type": "string"
+                    }, 
+                    "id": {
+                      "type": "integer"
+                    }, 
+                    "name": {
+                      "type": "string"
+                    }, 
+                    "tupleCount": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ], 
+              "type": "array"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}
+

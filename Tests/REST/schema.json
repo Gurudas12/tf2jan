@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema", 
+    "required": true, 
+    "type": "object", 
+    "id": "#", 
+    "properties": {
+        "hadoopLocation": {
+            "required": true, 
+            "type": "string", 
+            "id": "hadoopLocation"
+        }, 
+        "buildDate": {
+            "required": true, 
+            "type": "string", 
+            "id": "buildDate"
+        }, 
+        "buildVersion": {
+            "required": true, 
+            "type": "string", 
+            "id": "buildVersion"
+        }, 
+        "buildRevision": {
+            "required": true, 
+            "type": "string", 
+            "id": "buildRevision"
+        }, 
+        "hostname": {
+            "required": true, 
+            "type": "string", 
+            "id": "hostname"
+        }, 
+        "gatewayUser": {
+            "required": true, 
+            "type": "string", 
+            "id": "gatewayUser"
+        }, 
+        "buildUser": {
+            "required": true, 
+            "type": "string", 
+            "id": "buildUser"
+        }, 
+        "version": {
+            "required": true, 
+            "type": "string", 
+            "id": "version"
+        }, 
+        "configDirectory": {
+            "required": true, 
+            "type": "string", 
+            "id": "configDirectory"
+        }, 
+        "hadoopIsSecurityEnabled": {
+            "required": true, 
+            "type": "boolean", 
+            "id": "hadoopIsSecurityEnabled"
+        }, 
+        "jvmName": {
+            "required": true, 
+            "type": "string", 
+            "id": "jvmName"
+        }, 
+        "javaVersion": {
+            "required": false, 
+            "type": "string", 
+            "id": "javaVersion"
+        }
+    }
+}

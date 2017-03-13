@@ -1,0 +1,36 @@
+{
+  "required": [
+    "bufferServerBytesPSMA", 
+    "name", 
+    "queueSizeMA", 
+    "recordingId", 
+    "totalTuples", 
+    "tuplesPSMA", 
+    "type"
+  ], 
+  "type": "object", 
+  "properties": {
+    "name": {
+      "type": "string"
+    }, 
+    "recordingId": {
+      "type": "null"
+    }, 
+    "tuplesPSMA": {
+      "type": "string"
+    }, 
+    "totalTuples": {
+      "type": "string"
+    }, 
+    "type": {
+      "type": "string"
+    }, 
+    "queueSizeMA": {
+      "type": "string"
+    }, 
+    "bufferServerBytesPSMA": {
+      "type": "string"
+    }
+  }
+}
+

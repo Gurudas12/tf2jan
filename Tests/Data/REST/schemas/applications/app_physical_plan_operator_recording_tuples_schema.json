@@ -1,0 +1,58 @@
+{
+  "required": [
+    "startOffset", 
+    "tuples"
+  ], 
+  "type": "object", 
+  "properties": {
+    "tuples": {
+      "items": [
+        {
+          "required": [
+            "tuples", 
+            "windowId"
+          ], 
+          "type": "object", 
+          "properties": {
+            "tuples": {
+              "items": [
+                {
+                  "required": [
+                    "data", 
+                    "portId"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "data": {
+                      "required": [
+                        "string"
+                      ], 
+                      "type": "object", 
+                      "properties": {
+                        "string": {
+                          "type": "string"
+                        }
+                      }
+                    }, 
+                    "portId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ], 
+              "type": "array"
+            }, 
+            "windowId": {
+              "type": "string"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }, 
+    "startOffset": {
+      "type": "string"
+    }
+  }
+}
+

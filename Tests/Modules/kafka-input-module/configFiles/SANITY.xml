@@ -1,0 +1,31 @@
+<configuration>
+  <property>
+     <name>dt.application.KafkaInputModuleValidationApp.module.KafkaValidator.prop.topic</name>
+     <value>SANITY</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaInputModuleValidationApp.module.KafkaValidator.prop.zookeeper</name>
+     <value>localhost:2181</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaInputModuleValidationApp.module.KafkaValidator.prop.initialOffset</name>
+     <value>latest</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaInputModuleValidationApp.module.KafkaValidator.prop.parallelReads</name>
+     <value>1</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaInputModuleValidationApp.module.KafkaValidator.prop.maxTuplesPerWindow</name>
+     <value>100</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaInputModuleValidationApp.module.KafkaValidator.prop.broker</name>
+     <value>localhost:9092</value>
+  </property>
+  <property>
+     <name>dt.application.KafkaInputModuleValidationApp.module.KafkaValidator.prop.disableValidation</name>
+     <value>true</value>
+  </property>
+
+</configuration>

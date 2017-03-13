@@ -1,0 +1,255 @@
+*** Settings ***
+Suite Setup       SetupBrowsingEnv
+Suite Teardown    DestroyBrowsingEnv
+Resource          ../../../lib/web/WebLib.txt
+Resource          ../../../lib/web/Ingestion/Ingestion_Config_UI.txt
+
+*** Variables ***
+${username}        aditya
+${url}            http://aditya-ubuntu:9090/
+${app_pkg_loc}    /home/aditya/Downloads/pi-demo-3.5.0.apa
+${dt_version}      3.7.0
+${apex_version}    3.6.0
+${version_string}      3.6.0-dt20161215
+
+*** Test Cases ***
+Run_Demo_App_Test
+    [Documentation]    Test case details: xyzabc
+    Connect_To_DT_Console    ${url}
+    #Develop The App    Demo    Mobile Demo
+    Launch The app    Mobile Demo    MobileDemo
+    Click Element     xpath=/html/body/div[4]/div/div[4]/a
+    sleep    10s
+    ${state}   Get Text    xpath=//span[@dt-status='data.state']/span
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    ${app_name} application is not started, current state is ${state}
+    [Teardown]    Close Browser
+
+Run_Non_Existing_Application_Test
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    Mobile Demo
+    Launch The app    Mobile Demo    MobileDemo
+    [Teardown]    Close Browser
+
+Run_New_Application_Test
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    Pi Demo
+    Launch The app    Pi Demo    PiDemo
+    [Teardown]    Close Browser
+
+Verify_License_Details
+    Connect_To_DT_Console    ${url}
+    ${test}=    License_Info_Details
+    Log Dictionary    ${test}
+    [Teardown]    Close Browser
+
+Import_New_License_Test
+    Connect_To_DT_Console    ${url}
+    Import_License_File    /home/correct/path/here/DT_Certification/dt-20150504212046-j6u0k2fe
+
+Verify_Gateway_Info_Details
+    Connect_To_DT_Console    ${url}
+    ${test}=    System_Gw_Info_Details
+    Log Dictionary    ${test}
+    ${version_string}=    convert to string    3.1.0-SNAPSHOT
+    log    ${version_string}
+    dictionary should contain item    ${test}    version    ${version_string}
+    [Teardown]    Close Browser
+
+Verify_Hadoop_Info_Details
+    Connect_To_DT_Console    ${url}
+    ${test}=    Hadoop_Info_Details
+    [Teardown]    Close Browser
+
+Application_Shutdown_Test
+    [Documentation]    Test case details: abcxyz
+    Connect_To_DT_Console    ${url}
+    Develop The App    Demo    Pi Demo
+    Launch The app    Pi Demo    PiDemo
+    Click Element    xpath=/html/body/div[4]/div/div[4]/a  #Navigate to the launched app monitor page through the link on success message
+    sleep    15s
+    ${state}    Get Text    //span[@dt-status='data.state']/span
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    ${app_name} application is not started, current state is ${state}
+    sleep    10s
+    Click Element    //span[text()='shutdown']/..    #Shutdown the launched app
+    Wait Until Page Contains Element    //h3[text()="End this application?"]    #timeout=10s
+    Click Element    //button[contains(@class,'btn-danger')]
+    sleep    10s
+    Wait Until Page Contains Element    //span[text()='FINISHED']/..
+    [Teardown]    Close Browser
+
+Application_Kill_Test
+    [Documentation]    Test case details: abcxyz
+    Connect_To_DT_Console    ${url}
+    #Develop The App    Demo    Pi Demo
+    Launch The app    Pi Demo   PiDemo
+    Wait Until Page Contains Element   xpath=/html/body/div[4]/div/div[4]/a
+    Click Element    xpath=/html/body/div[4]/div/div[4]/a   #Navigate to the launched app monitor page through the link on success message
+    sleep    15s
+    ${state}    Get Text    //span[@dt-status='data.state']/span
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    ${app_name} application is not started, current state is ${state}
+    sleep    10s
+    Click Element    //span[text()='kill']/..    #Shutdown the launched app
+    Wait Until Page Contains Element    //h3[text()="End this application?"]    #timeout=10s
+    Click Element    //button[contains(@class,'btn-danger')]
+    sleep    10s
+    Wait Until Page Contains Element    //span[text()='KILLED']/..
+    Capture Page Screenshot
+    [Teardown]    Close Browser
+
+RTS_APEX_Version_Check
+    Connect_To_DT_Console    ${url}
+    ${config_info}=    System_Gw_Info_Details
+    Log Dictionary    ${config_info}
+    Comment    ${version_string}=    convert to string    3.4.0
+    Comment    log    ${version_string}
+    Comment    Verify Apex version string
+    ${apex_version_dict}=    Get From Dictionary    ${config_info}    version
+    ${apex_version_dict}=    Convert To String    ${apex_version_dict}
+    Log    ${apex_version_dict}
+    ${apex_version_str}=    Convert To String    ${apex_version}
+    List Should Contain Value    ${apex_version_dict}    ${apex_version_str}
+    ${rts_version_dict}    Get From Dictionary    ${config_info}    rtsVersion
+    ${rts_version_dict}    Convert To String    ${rts_version_dict}
+    Log    ${rts_version_dict}
+    ${rts_version_str}=    Convert To String    ${dt_version}
+    List Should Contain Value    ${rts_version_dict}    ${rts_version_str}
+    [Teardown]    Close Browser
+
+Operator_Kill_Test
+    Connect_To_DT_Console    ${url}
+    #Develop The App    Demo    Pi Demo
+    Launch The app    Pi Demo    PiDemo
+    Click Element    //t[contains(text(),"Application ID")]/../a    #Navigate to the launched app monitor page through the link on success message
+    Sleep    20s    #Delay in response due to remote connection
+    Click Element    //span[text()='physical']/..
+    sleep    5s
+    ${before_kill_Container_ID}    Get Text    //a[text()='rand']/../../..//a[@dt-page-href="Container"]
+    Click Element    //a[text()='rand']/../../..//a[@dt-page-href="Container"]    #Retrieve container ID for rand operator
+    Page Should Contain Element    //h2[contains(text(),'container')]
+    Click Element    //tr[@class='even']//input    #Select a container
+    Click Element    //t[text()='kill']/..
+    Reload Page
+    sleep    10s    #Delay in response due to remote connection
+    Page Should Contain Element    //span[@ng-if='dtStatus' and text()='KILLED']
+    Click Element    //a[@ng-bind="breadcrumb.label" and contains(@ng-href,"apps")]    #Navigate to application monitor page
+    Sleep    5s
+    ${after_kill_Container_ID}    Get Text    //a[text()='rand']/../../..//a[@dt-page-href="Container"]
+    Should Not Be Equal As Strings    ${before_kill_Container_ID}    ${after_kill_Container_ID}
+    [Teardown]    Close Browser
+
+### CUSTOM TEST CASES ###
+
+Upload_Package_Test                                                     # Passed
+    Connect_To_DT_Console    ${url}
+    Go To Page     Develop     Development
+    sleep      2s
+    ${navigate_to_page}    Set Variable    //t[text()='Application Packages']/..
+    Click Element   xpath=${navigate_to_page}
+    sleep     2s
+    Click Element      //button[contains(@class,'btn-info')]
+    Import Package      ${app_pkg_loc}
+    Click Element      //button[contains(@class,'dropdown-toggle')]
+    sleep     1s
+    Click Element      xpath=/html/body/div[1]/div/div/div[2]/div/div/div[5]/file-upload-merge-dropdown/div/ul/li[2]/a
+    sleep      1s
+    Click Element      //button[contains(@id,'split-button')]
+    Wait Until Page Contains Element    //*[contains(text(),'uploaded')]       timeout=20s
+    [Teardown]    Close Browser
+
+
+Delete_A_Package            #Aditya Gholba                          #Passed
+    [Documentation]    Test case details: http://ameya-m4master:9090
+    Connect_To_DT_Console    ${url}
+    Delete_App_From_Develop_Page  pi-demo   PiDemo   3.5.0   #Args are package name, app name, version
+
+Configure_App_Test                      #Aishwarya Dixit                #Passed
+    Connect_To_DT_Console    ${url}
+    Go_To_Page     Develop      Development
+    Wait Until Page Contains     Application Packages
+    Click Element   xpath=/html/body/div[2]/div/div[1]/h2/a/t
+    Click Element   xpath=/html/body/div[2]/div/h1/div/label[1]/span
+    ${Select_Demo_App_xpath}=    Set Variable     //*[contains(text(),'PiDemo')]
+    ${New_Name}=     Set Variable     PiDemo_NameChange
+    sleep   5s
+    log   ${Select_Demo_App_xpath}
+    Wait Until Element Is Visible    xpath=${Select_Demo_App_xpath}
+    Click Element    xpath=${Select_Demo_App_xpath}
+    sleep     5s
+    Click Element   xpath=/html/body/div[2]/div/h1/span[2]/div/button/t
+    Click Element   xpath=/html/body/ul/li/a
+    sleep   7s
+    Input Text      id=pkgName    ${New_Name}
+    Click Element   xpath=/html/body/div[1]/div/div/div[3]/button[1]
+    sleep   5s
+    Click Element   xpath=/html/body/div[4]/div/div[4]/a
+    sleep   5s
+    Wait Until Page Contains    launch      timeout=10s
+    Click Element   xpath=/html/body/div[2]/div/h1/span[2]/button[3]
+    sleep   5s
+    Click Element   xpath=/html/body/div[1]/div/div/form/div[3]/button[1]/span
+    sleep   10s
+    Wait Until Page Contains    Application ID      timeout=40s
+    Click Element     xpath=/html/body/div[4]/div/div[4]/a
+    sleep     10s
+    ${state}   Get Text    xpath=//span[@dt-status='data.state']/span
+    sleep   15s
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    ${New_Name} application is not started, current state is ${state}     timeout=40s
+    [Teardown]    Close Browser
+
+Launch_List_Test                    #Plaban Biswas                  #Passed
+    Connect_To_DT_Console    ${url}
+    Go_To_Page    Develop    Application Packages   #goto home->develop
+    ${navigate_to_page}    Set Variable    //t[text()='Application Packages']/..    #generic way to find Application packages instead of Absolute path
+    Click Element   xpath=${navigate_to_page}       #goto develop->Application packages
+    Wait Until Page Contains    Applications    timeout=20s     #wait for application to become visible
+    ${navigate_to_page}    Set Variable    //*[contains(text(),'pi-demo @ 3.4.0')]  #generic for version specific
+    Click Element   xpath=${navigate_to_page}
+    Wait Until Page Contains    v3.4.0          timeout=20s
+    ${navigate_to_page}    Set Variable    //table//a[text()='PiDemo']           #since many launch options, select one with PiDemo only
+    Click Element   xpath=${navigate_to_page}
+    Wait Until Page Contains    Package Properties         timeout=20s
+    ${navigate_to_page}    Set Variable    //button//span[contains(text(),'launch')]        #search the launch for PiDemo
+    Click Element   xpath=${navigate_to_page}
+    Wait Until Page Contains    Launch PiDemo         timeout=20s
+    ${navigate_to_page}    Set Variable    //button//span[contains(text(),'Launch')]       #search the pop-up window after clicking launch
+    Click Element   xpath=${navigate_to_page}
+    Wait Until Page Contains    Application ID          timeout=20s
+    #${navigate_to_page}    Set Variable   //div//span[contains(text(),'pause')]           #pause the application id popup
+    #Click Element   xpath=${navigate_to_page}
+    ${navigate_to_page}    Set Variable    //div//a[contains(text(),'application')]        #navigate to monitor
+    Click Element   xpath=${navigate_to_page}
+    Wait Until Page Contains    State       #timeout=30s
+    sleep   10s
+    ${state}    Get Text     xpath=//span[@dt-status='data.state']/span
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    PiDemo application is not started, current state is ${state}
+    [Teardown]    Close Browser
+
+Launch_New_Way                  #Shubham Agrawal                    #Passed
+    [Documentation]    Test case details:     http://ameya-m4master:9090
+    Connect_To_DT_Console    ${url}
+    #Develop The App    Demo    Pi Demo
+    Launch The App New    mobile-demo    MobileDemo    3.5.0
+    sleep    13s
+    Click Element     xpath=/html/body/div[4]/div/div[4]/a
+    sleep    10s
+    ${state}    Get Text    //span[@dt-status='data.state']/span
+    sleep    20s
+    Run Keyword Unless    '${state}'=='RUNNING'    Fail    PiDemo application is not started, current state is ${state}
+    [Teardown]    Close Browser
+
+
+License_Upgrade_link
+   Connect_To_DT_Console    ${url}
+   Capture Page Screenshot
+   Go_To_Page    Configure    License Information
+   Capture Page Screenshot
+   Click Element    //t[text()='License Information']/..
+   Wait Until Page Contains    Current License
+   Capture Page Screenshot                #/html/body/div[2]/div
+   ${Upgrade_Link}    Set Variable    /html/body/div[2]/div/div//a[contains(text(),"upgrade")]/../a   #/html/body/div[2]/div/div/div[2]/p/strong/a
+   Click Element   xpath=${Upgrade_link}
+   wait until page contains  DataTorrent RTS   timeout=20s
+   Capture Page Screenshot
+
+*** Keywords ***
+

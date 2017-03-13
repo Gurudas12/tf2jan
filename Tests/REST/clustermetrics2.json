@@ -1,0 +1,64 @@
+{
+    "properties": {
+        "averageAge": {
+            "type": "integer"
+        },
+        "cpuPercentage": {
+            "type": "number"
+        },
+        "currentMemoryAllocatedMB": {
+            "type": "integer"
+        },
+        "maxMemoryAllocatedMB": {
+            "type": "integer"
+        },
+        "numAppsFailed": {
+            "type": "integer"
+        },
+        "numAppsFinished": {
+            "type": "integer"
+        },
+        "numAppsKilled": {
+            "type": "integer"
+        },
+        "numAppsPending": {
+            "type": "integer"
+        },
+        "numAppsRunning": {
+            "type": "integer"
+        },
+        "numAppsSubmitted": {
+            "type": "integer",
+"minimum": 190
+        },
+        "numContainers": {
+            "type": "integer"
+        },
+        "numOperators": {
+            "type": "integer"
+        },
+        "tuplesEmittedPSMA": {
+            "type": "integer"
+        },
+        "tuplesProcessedPSMA": {
+            "type": "integer"
+        }
+    },
+    "required": [
+        "averageAge",
+        "cpuPercentage",
+        "currentMemoryAllocatedMB",
+        "maxMemoryAllocatedMB",
+        "numAppsFailed",
+        "numAppsFinished",
+        "numAppsKilled",
+        "numAppsPending",
+        "numAppsRunning",
+        "numAppsSubmitted",
+        "numContainers",
+        "numOperators",
+        "tuplesEmittedPSMA",
+        "tuplesProcessedPSMA"
+    ],
+    "type": "object"
+}

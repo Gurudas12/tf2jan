@@ -1,0 +1,35 @@
+{
+  "required": [
+    "finalStatus", 
+    "id", 
+    "name", 
+    "startTime", 
+    "state", 
+    "trackingUrl", 
+    "user"
+  ], 
+  "type": "object", 
+  "properties": {
+    "name": {
+      "type": "string"
+    }, 
+    "trackingUrl": {
+      "type": "string"
+    }, 
+    "state": {
+      "type": "string"
+    }, 
+    "user": {
+      "type": "string"
+    }, 
+    "startTime": {
+      "type": "integer"
+    }, 
+    "id": {
+      "type": "string"
+    }, 
+    "finalStatus": {
+      "type": "string"
+    }
+  }
+}

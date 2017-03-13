@@ -1,0 +1,46 @@
+*** Settings ***
+Suite Setup       Dtcli Setup
+Resource          JSONParser-resources.txt
+Variables         variables.py
+
+*** Test Cases ***
+PT jsonSchema With All Req Fields
+    [Setup]    Dtcli Enter
+    RUNit    dt.application.JsonProcessor.operator.JsonParser.jsonSchema    ${valid_schema_all_req}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+PT jsonSchema With Few Req Fields
+    [Setup]    Dtcli Enter
+    RUNit    dt.application.JsonProcessor.operator.JsonParser.jsonSchema    ${valid_schema_few_req}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+PT jsonSchema With No Req Fields
+    [Setup]    Dtcli Enter
+    RUNit    dt.application.JsonProcessor.operator.JsonParser.jsonSchema    ${valid_schema_no_req}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+PT jsonSchema With Extra NonReq Fields
+    [Setup]    Dtcli Enter
+    RUNit    dt.application.JsonProcessor.operator.JsonParser.jsonSchema    ${valid_schema_with_extra_field}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+PT jsonSchema With Extra Req Fields
+    [Setup]    Dtcli Enter
+    RUNit    dt.application.JsonProcessor.operator.JsonParser.jsonSchema    ${invalid_schema_with_extra_req_field}    negative=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+PT jsonSchema With Fields Having Different Case
+    [Setup]    Dtcli Enter
+    RUNit    dt.application.JsonProcessor.operator.JsonParser.jsonSchema    ${invalid_schema_all_caps}    negative=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+PT jsonSchema With Irrelevant fields
+    [Setup]    Dtcli Enter
+    RUNit    dt.application.JsonProcessor.operator.JsonParser.jsonSchema    ${invalid_schema_all_missing}    negative=${True}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}
+
+Test For Dynamic Scalability
+    [Setup]    Dtcli Enter
+    RUNit    dt.application.JsonProcessor.operator.JsonGenerator.totalNumTuples    -1    validate=${False}
+    Check Dynamic Scalability    ${app_id}    ${OPERATOR_NAME}    ${INPUT_OP_NAME}    ${INPUT_OP_PROP_NAME}    ${INPUT_OP_PROP_VALUE}
+    [Teardown]    Dtcli Exit    ${app_id}    kill=${True}

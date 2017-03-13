@@ -1,0 +1,22 @@
+#Server config:
+dtserver    = 'localhost'
+sshuser     = 'aditya'
+sshkey      = '/home/aditya/.ssh/id_rsa'
+dtbin       = '/home/aditya/datatorrent/current/bin/'
+dtcli_log   = '/tmp/dtcli_log.txt'
+
+#Packages info:
+dtinstall              = '/home/aditya/datatorrent/current/'
+pkg_pi_demo            = dtinstall + '/demos/' + 'pi-demo-3.0.0.apa'
+pkg_pi_demo            = '/home/aditya/pi-demo-3.3.1-incubating.apa'
+pkg_dimensions_demo    = dtinstall + '/demos/' + 'dimensions-demo-3.0.0.apa'
+pkg_frauddetect_demo   = dtinstall + '/demos/' + 'frauddetect-demo-3.0.0.apa'
+pkg_machinedata_demo   = dtinstall + '/demos/' + 'machinedata-demo-3.0.0.apa'
+pkg_mobile_demo        = dtinstall + '/demos/' + 'mobile-demo-3.0.0.apa'
+pkg_twitter_demo       = dtinstall + '/demos/' + 'twitter-demo-3.0.0.apa'
+pkg_wordcount_demo     = dtinstall + '/demos/' + 'wordcount-demo-3.0.0.apa'
+pkg_yahoo_finance_demo = dtinstall + '/demos/' + 'yahoo-finance-demo-3.0.0.apa'
+pkg_ingestion_apa      = dtinstall + '/apps/'  + 'dtingest-1.0.0.apa'
+pkg_ingestion_jar      = '/home/aditya/IngestionAppTesting/.ingestion-app-2.2.0-SNAPSHOT.jar'
+pkg_mobile_demo        = '/home/aditya/robot/tf2jan/apa/mobile-demo-3.4.0.apa'
+pkg_pi_demo            = '/home/aditya/robot/tf2jan/apa/pi-demo-3.5.0.apa'

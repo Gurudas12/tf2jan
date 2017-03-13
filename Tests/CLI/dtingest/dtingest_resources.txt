@@ -1,0 +1,225 @@
+*** Settings ***
+Library           OperatingSystem    # For accessing OS environment variables
+Library           String    # A test library for string manipulation and verification. String is Robot Framework's standard library for manipulating strings (e.g. Replace String Using Regexp, Split To Lines) and verifying their contents (e.g. Should Be String).
+Library           Collections    # Importing robots collections library
+Library           SSHLibrary    120 seconds    # For executing dtcp command: modify to 30 seconds
+Library           ../../../lib/CLI/dtingest/DTCPLib.py    # Custom library
+Resource          ../cli_resources.txt
+Library           ../../../lib/CLI/dtingest/KafkaDataProducer.py    # Kafka data producer for testing
+
+*** Variables ***
+#${dtserver}      node35.morado.com    # localhost
+#${sshuser}       dttbc    # hduser
+#${sshkey}        /root/.ssh/node30_id_rsa    # hduser
+#${dtbin}         /home/dttbc/datatorrent/current/bin/    # /home/hduser/datatorrent/current/bin/
+#${dtcpsh}        /home/dttbc/IngestionAppTesting/dtcp    # /home/hduser/IngestionAppTesting/dtcp
+#${dtcpjar}       -j /home/dttbc/IngestionAppTesting/ingestion-app-2.2.0-SNAPSHOT.jar    # /home/hduser/IngestionAppTesting/ingestion-app-1.0-SNAPSHOT.jar
+${dtcp_log}       /tmp/ingestion-output.log
+#${decyptor}      ${dtinstall}/utils/dtingest-utils-1.0.1-RC1-jar-with-dependencies.jar
+#${decompactor}    ${dtinstall}/utils/dtingest-utils-1.0.1-RC1-jar-with-dependencies.jar
+#${NN}            node34.morado.com
+#${NNPORT}        8020
+
+*** Keywords ***
+DTCP Setup
+    [Documentation]    Suit level setup for all the testcases: Login, Setpath, CreateLogFile
+    Log Many    ${dtserver}    ${sshuser}    ${sshkey}    ${dtinstall}    ${dtbin}    ${dtcpsh}
+    ...    ${dtcpjar}    ${decyptor}    ${decompactor}
+    Login Server    ${dtserver}    ${sshuser}    ${sshkey}
+    Add To PATH    ${dtbin}
+    Comment    Create File    ${dtcp_log}    content="Writing DTCP output::" ${\n}
+
+DTCP Setup Datasets
+    [Documentation]    Create required datasets/folders at source/destinations
+    Log    Creating required datasets/folders for dtingest test runs
+    ${create_data_cmd}=    Catenate    SEPARATOR=${SPACE}    bash    ../../../etc/environments/setup-dtingest-data.sh
+    ${cmd_stdout}=    Write Read Prompt    ${create_data_cmd}
+
+DTCP Launch And Validate
+    [Arguments]    ${source}    ${dest}    ${name}=${EMPTY}    ${filter}=${EMPTY}    ${no_recurse}=${EMPTY}    ${scan}=${EMPTY}
+    ...    ${appid_r}=${EMPTY}    ${overwrite}=ON    ${otc}=ON    ${enc_type}=${EMPTY}    ${enc_key}=${EMPTY}    ${dec_key}=${EMPTY}
+    ...    ${cmp_type}=${EMPTY}    ${fastmerge}=${EMPTY}    ${compact}=${EMPTY}    ${cmSize}=${EMPTY}    ${cmSep}=${EMPTY}    ${readers}=${EMPTY}
+    ...    ${timeout}=5
+    Append To File    ${dtcp_log}    ${TEST_NAME} ${SPACE}${:}${SPACE}
+    Comment    Get source metadata
+    ${source_meta}=    Get Size Metadata    ${source}    ${dtserver}    ${sshuser}    ${sshkey}    1
+    ...    ${filter}
+    Comment    Set dtcp parameters
+    ${name}    ${filter}    ${no_recurse}    ${scan}    ${appid_r}    ${overwrite}    ${otc}
+    ...    ${enc_type}    ${enc_key}    ${enc_key_str}    ${dec_key}    ${cmp_type}    ${fastmerge}
+    ...    ${compact}    ${cmSize}    ${cmSep}    ${readers}=    Set DTCP Params    ${name}
+    ...    ${filter}    ${no_recurse}    ${scan}    ${appid_r}    ${overwrite}    ${otc}
+    ...    ${enc_type}    ${enc_key}    ${EMPTY}    ${dec_key}    ${cmp_type}    ${fastmerge}
+    ...    ${compact}    ${cmSize}    ${cmSep}    ${readers}
+    Comment    Launch dtcp
+    ${app_id}=    Launch App    ${source}    ${dest}    name=${name}    filter=${filter}    no_recurse=${no_recurse}
+    ...    scan=${scan}    appid_r=${appid_r}    overwrite=${overwrite}    otc=${otc}    enc_type=${enc_type}    enc_key=${enc_key}
+    ...    enc_key_str=${enc_key_str}    dec_key=${dec_key}    cmp_type=${cmp_type}    fastmerge=${fastmerge}    compact=${compact}    cmSize=${cmSize}
+    ...    cmSep=${cmSep}    readers=${readers}
+    Comment    Polling for app status
+    ${status}=    Poll For App Status    ${app_id}    ${timeout}
+    Comment    Terminate if not yet
+    Terminate App    ${app_id}    ${timeout}
+    Comment    Getting dest metadata
+    ${dest_meta}=    Run Keyword If    '${enc_type}'=='-e-aes' or '${enc_type}'=='-e-pki'    Decrypt Data    encrypt_loc=${dest}    e_type=${enc_type}    e_key=${enc_key}
+    ...    d_key=${dec_key}
+    ...    ELSE IF    '${cmp_type}'=='-c-gzip'    Decompress Data    compress_loc=${dest}    c_type=${cmp_type}
+    ...    ELSE IF    '${compact}'=='--compact'    Decompact Data    compact_loc=${dest}    name=${name}
+    ...    ELSE    Get Size Metadata    ${dest}    ${dtserver}    ${sshuser}    ${sshkey}
+    ...    0
+    Comment    Comparing Source and Destination files
+    Dictionaries Should Be Equal    ${source_meta}    ${dest_meta}    msg=DICTIONARIES DO NOT MATCH !!
+
+DTCP Launch With ScanInterval
+    [Arguments]    ${source}    ${dest}    ${name}=${EMPTY}    ${filter}=${EMPTY}    ${no_recurse}=${EMPTY}    ${scan}=${EMPTY}
+    ...    ${appid_r}=${EMPTY}    ${overwrite}=ON    ${otc}=ON    ${enc_type}=${EMPTY}    ${enc_key}=${EMPTY}    ${dec_key}=${EMPTY}
+    ...    ${cmp_type}=${EMPTY}    ${fastmerge}=${EMPTY}    ${compact}=${EMPTY}    ${cmSize}=${EMPTY}    ${cmSep}=${EMPTY}    ${readers}=${EMPTY}
+    ...    ${timeout}=30
+    Append To File    ${dtcp_log}    ${TEST_NAME} ${SPACE}${:}${SPACE}
+    Comment    Set dtcp parameters
+    ${name}    ${filter}    ${no_recurse}    ${scan}    ${appid_r}    ${overwrite}    ${otc}
+    ...    ${enc_type}    ${enc_key}    ${enc_key_str}    ${dec_key}    ${cmp_type}    ${fastmerge}
+    ...    ${compact}    ${cmSize}    ${cmSep}    ${readers}=    Set DTCP Params    ${name}
+    ...    ${filter}    ${no_recurse}    ${scan}    ${appid_r}    ${overwrite}    ${otc}
+    ...    ${enc_type}    ${enc_key}    ${EMPTY}    ${dec_key}    ${cmp_type}    ${fastmerge}
+    ...    ${compact}    ${cmSize}    ${cmSep}    ${readers}
+    Comment    Launch dtcp
+    ${app_id}=    Launch App    ${source}    ${dest}    name=${name}    filter=${filter}    no_recurse=${no_recurse}
+    ...    scan=${scan}    appid_r=${appid_r}    overwrite=${overwrite}    otc=${otc}    enc_type=${enc_type}    enc_key=${enc_key}
+    ...    enc_key_str=${enc_key_str}    dec_key=${dec_key}    cmp_type=${cmp_type}    fastmerge=${fastmerge}    compact=${compact}    cmSize=${cmSize}
+    ...    cmSep=${cmSep}    readers=${readers}
+    Comment    Sleep for some time
+    Sleep    1m
+    Comment    Updating source location
+    Add Update Files On Hdfs    ${source}    ${dtserver}    ${sshuser}    ${sshkey}
+    Comment    Polling for app status
+    ${status}=    Poll For App Status    ${app_id}    ${timeout}
+    Comment    Terminate if not yet
+    Terminate App    ${app_id}    ${timeout}
+    Comment    Get source metadata
+    ${source_meta}=    Get Size Metadata    ${source}    ${dtserver}    ${sshuser}    ${sshkey}    1
+    ...    ${filter}
+    Comment    Getting dest metadata
+    ${dest_meta}=    Get Size Metadata    ${dest}    ${dtserver}    ${sshuser}    ${sshkey}    0
+    Comment    Comparing Source and Destination files
+    Dictionaries Should Be Equal    ${source_meta}    ${dest_meta}    msg=DICTIONARIES DO NOT MATCH !!
+
+Set DTCP Params
+    [Arguments]    ${name}=${EMPTY}    ${filter}=${EMPTY}    ${no_recurse}=${EMPTY}    ${scan}=${EMPTY}    ${appid_r}=${EMPTY}    ${overwrite}=ON
+    ...    ${otc}=ON    ${enc_type}=${EMPTY}    ${enc_key}=${EMPTY}    ${enc_key_str}=${EMPTY}    ${dec_key}=${EMPTY}    ${cmp_type}=${EMPTY}
+    ...    ${fastmerge}=${EMPTY}    ${compact}=${EMPTY}    ${cmSize}=${EMPTY}    ${cmSep}=${EMPTY}    ${readers}=${EMPTY}
+    ${dtcpjar}=    Set Variable    -j ${dtcpjar}
+    ${name}=    Set Variable If    '${name}'=='${EMPTY}'    ${TEST_NAME}    ${name}
+    ${name}=    Set Variable If    '${name}'=='${EMPTY}'    ${EMPTY}    --name ${name}
+    ${filter}=    Set Variable If    '${filter}'=='${EMPTY}'    ${EMPTY}    -f ${filter}
+    Log    Update filter: SPOI-4652
+    ${filter}=    Replace String    ${filter}    .    \\\\.    #Remove later
+    ${filter}=    Replace String    ${filter}    *    .*    #Remove later
+    ${no_recurse}=    Set Variable If    '${no_recurse}'=='${EMPTY}'    ${EMPTY}    --no-recurse
+    ${scan}=    Set Variable If    '${scan}'=='${EMPTY}'    ${EMPTY}    --scanInterval ${scan}
+    ${appid_r}=    Set Variable If    '${appid_r}'=='${EMPTY}'    ${EMPTY}    --originalAppId ${appid_r}
+    ${overwrite}=    Set Variable If    '${overwrite}'=='ON'    -w    ${EMPTY}    #ON FOR ALL TCS
+    ${otc}=    Set Variable If    '${otc}'=='ON'    --oneTimeCopy    ${EMPTY}    #ON FOR ALL TCS
+    ${enc_type}=    Set Variable If    '${enc_type}'=='${EMPTY}'    ${EMPTY}    ${enc_type}
+    ${enc_key}=    Set Variable If    '${enc_key}'=='${EMPTY}'    ${EMPTY}    ${enc_key}    #not reqd
+    ${enc_key_str}=    Set Variable If    '${enc_type}'=='${EMPTY}'    ${EMPTY}    --key ${enc_key}
+    ${dec_key}=    Set Variable If    '${dec_key}'=='${EMPTY}'    ${EMPTY}    ${dec_key}    #not reqd
+    ${cmp_type}=    Set Variable If    '${cmp_type}'=='${EMPTY}'    ${EMPTY}    ${cmp_type}    #not reqd
+    ${fastmerge}=    Set Variable If    '${fastmerge}'=='${EMPTY}'    ${EMPTY}    --fastMerge
+    ${compact}=    Set Variable If    '${compact}'=='${EMPTY}'    ${EMPTY}    --compact
+    ${cmSize}=    Set Variable If    '${cmSize}'=='${EMPTY}'    ${EMPTY}    --compactionSize ${cmSize}
+    ${cmSep}=    Set Variable If    '${cmSep}'=='${EMPTY}'    ${EMPTY}    --separator ${cmSep}
+    ${readers}=    Set Variable If    '${readers}'=='${EMPTY}'    ${EMPTY}    --parallelReaders ${readers}
+    Log    Update seperator value
+    ${cmSep}=    Replace String    ${cmSep}    \\    \\\\    #Remove later
+    Return From Keyword    ${name}    ${filter}    ${no_recurse}    ${scan}    ${appid_r}    ${overwrite}
+    ...    ${otc}    ${enc_type}    ${enc_key}    ${enc_key_str}    ${dec_key}    ${cmp_type}
+    ...    ${fastmerge}    ${compact}    ${cmSize}    ${cmSep}    ${readers}
+
+Launch App
+    [Arguments]    ${source}    ${dest}    ${name}=${EMPTY}    ${filter}=${EMPTY}    ${no_recurse}=${EMPTY}    ${scan}=${EMPTY}
+    ...    ${appid_r}=${EMPTY}    ${overwrite}=ON    ${otc}=ON    ${enc_type}=${EMPTY}    ${enc_key}=${EMPTY}    ${enc_key_str}=${EMPTY}
+    ...    ${dec_key}=${EMPTY}    ${cmp_type}=${EMPTY}    ${fastmerge}=${EMPTY}    ${compact}=${EMPTY}    ${cmSize}=${EMPTY}    ${cmSep}=${EMPTY}
+    ...    ${readers}=${EMPTY}
+    Log    Create DTCP command
+    ${dtcp_command}=    Catenate    SEPARATOR=${SPACE}    ${dtcpsh}    ${dtcpjar}    ${name}    ${no_recurse}
+    ...    ${overwrite}
+    ${dtcp_command}=    Catenate    SEPARATOR=${SPACE}    ${dtcp_command}    ${otc}    ${appid_r}    ${cmp_type}
+    ...    ${fastmerge}
+    ${dtcp_command}=    Catenate    SEPARATOR=${SPACE}    ${dtcp_command}    ${scan}    ${filter}    ${enc_type}
+    ...    ${enc_key_str}
+    ${dtcp_command}=    Catenate    SEPARATOR=${SPACE}    ${dtcp_command}    ${compact}    ${cmSize}    ${cmSep}
+    ...    ${readers}
+    ${dtcp_command}=    Catenate    SEPARATOR=${SPACE}    ${dtcp_command}    ${source}    ${dest}
+    Log    Launching DTCP App
+    Append To File    ${dtcp_log}    ${dtcp_command} ${\n}
+    ${dtcp_stdout}=    Write Read Prompt    ${dtcp_command}    time_out=150 s
+    ${match}    ${app_id}=    Should Match Regexp    ${dtcp_stdout}    {"appId": "(\\w+)"}
+    Append To File    ${dtcp_log}    ${app_id} ${\n}
+    Return From Keyword    ${app_id}
+
+Decrypt Data
+    [Arguments]    ${encrypt_loc}    ${e_type}    ${e_key}    ${d_key}
+    Log    ${encrypt_loc}${\n}${e_type}${\n}${e_key}${\n}${d_key}
+    Comment    ${f_name}=    Generate Random String
+    ${f_name}=    Set Variable    ${TEST_NAME}
+    ${match}    ${protocol}=    Should Match Regexp    ${encrypt_loc}    ([^\:]+)
+    ${base_folder}=    Run Keyword If    '${protocol}'=='file'    Set Variable    file:///home/dttbc/PSARK
+    ...    ELSE IF    '${protocol}'=='hdfs'    Set Variable    hdfs://node34.morado.com:8020${BASEDIR}/ing-dest-data/PSARK
+    ...    ELSE IF    '${protocol}'!='hdfs' or '${protocol}'!='file'    Set Variable    Abnormal protocol: ${protocol}
+    ${decrypt_loc}=    Catenate    SEPARATOR=${/}    ${base_folder}    ${f_name}
+    Comment    Change encryption key
+    ${e_type}=    Run Keyword If    '${e_type}'=='-e-aes'    Set Variable    AES
+    ...    ELSE IF    '${e_type}'=='-e-pki'    Set Variable    PKI
+    ...    ELSE    Set Variable    ABNORMAL: ${e_type}
+    ${d_key}    Run Keyword If    '${d_key}'=='${EMPTY}'    Set Variable    ${e_key}
+    ...    ELSE    Set Variable    ${d_key}
+    ${decypt_cmd}=    Catenate    SEPARATOR=${SPACE}    java -jar    ${decyptor}    -decrypt    -a ${e_type}
+    ...    -k ${d_key}    -i ${encrypt_loc}    -o ${decrypt_loc}
+    Write Read Prompt    ${decypt_cmd}    time_out=1 h
+    Log    For large datasets decrypt utility takes some time to write data
+    Sleep    1 m
+    ${size_meta}=    Get Size Metadata    ${decrypt_loc}    ${dtserver}    ${sshuser}    ${sshkey}    0
+    Return From Keyword    ${size_meta}
+
+Decompress Data
+    [Arguments]    ${compress_loc}    ${c_type}
+    Log    ${compress_loc}${\n}${c_type}
+    ${match}    ${protocol}=    Should Match Regexp    ${compress_loc}    ([^\:]+)
+    ${size_meta}=    Run Keyword If    '${protocol}'=='file'    Decompress On Local    ${compress_loc}
+    ...    ELSE IF    '${protocol}'=='hdfs'    Decompress On Hdfs    ${compress_loc}    ${dtserver}    ${sshuser}
+    ...    ${sshkey}
+    Return From Keyword    ${size_meta}
+
+Decompress On Local
+    [Arguments]    ${path}
+    ${decmp_cmd}=    Catenate    SEPARATOR=${SPACE}    gunzip -k -r    ${path}
+    Write Read Prompt    ${decmp_cmd}
+    ${size_meta}=    Get Size Metadata    ${path}    ${dtserver}    ${sshuser}    ${sshkey}    0
+    ${size_meta}=    Filter Out Dictionary    ${size_meta}    regex=*.gz
+    Return From Keyword    ${size_meta}
+
+Decompact Data
+    [Arguments]    ${compact_loc}    ${name}
+    Log    ${compact_loc}${\n}${compact}${\n}${name}${\n}${cmSize}
+    ${compact_loc}=    Replace String Using Regexp    ${compact_loc}    /$    ${EMPTY}
+    ${remaining}    ${cmn}=    Split String From Right    ${name}    ${SPACE}    1
+    ${compact_meta_loc}=    Catenate    SEPARATOR=${/}    ${compact_loc}    Ingestion-${cmn}.CompactionMeta
+    ${f_name}=    Set Variable    ${TEST_NAME}
+    ${match}    ${protocol}=    Should Match Regexp    ${compact_loc}    ([^\:]+)
+    ${base_folder}=    Run Keyword If    '${protocol}'=='file'    Set Variable    file:///home/dttbc/CMPCT
+    ...    ELSE IF    '${protocol}'=='hdfs'    Set Variable    hdfs://node34.morado.com:8020${BASEDIR}/ing-dest-data/CMPCT
+    ...    ELSE IF    '${protocol}'!='hdfs' or '${protocol}'!='file'    Set Variable    Abnormal protocol: ${protocol}
+    ${decompact_loc}=    Catenate    SEPARATOR=${/}    ${base_folder}    ${f_name}
+    Comment    ${decompact_cmd}=    Catenate    SEPARATOR=${SPACE}    java -cp    ${decompactor}    com.datatorrent.apps.ingestion.utility.compaction.Decompactor
+    ...    -i ${compact_meta_loc}    -o ${decompact_loc}
+    ${decompact_cmd}=    Catenate    SEPARATOR=${SPACE}    java -jar    ${decompactor}    -decompact    -i ${compact_meta_loc}
+    ...    -o ${decompact_loc}
+    Write Read Prompt    ${decompact_cmd}    time_out=1 h
+    Log    For large datasets decrypt utility takes some time to write data
+    Sleep    1 m
+    ${size_meta}=    Get Size Metadata    ${decompact_loc}    ${dtserver}    ${sshuser}    ${sshkey}    0
+    Return From Keyword    ${size_meta}
+
+Notify User
+    Send Email    ${SUITE_NAME}    ${SUITE_STATUS}    ${SUITE_MESSAGE}    ${SUITE_SOURCE}

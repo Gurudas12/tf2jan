@@ -1,0 +1,147 @@
+{
+  "required": [
+    "operators"
+  ], 
+  "type": "object", 
+  "properties": {
+    "operators": {
+      "items": [
+        {
+          "required": [
+            "className", 
+            "container", 
+            "counters", 
+            "cpuPercentageMA", 
+            "currentWindowId", 
+            "customMetrics", 
+            "failureCount", 
+            "host", 
+            "id", 
+            "lastHeartbeat", 
+            "latencyMA", 
+            "logicalName", 
+            "name", 
+            "ports", 
+            "recordingId", 
+            "recoveryWindowId", 
+            "status", 
+            "totalTuplesEmitted", 
+            "totalTuplesProcessed", 
+            "tuplesEmittedPSMA", 
+            "tuplesProcessedPSMA", 
+            "unifierClass"
+          ], 
+          "type": "object", 
+          "properties": {
+            "logicalName": {
+              "type": "string"
+            }, 
+            "failureCount": {
+              "type": "string"
+            }, 
+            "totalTuplesEmitted": {
+              "type": "string"
+            }, 
+            "totalTuplesProcessed": {
+              "type": "string"
+            }, 
+            "lastHeartbeat": {
+              "type": "string"
+            }, 
+            "id": {
+              "type": "string"
+            }, 
+            "container": {
+              "type": "string"
+            }, 
+            "latencyMA": {
+              "type": "string"
+            }, 
+            "counters": {
+              "type": "null"
+            }, 
+            "status": {
+              "type": "string"
+            }, 
+            "tuplesProcessedPSMA": {
+              "type": "string"
+            }, 
+            "recordingId": {
+              "type": "null"
+            }, 
+            "cpuPercentageMA": {
+              "type": "string"
+            }, 
+            "host": {
+              "type": "string"
+            }, 
+            "currentWindowId": {
+              "type": "string"
+            }, 
+            "unifierClass": {
+              "type": "null"
+            }, 
+            "name": {
+              "type": "string"
+            }, 
+            "recoveryWindowId": {
+              "type": "string"
+            }, 
+            "tuplesEmittedPSMA": {
+              "type": "string"
+            }, 
+            "className": {
+              "type": "string"
+            }, 
+            "customMetrics": {
+              "type": "object", 
+              "properties": {}
+            }, 
+            "ports": {
+              "items": [
+                {
+                  "required": [
+                    "bufferServerBytesPSMA", 
+                    "name", 
+                    "queueSizeMA", 
+                    "recordingId", 
+                    "totalTuples", 
+                    "tuplesPSMA", 
+                    "type"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }, 
+                    "recordingId": {
+                      "type": "null"
+                    }, 
+                    "tuplesPSMA": {
+                      "type": "string"
+                    }, 
+                    "totalTuples": {
+                      "type": "string"
+                    }, 
+                    "type": {
+                      "type": "string"
+                    }, 
+                    "queueSizeMA": {
+                      "type": "string"
+                    }, 
+                    "bufferServerBytesPSMA": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ], 
+              "type": "array"
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }
+  }
+}
+

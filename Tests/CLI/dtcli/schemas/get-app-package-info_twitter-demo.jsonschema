@@ -1,0 +1,836 @@
+{
+  "required": [
+    "appJars", 
+    "appJsonFiles", 
+    "appPackageDescription", 
+    "appPackageDisplayName", 
+    "appPackageName", 
+    "appPackageVersion", 
+    "appPropertiesFiles", 
+    "applications", 
+    "classPath", 
+    "comment", 
+    "configs", 
+    "defaultProperties", 
+    "dtEngineVersion", 
+    "manifest", 
+    "requiredProperties"
+  ], 
+  "type": "object", 
+  "properties": {
+    "comment": {
+      "type": "null"
+    }, 
+    "appJsonFiles": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "requiredProperties": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "appPackageName": {
+      "type": "string"
+    }, 
+    "appPackageDescription": {
+      "type": "string"
+    }, 
+    "appPackageDisplayName": {
+      "type": "string"
+    }, 
+    "classPath": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "dtEngineVersion": {
+      "type": "string"
+    }, 
+    "manifest": {
+      "required": [
+        "entries", 
+        "mainAttributes"
+      ], 
+      "type": "object", 
+      "properties": {
+        "mainAttributes": {
+          "required": [
+            "Archiver-Version", 
+            "Build-Jdk", 
+            "Built-By", 
+            "Class-Path", 
+            "Created-By", 
+            "DT-App-Package-Description", 
+            "DT-App-Package-Display-Name", 
+            "DT-App-Package-Name", 
+            "DT-App-Package-Version", 
+            "DT-Engine-Version", 
+            "Manifest-Version"
+          ], 
+          "type": "object", 
+          "properties": {
+            "Class-Path": {
+              "type": "string"
+            }, 
+            "DT-App-Package-Description": {
+              "type": "string"
+            }, 
+            "Archiver-Version": {
+              "type": "string"
+            }, 
+            "Manifest-Version": {
+              "type": "string"
+            }, 
+            "DT-App-Package-Name": {
+              "type": "string"
+            }, 
+            "DT-Engine-Version": {
+              "type": "string"
+            }, 
+            "Build-Jdk": {
+              "type": "string"
+            }, 
+            "DT-App-Package-Version": {
+              "type": "string"
+            }, 
+            "Created-By": {
+              "type": "string"
+            }, 
+            "Built-By": {
+              "type": "string"
+            }, 
+            "DT-App-Package-Display-Name": {
+              "type": "string"
+            }
+          }
+        }, 
+        "entries": {
+          "type": "object", 
+          "properties": {}
+        }
+      }
+    }, 
+    "appPackageVersion": {
+      "type": "string"
+    }, 
+    "applications": {
+      "items": [
+        {
+          "required": [
+            "dag", 
+            "defaultProperties", 
+            "displayName", 
+            "error", 
+            "errorStackTrace", 
+            "file", 
+            "name", 
+            "requiredProperties", 
+            "type"
+          ], 
+          "type": "object", 
+          "properties": {
+            "requiredProperties": {
+              "items": [
+                {
+                  "type": "string"
+                }
+              ], 
+              "type": "array"
+            }, 
+            "dag": {
+              "required": [
+                "attributes", 
+                "operators", 
+                "streams"
+              ], 
+              "type": "object", 
+              "properties": {
+                "attributes": {
+                  "required": [
+                    "APPLICATION_DATA_LINK", 
+                    "APPLICATION_DOC_LINK", 
+                    "APPLICATION_ID", 
+                    "APPLICATION_NAME", 
+                    "APPLICATION_PATH", 
+                    "APP_PACKAGE_SOURCE", 
+                    "BUFFER_SPOOLING", 
+                    "CHECKPOINT_WINDOW_COUNT", 
+                    "CONTAINER_JVM_OPTIONS", 
+                    "CONTAINER_OPTS_CONFIGURATOR", 
+                    "DEBUG", 
+                    "ENABLE_STATS_RECORDING", 
+                    "GATEWAY_CONNECT_ADDRESS", 
+                    "GATEWAY_PASSWORD", 
+                    "GATEWAY_USER_NAME", 
+                    "GATEWAY_USE_SSL", 
+                    "HEARTBEAT_INTERVAL_MILLIS", 
+                    "HEARTBEAT_LISTENER_THREAD_COUNT", 
+                    "HEARTBEAT_TIMEOUT_MILLIS", 
+                    "MASTER_MEMORY_MB", 
+                    "METRICS_TRANSPORT", 
+                    "RESOURCE_ALLOCATION_TIMEOUT_MILLIS", 
+                    "RPC_LATENCY_COMPENSATION_SAMPLES", 
+                    "STATS_MAX_ALLOWABLE_WINDOWS_LAG", 
+                    "STREAMING_WINDOW_SIZE_MILLIS", 
+                    "STRING_CODECS", 
+                    "THROUGHPUT_CALCULATION_INTERVAL", 
+                    "THROUGHPUT_CALCULATION_MAX_SAMPLES", 
+                    "TUPLE_RECORDING_PART_FILE_SIZE", 
+                    "TUPLE_RECORDING_PART_FILE_TIME_MILLIS"
+                  ], 
+                  "type": "object", 
+                  "properties": {
+                    "HEARTBEAT_LISTENER_THREAD_COUNT": {
+                      "type": "string"
+                    }, 
+                    "THROUGHPUT_CALCULATION_INTERVAL": {
+                      "type": "string"
+                    }, 
+                    "CONTAINER_OPTS_CONFIGURATOR": {
+                      "type": "null"
+                    }, 
+                    "HEARTBEAT_INTERVAL_MILLIS": {
+                      "type": "string"
+                    }, 
+                    "STATS_MAX_ALLOWABLE_WINDOWS_LAG": {
+                      "type": "string"
+                    }, 
+                    "APPLICATION_NAME": {
+                      "type": "string"
+                    }, 
+                    "CHECKPOINT_WINDOW_COUNT": {
+                      "type": "string"
+                    }, 
+                    "STRING_CODECS": {
+                      "type": "null"
+                    }, 
+                    "TUPLE_RECORDING_PART_FILE_SIZE": {
+                      "type": "string"
+                    }, 
+                    "APPLICATION_PATH": {
+                      "type": "null"
+                    }, 
+                    "BUFFER_SPOOLING": {
+                      "type": "boolean"
+                    }, 
+                    "CONTAINER_JVM_OPTIONS": {
+                      "type": "null"
+                    }, 
+                    "GATEWAY_PASSWORD": {
+                      "type": "null"
+                    }, 
+                    "TUPLE_RECORDING_PART_FILE_TIME_MILLIS": {
+                      "type": "string"
+                    }, 
+                    "GATEWAY_USER_NAME": {
+                      "type": "null"
+                    }, 
+                    "GATEWAY_CONNECT_ADDRESS": {
+                      "type": "null"
+                    }, 
+                    "APPLICATION_DATA_LINK": {
+                      "type": "null"
+                    }, 
+                    "THROUGHPUT_CALCULATION_MAX_SAMPLES": {
+                      "type": "string"
+                    }, 
+                    "RPC_LATENCY_COMPENSATION_SAMPLES": {
+                      "type": "string"
+                    }, 
+                    "APPLICATION_DOC_LINK": {
+                      "type": "null"
+                    }, 
+                    "HEARTBEAT_TIMEOUT_MILLIS": {
+                      "type": "string"
+                    }, 
+                    "STREAMING_WINDOW_SIZE_MILLIS": {
+                      "type": "string"
+                    }, 
+                    "DEBUG": {
+                      "type": "boolean"
+                    }, 
+                    "ENABLE_STATS_RECORDING": {
+                      "type": "boolean"
+                    }, 
+                    "APPLICATION_ID": {
+                      "type": "null"
+                    }, 
+                    "APP_PACKAGE_SOURCE": {
+                      "type": "null"
+                    }, 
+                    "MASTER_MEMORY_MB": {
+                      "type": "string"
+                    }, 
+                    "METRICS_TRANSPORT": {
+                      "type": "null"
+                    }, 
+                    "GATEWAY_USE_SSL": {
+                      "type": "boolean"
+                    }, 
+                    "RESOURCE_ALLOCATION_TIMEOUT_MILLIS": {
+                      "type": "string"
+                    }
+                  }
+                }, 
+                "operators": {
+                  "items": [
+                    {
+                      "required": [
+                        "attributes", 
+                        "class", 
+                        "name", 
+                        "ports", 
+                        "properties"
+                      ], 
+                      "type": "object", 
+                      "properties": {
+                        "attributes": {
+                          "required": [
+                            "ACTIVATION_WINDOW_ID", 
+                            "APPLICATION_WINDOW_COUNT", 
+                            "AUTO_RECORD", 
+                            "CHECKPOINT_WINDOW_COUNT", 
+                            "COUNTERS_AGGREGATOR", 
+                            "CUSTOM_METRIC_AGGREGATOR", 
+                            "CUSTOM_METRIC_DIMENSIONS_SCHEME", 
+                            "JVM_OPTIONS", 
+                            "LOCALITY_HOST", 
+                            "LOCALITY_RACK", 
+                            "MEMORY_MB", 
+                            "PARTITIONER", 
+                            "PROCESSING_MODE", 
+                            "RECOVERY_ATTEMPTS", 
+                            "SLIDE_BY_WINDOW_COUNT", 
+                            "SPIN_MILLIS", 
+                            "STATELESS", 
+                            "STATS_LISTENERS", 
+                            "STORAGE_AGENT", 
+                            "TIMEOUT_WINDOW_COUNT", 
+                            "VCORES"
+                          ], 
+                          "type": "object", 
+                          "properties": {
+                            "VCORES": {
+                              "type": "string"
+                            }, 
+                            "STATELESS": {
+                              "type": "boolean"
+                            }, 
+                            "STORAGE_AGENT": {
+                              "type": "null"
+                            }, 
+                            "CUSTOM_METRIC_DIMENSIONS_SCHEME": {
+                              "type": "null"
+                            }, 
+                            "STATS_LISTENERS": {
+                              "type": "null"
+                            }, 
+                            "JVM_OPTIONS": {
+                              "type": "null"
+                            }, 
+                            "LOCALITY_RACK": {
+                              "type": "null"
+                            }, 
+                            "ACTIVATION_WINDOW_ID": {
+                              "type": "string"
+                            }, 
+                            "LOCALITY_HOST": {
+                              "type": "null"
+                            }, 
+                            "PARTITIONER": {
+                              "type": "null"
+                            }, 
+                            "TIMEOUT_WINDOW_COUNT": {
+                              "type": "string"
+                            }, 
+                            "PROCESSING_MODE": {
+                              "type": "string"
+                            }, 
+                            "RECOVERY_ATTEMPTS": {
+                              "type": "null"
+                            }, 
+                            "AUTO_RECORD": {
+                              "type": "boolean"
+                            }, 
+                            "COUNTERS_AGGREGATOR": {
+                              "type": "null"
+                            }, 
+                            "SPIN_MILLIS": {
+                              "type": "string"
+                            }, 
+                            "APPLICATION_WINDOW_COUNT": {
+                              "type": "string"
+                            }, 
+                            "MEMORY_MB": {
+                              "type": "string"
+                            }, 
+                            "CUSTOM_METRIC_AGGREGATOR": {
+                              "type": "null"
+                            }, 
+                            "SLIDE_BY_WINDOW_COUNT": {
+                              "type": [
+                                "null", 
+                                "string"
+                              ]
+                            }, 
+                            "CHECKPOINT_WINDOW_COUNT": {
+                              "type": "string"
+                            }
+                          }
+                        }, 
+                        "properties": {
+                          "required": [
+                            "@class"
+                          ], 
+                          "type": [
+                            "null", 
+                            "object"
+                          ], 
+                          "properties": {
+                            "endPoint": {
+                              "type": "null"
+                            }, 
+                            "dagWindowWidth": {
+                              "type": "string"
+                            }, 
+                            "tableName": {
+                              "type": "null"
+                            }, 
+                            "secretKey": {
+                              "type": "null"
+                            }, 
+                            "persistenceStrategy": {
+                              "required": [
+                                "@class", 
+                                "columnFamilyName", 
+                                "rowName", 
+                                "table"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "table": {
+                                  "type": "null"
+                                }, 
+                                "rowName": {
+                                  "type": "string"
+                                }, 
+                                "@class": {
+                                  "type": "string"
+                                }, 
+                                "columnFamilyName": {
+                                  "type": "string"
+                                }
+                              }
+                            }, 
+                            "slidingWindowWidth": {
+                              "type": "string"
+                            }, 
+                            "@class": {
+                              "type": "string"
+                            }, 
+                            "feedMultiplierVariance": {
+                              "type": "string"
+                            }, 
+                            "lastWindowColumnName": {
+                              "type": "string"
+                            }, 
+                            "silent": {
+                              "type": "boolean"
+                            }, 
+                            "accessKey": {
+                              "type": "null"
+                            }, 
+                            "cumulative": {
+                              "type": "boolean"
+                            }, 
+                            "stringFormat": {
+                              "type": "string"
+                            }, 
+                            "filterList": {
+                              "type": "null"
+                            }, 
+                            "batchProcessing": {
+                              "type": "boolean"
+                            }, 
+                            "zookeeperClientPort": {
+                              "type": "string"
+                            }, 
+                            "streamName": {
+                              "type": "null"
+                            }, 
+                            "configuration": {
+                              "type": "null"
+                            }, 
+                            "feedMultiplier": {
+                              "type": "string"
+                            }, 
+                            "name": {
+                              "type": "string"
+                            }, 
+                            "windows": {
+                              "type": "string"
+                            }, 
+                            "zookeeperQuorum": {
+                              "type": "null"
+                            }, 
+                            "reConnect": {
+                              "type": "boolean"
+                            }, 
+                            "debug": {
+                              "type": "boolean"
+                            }, 
+                            "batchSize": {
+                              "type": "string"
+                            }
+                          }
+                        }, 
+                        "ports": {
+                          "items": [
+                            {
+                              "required": [
+                                "attributes", 
+                                "name", 
+                                "type"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "attributes": {
+                                  "required": [
+                                    "AUTO_RECORD", 
+                                    "BUFFER_MEMORY_MB", 
+                                    "IS_OUTPUT_UNIFIED", 
+                                    "PARTITION_PARALLEL", 
+                                    "QUEUE_CAPACITY", 
+                                    "SPIN_MILLIS", 
+                                    "STREAM_CODEC", 
+                                    "UNIFIER_LIMIT", 
+                                    "UNIFIER_SINGLE_FINAL"
+                                  ], 
+                                  "type": "object", 
+                                  "properties": {
+                                    "QUEUE_CAPACITY": {
+                                      "type": "string"
+                                    }, 
+                                    "UNIFIER_SINGLE_FINAL": {
+                                      "type": "boolean"
+                                    }, 
+                                    "UNIFIER_LIMIT": {
+                                      "type": "string"
+                                    }, 
+                                    "BUFFER_MEMORY_MB": {
+                                      "type": "string"
+                                    }, 
+                                    "IS_OUTPUT_UNIFIED": {
+                                      "type": "boolean"
+                                    }, 
+                                    "PARTITION_PARALLEL": {
+                                      "type": "boolean"
+                                    }, 
+                                    "STREAM_CODEC": {
+                                      "type": "null"
+                                    }, 
+                                    "AUTO_RECORD": {
+                                      "type": "boolean"
+                                    }, 
+                                    "SPIN_MILLIS": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }, 
+                                "type": {
+                                  "type": "string"
+                                }, 
+                                "name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          ], 
+                          "type": "array"
+                        }, 
+                        "name": {
+                          "type": "string"
+                        }, 
+                        "class": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ], 
+                  "type": "array"
+                }, 
+                "streams": {
+                  "items": [
+                    {
+                      "required": [
+                        "name", 
+                        "sinks", 
+                        "source"
+                      ], 
+                      "type": "object", 
+                      "properties": {
+                        "source": {
+                          "required": [
+                            "operatorName", 
+                            "portName"
+                          ], 
+                          "type": "object", 
+                          "properties": {
+                            "portName": {
+                              "type": "string"
+                            }, 
+                            "operatorName": {
+                              "type": "string"
+                            }
+                          }
+                        }, 
+                        "sinks": {
+                          "items": [
+                            {
+                              "required": [
+                                "operatorName", 
+                                "portName"
+                              ], 
+                              "type": "object", 
+                              "properties": {
+                                "portName": {
+                                  "type": "string"
+                                }, 
+                                "operatorName": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          ], 
+                          "type": "array"
+                        }, 
+                        "name": {
+                          "type": "string"
+                        }, 
+                        "locality": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ], 
+                  "type": "array"
+                }
+              }
+            }, 
+            "displayName": {
+              "type": "string"
+            }, 
+            "name": {
+              "type": "string"
+            }, 
+            "errorStackTrace": {
+              "type": "string"
+            }, 
+            "file": {
+              "type": "string"
+            }, 
+            "error": {
+              "type": "string"
+            }, 
+            "type": {
+              "type": "string"
+            }, 
+            "defaultProperties": {
+              "required": [
+                "dt.application.*.operator.*.attr.JVM_OPTIONS", 
+                "dt.application.*.operator.*.attr.MEMORY_MB", 
+                "dt.application.*.operator.*.port.*.attr.BUFFER_MEMORY_MB", 
+                "dt.application.RollingTopWordsDemo.operator.Query.topic", 
+                "dt.application.RollingTopWordsDemo.operator.QueryResult.numRetries", 
+                "dt.application.RollingTopWordsDemo.operator.QueryResult.topic", 
+                "dt.application.RollingTopWordsDemo.operator.TopCounter.topCount", 
+                "dt.application.RollingTopWordsDemo.stream.TweetStream.locality", 
+                "dt.application.TwitterDemo.operator.Query.topic", 
+                "dt.application.TwitterDemo.operator.QueryResult.numRetries", 
+                "dt.application.TwitterDemo.operator.QueryResult.topic", 
+                "dt.application.TwitterTrendingDemo.operator.Query.topic", 
+                "dt.application.TwitterTrendingDemo.operator.QueryResult.numRetries", 
+                "dt.application.TwitterTrendingDemo.operator.QueryResult.topic", 
+                "dt.attr.MASTER_MEMORY_MB", 
+                "dt.operator.TweetSampler.feedMultiplier", 
+                "dt.operator.TweetSampler.feedMultiplierVariance"
+              ], 
+              "type": "object", 
+              "properties": {
+                "dt.application.TwitterDemo.operator.QueryResult.numRetries": {
+                  "type": "string"
+                }, 
+                "dt.application.RollingTopWordsDemo.operator.TopCounter.topCount": {
+                  "type": "string"
+                }, 
+                "dt.application.TwitterTrendingDemo.operator.QueryResult.numRetries": {
+                  "type": "string"
+                }, 
+                "dt.operator.FromKinesis.streamName": {
+                  "type": "string"
+                }, 
+                "dt.application.*.operator.*.attr.MEMORY_MB": {
+                  "type": "string"
+                }, 
+                "dt.application.RollingTopWordsDemo.operator.QueryResult.topic": {
+                  "type": "string"
+                }, 
+                "dt.operator.TweetSampler.feedMultiplierVariance": {
+                  "type": "string"
+                }, 
+                "dt.application.TwitterDemo.operator.QueryResult.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.TwitterDemo.operator.Query.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.RollingTopWordsDemo.operator.Query.topic": {
+                  "type": "string"
+                }, 
+                "dt.application.*.operator.*.port.*.attr.BUFFER_MEMORY_MB": {
+                  "type": "string"
+                }, 
+                "dt.application.RollingTopWordsDemo.stream.TweetStream.locality": {
+                  "type": "string"
+                }, 
+                "dt.application.RollingTopWordsDemo.operator.QueryResult.numRetries": {
+                  "type": "string"
+                }, 
+                "dt.application.*.operator.*.attr.JVM_OPTIONS": {
+                  "type": "string"
+                }, 
+                "dt.operator.TweetSampler.feedMultiplier": {
+                  "type": "string"
+                }, 
+                "dt.application.TwitterTrendingDemo.operator.Query.topic": {
+                  "type": "string"
+                }, 
+                "dt.attr.MASTER_MEMORY_MB": {
+                  "type": "string"
+                }, 
+                "dt.operator.ToKinesis.streamName": {
+                  "type": "string"
+                }, 
+                "dt.application.TwitterTrendingDemo.operator.QueryResult.topic": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ], 
+      "type": "array"
+    }, 
+    "appPropertiesFiles": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "appJars": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "configs": {
+      "items": [
+        {
+          "type": "string"
+        }
+      ], 
+      "type": "array"
+    }, 
+    "defaultProperties": {
+      "required": [
+        "dt.application.*.operator.*.attr.JVM_OPTIONS", 
+        "dt.application.*.operator.*.attr.MEMORY_MB", 
+        "dt.application.*.operator.*.port.*.attr.BUFFER_MEMORY_MB", 
+        "dt.application.RollingTopWordsDemo.operator.Query.topic", 
+        "dt.application.RollingTopWordsDemo.operator.QueryResult.numRetries", 
+        "dt.application.RollingTopWordsDemo.operator.QueryResult.topic", 
+        "dt.application.RollingTopWordsDemo.operator.TopCounter.topCount", 
+        "dt.application.RollingTopWordsDemo.stream.TweetStream.locality", 
+        "dt.application.TwitterDemo.operator.Query.topic", 
+        "dt.application.TwitterDemo.operator.QueryResult.numRetries", 
+        "dt.application.TwitterDemo.operator.QueryResult.topic", 
+        "dt.application.TwitterTrendingDemo.operator.Query.topic", 
+        "dt.application.TwitterTrendingDemo.operator.QueryResult.numRetries", 
+        "dt.application.TwitterTrendingDemo.operator.QueryResult.topic", 
+        "dt.attr.MASTER_MEMORY_MB", 
+        "dt.operator.TweetSampler.feedMultiplier", 
+        "dt.operator.TweetSampler.feedMultiplierVariance"
+      ], 
+      "type": "object", 
+      "properties": {
+        "dt.application.TwitterDemo.operator.QueryResult.numRetries": {
+          "type": "string"
+        }, 
+        "dt.application.RollingTopWordsDemo.operator.TopCounter.topCount": {
+          "type": "string"
+        }, 
+        "dt.application.TwitterTrendingDemo.operator.QueryResult.numRetries": {
+          "type": "string"
+        }, 
+        "dt.operator.TweetSampler.feedMultiplier": {
+          "type": "string"
+        }, 
+        "dt.application.*.operator.*.attr.MEMORY_MB": {
+          "type": "string"
+        }, 
+        "dt.application.RollingTopWordsDemo.operator.QueryResult.topic": {
+          "type": "string"
+        }, 
+        "dt.operator.TweetSampler.feedMultiplierVariance": {
+          "type": "string"
+        }, 
+        "dt.application.TwitterDemo.operator.QueryResult.topic": {
+          "type": "string"
+        }, 
+        "dt.application.TwitterDemo.operator.Query.topic": {
+          "type": "string"
+        }, 
+        "dt.application.*.operator.*.port.*.attr.BUFFER_MEMORY_MB": {
+          "type": "string"
+        }, 
+        "dt.application.RollingTopWordsDemo.stream.TweetStream.locality": {
+          "type": "string"
+        }, 
+        "dt.application.RollingTopWordsDemo.operator.QueryResult.numRetries": {
+          "type": "string"
+        }, 
+        "dt.application.*.operator.*.attr.JVM_OPTIONS": {
+          "type": "string"
+        }, 
+        "dt.application.RollingTopWordsDemo.operator.Query.topic": {
+          "type": "string"
+        }, 
+        "dt.application.TwitterTrendingDemo.operator.Query.topic": {
+          "type": "string"
+        }, 
+        "dt.attr.MASTER_MEMORY_MB": {
+          "type": "string"
+        }, 
+        "dt.application.TwitterTrendingDemo.operator.QueryResult.topic": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+

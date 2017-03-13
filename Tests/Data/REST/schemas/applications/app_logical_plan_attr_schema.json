@@ -1,0 +1,55 @@
+{
+    "properties": {
+        "com.datatorrent.api.Context.DAGContext.APPLICATION_ID": {
+            "type": "string"
+        },
+        "com.datatorrent.api.Context.DAGContext.APPLICATION_NAME": {
+            "type": "string"
+        },
+        "com.datatorrent.api.Context.DAGContext.APPLICATION_PATH": {
+            "type": "string"
+        },
+        "com.datatorrent.api.Context.DAGContext.APP_PACKAGE_SOURCE": {
+            "type": "string"
+        },
+        "com.datatorrent.api.Context.DAGContext.CHECKPOINT_WINDOW_COUNT": {
+            "type": "integer"
+        },
+        "com.datatorrent.api.Context.DAGContext.CONTAINER_OPTS_CONFIGURATOR": {
+            "type": "string"
+        },
+        "com.datatorrent.api.Context.DAGContext.GATEWAY_CONNECT_ADDRESS": {
+            "type": "string"
+        },
+        "com.datatorrent.api.Context.DAGContext.MASTER_MEMORY_MB": {
+            "type": "integer"
+        },
+        "com.datatorrent.api.Context.DAGContext.STREAMING_WINDOW_SIZE_MILLIS": {
+            "type": "integer"
+        },
+        "com.datatorrent.api.Context.OperatorContext.STORAGE_AGENT": {
+            "type": "string"
+        },
+        "com.datatorrent.stram.plan.logical.LogicalPlan.HDFS_TOKEN_LIFE_TIME": {
+            "type": "integer"
+        },
+        "com.datatorrent.stram.plan.logical.LogicalPlan.LIBRARY_JARS": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "com.datatorrent.api.Context.DAGContext.APPLICATION_ID",
+        "com.datatorrent.api.Context.DAGContext.APPLICATION_NAME",
+        "com.datatorrent.api.Context.DAGContext.APPLICATION_PATH",
+        "com.datatorrent.api.Context.DAGContext.APP_PACKAGE_SOURCE",
+        "com.datatorrent.api.Context.DAGContext.CHECKPOINT_WINDOW_COUNT",
+        "com.datatorrent.api.Context.DAGContext.CONTAINER_OPTS_CONFIGURATOR",
+        "com.datatorrent.api.Context.DAGContext.GATEWAY_CONNECT_ADDRESS",
+        "com.datatorrent.api.Context.DAGContext.MASTER_MEMORY_MB",
+        "com.datatorrent.api.Context.DAGContext.STREAMING_WINDOW_SIZE_MILLIS",
+        "com.datatorrent.api.Context.OperatorContext.STORAGE_AGENT",
+        "com.datatorrent.stram.plan.logical.LogicalPlan.HDFS_TOKEN_LIFE_TIME",
+        "com.datatorrent.stram.plan.logical.LogicalPlan.LIBRARY_JARS"
+    ],
+    "type": "object"
+}

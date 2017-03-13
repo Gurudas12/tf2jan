@@ -1,0 +1,23 @@
+---
+test_run:
+  cases:
+    3:
+      case_id: 3
+      isautomated: 0
+      summary: REST API Ping
+    4:
+      case_id: 4
+      isautomated: 1
+      summary: REST API VERSION
+    5:
+      case_id: 5
+      isautomated: 1
+      summary: Connect_To_App
+    1049:
+      case_id: 1049
+      isautomated: 1
+      summary: DT_Installation_Configuration
+  environment_id: 20
+  plan_id: 3
+  run_id: 188
+  summary: Build_Verification_Tests_13_2015-11-19_09:33:47

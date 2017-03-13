@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<configuration>
+  <property>
+    <name>dt.application.JsonProcessor.operator.JsonParser.jsonSchema</name>
+    <value>
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Product set",
+  "type": "object",
+  "properties": {
+    "adId": {
+      "description": "Advertisement ID",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "exclusiveMinimum": false
+    },
+    "campaignName": {
+      "type": "string"
+    },
+    "campaignBudget": {
+      "type": "number"
+    },
+    "weatherTargeting": {
+      "type": "boolean"
+    }   
+  },
+  "required": [
+    "adId",
+    "campaignName",
+    "campaignBudget",
+    "weatherTargeting"
+  ]
+}
+    </value>
+  </property>
+</configuration>
+

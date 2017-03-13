@@ -1,0 +1,14 @@
+*** Settings ***
+Suite Setup       DTCP Setup Datasets    #Suite Teardown    Notify User
+Resource          ../cli_resources.txt
+Resource          dtingest_resources.txt
+
+*** Variables ***
+${iHDFS}          hdfs://${iNN}:${iNNPORT}
+${oHDFS}          hdfs://${oNN}:${oNNPORT}
+${NFS}            file:///disk5/dt-nfs-mount/IngestionAppTesting
+${FTP}            ftp://${FTPUSER}:${FTPPSWD}@${FTPSRVR}:{FTPPORT}
+
+*** Test Cases ***
+TEST
+    Comment    Hello

@@ -1,0 +1,200 @@
+*** Settings ***
+Library           OperatingSystem    # For accessing OS environment variables
+Library           String    # A test library for string manipulation and verification. String is Robot Framework's standard library for manipulating strings (e.g. Replace String Using Regexp, Split To Lines) and verifying their contents (e.g. Should Be String).
+Library           Collections    # Importing robots collections library
+Library           SSHLibrary    120 seconds    # For executing dtcp command: modify to 30 seconds
+Resource          ../cli_resources.txt
+Library           BuiltIn
+Library           ../../../lib/CLI/dtcli/DTCLILib.py    # Test library for DTCLI commandline utility
+Library           ../../../lib/rest/JsonValidator.py
+
+*** Variables ***
+${sep}            ${\n}##################################################${\n}
+
+*** Keywords ***
+Dtcli Setup
+    [Documentation]    Suit level setup for all the testcases: Login, Setpath, CreateLogFile
+    Login Server    ${dtserver}    ${sshuser}    ${sshkey}
+    Add To PATH    ${dtbin}
+    Create File    ${dtcli_log}    content="DTCLI LOG ::" ${\n}
+
+Login Server TEMP
+    [Arguments]    ${server}    ${uname}    ${psky}
+    [Documentation]    Log into the server: provided server name, user name & passkey/password
+    Open Connection    ${server}
+    Comment    Login With Public Key    ${uname}    ${psky}
+    Login    ${uname}    ${psky}
+
+Dtcli Enter
+    [Arguments]    ${verbose}=${EMPTY}
+    Write Read Prompt    dtcli ${verbose}    prompt=apex>
+
+Dtcli Exit
+    [Arguments]    ${app_id}=${EMPTY}    ${kill}=${False}    ${shutdown}=${False}
+    Kill Shutdown App    ${app_id}    ${kill}    ${shutdown}
+    Write Read Prompt    exit
+
+Dtcli Force Exit
+    ${cmd_stdout}=    Write Read Prompt    hostname    prompt=>    time_out=5s
+    ${cmd_stdout}=    Replace String    ${cmd_stdout}    \"    dQUOTE
+    ${cmd_stdout}=    Replace String    ${cmd_stdout}    \'    sQUOTE
+    ${bool}=    Evaluate    "Invalid command" in "${cmd_stdout}"
+    Run Keyword If    ${bool}    Write Read Prompt    exit
+
+Check String For Errors
+    [Arguments]    ${str}
+    Should Not Contain    ${str}    Not found
+    Should Not Contain    ${str}    Not Found
+    Should Not Contain    ${str}    not found
+    Comment    Should Not Contain    ${str}    error    #To avoid <"error": null,>
+    Should Not Contain    ${str}    Error
+    Should Not Contain    ${str}    ERROR
+    Should Not Contain    ${str}    Exception
+    Should Not Contain    ${str}    exception
+    Should Not Contain    ${str}    EXCEPTION
+
+__Get From Json
+    [Arguments]    ${cmd}    ${regex}
+    ${cmd}=    Set Variable    list-apps
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    ${apps}=    Get App List    ${cmd_stdout}
+    Log    ${apps}
+
+Verify Usage
+    [Arguments]    ${cmd}    ${actual_usage}    ${prompt}=apex>
+    #USAGE Check:
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=${prompt}
+    Append To File    ${dtcli_log}    ${cmd}${\n}${cmd_stdout}${sep}
+    Should Contain    ${cmd_stdout}    ${actual_usage}
+    Should Contain    ${cmd_stdout}    Command parameter error
+
+Get App Id From String
+    [Arguments]    ${str}
+    ${match}    ${app_id}=    Should Match Regexp    ${str}    {"appId": "(\\w+)"}
+    [Return]    ${app_id}
+
+Get Json Value From Key
+    [Arguments]    ${json}    ${key}
+    Comment    ${match}    ${value}=    Should Match Regexp    ${json}    "${key}": "([^\"]+)"
+    ${match}    ${value}=    Should Match Regexp    ${json}    "${key}": "([^${\n}]+)"
+    [Return]    ${value}
+
+App Launch And Validate
+    [Arguments]    ${app-jar}    ${conf}    ${APPLICATION_NAME}    ${queue}=default    ${kill}=${True}    ${shutdown}=${False}
+    ...    ${prompt}=${False}
+    ${conf}    ${app_instance_name}=    Run Keyword If    '-D' not in '${conf}'    Get Random App Name    ${conf}    ${APPLICATION_NAME}
+    ...    ${TEST_NAME}
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${app-jar}    ${conf}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    Should Contain    ${cmd_stdout}    Submitting application: {name=${app_instance_name}, queue=${queue}, user=${sshuser} (auth:SIMPLE), resource=<memory:1024, vCores:0>}
+    ${app_id}=    Get App Id From String    ${cmd_stdout}
+    Should Contain    ${cmd_stdout}    Submitted application ${app_id}
+    Run Keyword If    ${kill}==${True}    Sleep    5s
+    Run Keyword If    ${kill}==${True}    Write Read Prompt    kill-app    prompt=apex>
+    Run Keyword If    ${shutdown}==${True}    Sleep    10s
+    Run Keyword If    ${shutdown}==${True}    Write Read Prompt    shutdown-app    prompt=apex>
+    Sleep    10s
+    Run Keyword If    ${prompt}==${True}    Write Read Prompt    connect null    prompt=apex>
+    [Return]    ${app_id}    ${cmd_stdout}
+
+App Relaunch And Validate
+    [Arguments]    ${app-jar}    ${origAppId}    ${conf}    ${APPLICATION_NAME}    ${kill}=${True}    ${shutdown}=${False}
+    ${conf}    ${app_instance_name}=    Run Keyword If    '-D' not in '${conf}'    Get Random App Name    ${conf}    ${APPLICATION_NAME}
+    ...    ${TEST_NAME}
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${app-jar}    ${conf}    -originalAppId ${origAppId}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    ${app_id_re}=    Get App Id From String    ${cmd_stdout}
+    Should Match Regexp    ${cmd_stdout}    stram.StramClient: Restart from hdfs://.*${origAppId}
+    Should Match Regexp    ${cmd_stdout}    stram.FSRecoveryHandler: Creating hdfs://.*${app_id_re}/recovery/log
+    Should Contain    ${cmd_stdout}    Submitting application: {name=${app_instance_name}, queue=default, user=${sshuser} (auth:SIMPLE), resource=<memory:1024, vCores:0>}
+    Should Contain    ${cmd_stdout}    Submitted application ${app_id_re}
+    Run Keyword If    ${kill}==${True}    Write Read Prompt    kill-app    prompt=apex>
+    Run Keyword If    ${shutdown}==${True}    Write Read Prompt    shutdown-app    prompt=apex>
+    Sleep    10s
+    [Return]    ${app_id_re}    ${cmd_stdout}
+
+App Launch
+    [Arguments]    ${app-jar}    ${conf}    ${APPLICATION_NAME}    ${queue}=default    ${kill}=${False}    ${shutdown}=${False}
+    [Documentation]    Just launch the app and return app ID & stdout
+    ${conf}    ${app_instance_name}=    Run Keyword If    '${APPLICATION_NAME}' != '${EMPTY}'    Get Random App Name    ${conf}    ${APPLICATION_NAME}
+    ...    ${TEST_NAME}
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${app-jar}    ${conf}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    ${app_id}=    Get App Id From String    ${cmd_stdout}
+    Run Keyword If    ${kill}==${True}    Write Read Prompt    kill-app    prompt=apex>
+    Run Keyword If    ${kill}==${True}    Sleep    5s
+    Run Keyword If    ${shutdown}==${True}    Write Read Prompt    shutdown-app    prompt=apex>
+    Run Keyword If    ${shutdown}==${True}    Sleep    10s
+    [Return]    ${app_id}    ${cmd_stdout}
+
+App Launch And Expect Error
+    [Arguments]    ${app-jar}    ${conf}    ${error}
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${app-jar}    ${conf}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=apex>
+    Should Contain    ${cmd_stdout}    ${error}
+
+Get Random App Name
+    [Arguments]    ${orig_conf}    ${APPLICATION_NAME}    ${new_app_name_prefix}=APP_
+    ${uuid}=    Generate Random String    chars=DDDDATTTTA0RRRRENNNNT
+    ${new_app_name}=    Catenate    SEPARATOR=_    ${new_app_name_prefix}    ${uuid}
+    ${name_prop}=    Catenate    SEPARATOR=${EMPTY}    -D dt.application.    ${APPLICATION_NAME}    .attr.APPLICATION_NAME=    ${new_app_name}
+    ${new_conf}=    Catenate    SEPARATOR=${SPACE}    ${orig_conf}    ${name_prop}
+    [Return]    ${new_conf}    ${new_app_name}
+
+App Launch Backup
+    [Arguments]    ${app-jar}    ${conf}    ${APPLICATION_NAME}    ${queue}=default    ${kill}=${False}    ${shutdown}=${False}
+    [Documentation]    Just launch the app and return app ID & stdout
+    ${conf}    ${app_instance_name}=    Run Keyword If    '-D' not in '${conf}'    Get Random App Name    ${conf}    ${APPLICATION_NAME}
+    ...    ${TEST_NAME}
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${app-jar}    ${conf}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=) >
+    ${app_id}=    Get App Id From String    ${cmd_stdout}
+    Run Keyword If    ${kill}==${True}    Write Read Prompt    kill-app    prompt=apex>
+    Run Keyword If    ${kill}==${True}    Sleep    5s
+    Run Keyword If    ${shutdown}==${True}    Write Read Prompt    shutdown-app    prompt=apex>
+    Run Keyword If    ${shutdown}==${True}    Sleep    10s
+    [Return]    ${app_id}    ${cmd_stdout}
+
+Kill Shutdown App
+    [Arguments]    ${appid}    ${kill}=${False}    ${shutdown}=${False}
+    Run Keyword If    ${kill}==${True}    Write Read Prompt    kill-app ${appid}    prompt=>
+    Run Keyword If    ${kill}==${True}    Sleep    5s
+    Run Keyword If    ${shutdown}==${True}    Write Read Prompt    shutdown-app ${appid}    prompt=>
+    Run Keyword If    ${shutdown}==${True}    Sleep    10s
+
+Check Operator Property Value
+    [Arguments]    ${appid}    ${opname}    ${paramName}    ${paramValue}
+    ${paramName}=    Get Value From Splits    str=${paramName}    sep=.    index=-1
+    Write Read Prompt    connect ${appid}    prompt=) >
+    ${cmd_stdout}=    Write Read Prompt    get-operator-properties ${opname}    prompt=) >
+    ${actualValue}=    Get Json Value From Key    ${cmd_stdout}    ${paramName}
+    ${actualValue}=    Replace String    ${actualValue}    \\"    "
+    ${actualValue}=    Replace String    ${actualValue}    \\/    /
+    Should Be Equal    ${actualValue}    ${paramValue}
+
+Check Operator Property Values
+    [Arguments]    ${appid}    ${opname}    ${params}
+    Write Read Prompt    connect ${appid}    prompt=) >
+    ${op_props}=    Write Read Prompt    get-operator-properties ${opname}    prompt=) >
+    @{items}=    Get Dictionary Items    ${params}
+    : FOR    ${pname}    ${pvalue}    IN    @{items}
+    \    ${ret}=    Run Keyword And Return Status    Should Match Regexp    ${pname}    dt.*operator.${OPERATOR_NAME}.prop
+    \    Continue For Loop If    ${ret}==${False}
+    \    ${paramName}=    Get Value From Splits    str=${pname}    sep=.    index=-1
+    \    ${actualValue}=    Get Json Value From Key    ${op_props}    ${paramName}
+    \    ${actualValue}=    Replace String    ${actualValue}    \\"    "
+    \    ${actualValue}=    Replace String    ${actualValue}    \\/    /
+    \    ${actualValue}=    Replace String    ${actualValue}    \\\\    \\
+    \    Should Be Equal    ${actualValue}    ${pvalue}
+
+Get App Info Using Key
+    [Arguments]    ${appid}    ${key}
+    ${appinfo}=    Write Read Prompt    get-app-info ${appid}    prompt=>
+    ${value}=    Get Json Value From Key    ${appinfo}    ${key}
+    [Return]    ${value}
+
+Set Operator Property
+    [Arguments]    ${appid}    ${opname}    ${key}    ${value}
+    ${cmd_stdout}=    Write Read Prompt    set-operator-property ${opname} ${key} ${value}    prompt=>
+    Check String For Errors    ${cmd_stdout}
+    [Return]    ${value}

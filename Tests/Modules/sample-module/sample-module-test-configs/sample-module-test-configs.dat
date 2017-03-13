@@ -1,0 +1,4 @@
+TCID|dt.attr.MASTER_MEMORY_MB|dt.attr.APPLICATION_NAME
+Launch-module-sanity|1024|MobileDemo-sanity
+Launch-module-with-conf1|2048|_DEFAULT_
+Launch-module-with-conf2|_DEFAULT_|MobileDemo_with_conf2

@@ -1,0 +1,97 @@
+*** Settings ***
+Library           Selenium2Library
+Library           Collections
+Library           String
+Library           ../helpers.py
+Library           OperatingSystem
+
+*** Keywords ***
+Go_To_Page
+    [Arguments]    ${link_disp_name}    ${str_on_page_to_verify}
+    [Documentation]    Redirects to the page by given link display name and waits for the string " str_on_page_to_verify" \ to be displayed on the page
+    ${Go_To_Page_Link}    Set Variable    //span[text()='${link_disp_name}']/..
+    Click Element    xpath=${Go_To_Page_Link}
+    Wait Until Page Contains    ${str_on_page_to_verify}    timeout=10s
+    Comment    Wait Until Page Contains    //t[text()="Application Packages"]/..    10s
+
+Go_To_PageM
+    [Arguments]    ${link_disp_name}    ${str_on_page_to_verify}
+    [Documentation]    Redirects to the page by given link display name and waits for the string " str_on_page_to_verify" \ to be displayed on the page
+    ${Go_To_Page_Link}    Set Variable    //span[text()='${link_disp_name}']/..
+    Click Element    xpath=${Go_To_Page_Link}
+    Wait Until Page Contains    ${str_on_page_to_verify}    timeout=10s
+    Comment    Wait Until Page Contains    //t[text()="Application Packages"]/..    10s
+    input text   xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[4]/input  RUN
+
+Connect_To_DT_Console
+    [Arguments]    ${url}
+    [Documentation]    Connects to DT web console
+    Open Browser    ${url}  CHROME   #ff_profile_dir=/home/akki/.mozilla/firefox/x1zhunv2.Automation_DT_Console
+    Maximize Browser Window
+    Wait Until Page Contains    Welcome to DataTorrent RTS
+    Wait Until Page Contains    Monitor
+    Wait Until Page Contains    Develop
+
+Read_Table
+    [Arguments]    ${table_locator}
+    [Documentation]    Reads the given table containent. Returns dictonary having table containent and table headers in list
+    Comment    Read and fetch table headers
+    ${Gw_Info_Header_List}=    Create List    #List for storing headers of the table
+    ${Table_Data_Dict}=    Create Dictionary    #Dictonary for storing values from the table
+    ${tHeader_xpath}=    Catenate    ${table_locator}    /thead/tr/th    #Creating xpath for getting table headers
+    ${tHeader}=    Get Webelements    ${tHeader_xpath}
+    ${hList_len}=    Get Length    ${tHeader}    #Get the number of headers in the table
+    Comment    Loop which retrives of headers and add into the list
+    : FOR    ${i}    IN RANGE    0    ${hList_len}
+    \    ${h}=    Catenate    ${tHeader_xpath}    [${i}]
+    \    Append To List    ${Gw_Info_Header_List}    ${h}
+    Log List    ${Gw_Info_Header_List}
+    Comment    Read and fetch table cells
+    ${tTr_xpath}    Catenate    ${table_locator}    /tbody/tr    #Creating xpath for getting table tr to get number of rows
+    ${list_web_ele}=    Get Webelements    ${tTr_xpath}
+    ${list_len}=    Get Length    ${list_web_ele}
+    : FOR    ${i}    IN RANGE    0    ${list_len}
+    \    Log    ${i}
+    \    ${j}=    Set Variable    ${${i}+1}
+    \    Comment    Read the table cells
+    \    ${item_xpath}=    Catenate    ${table_locator}    /tbody/tr[${j}]/td[1]    #Read first cell and add it as key in dictionary
+    \    ${item}    Get Text    ${item_xpath}
+    \    ${Dict_Values_List}    Create List    #List For stroring columns of the table except first
+    \    ${Dict_Values_List}=    Read_Table_Cells_Data_Inner_Loop    ${j}    ${table_locator}    ${hList_len}    #Read data from remaining data cells and creates one list
+    \    Set To Dictionary    ${Table_Data_Dict}    ${item}    ${Dict_Values_List}
+    Log Dictionary    ${Table_Data_Dict}
+    [Return]    ${Gw_Info_Header_List}    ${Table_Data_Dict}
+
+Read_Table_Cells_Data_Inner_Loop
+    [Arguments]    ${j}    ${table_locator}    ${hList_len}
+    ${Data_List}    Create List
+    : FOR    ${k}    IN RANGE    1    ${hList_len}
+    \    ${item_xpath}=    Catenate    ${table_locator}    /tbody/tr[${j}]/td[${${k}+1}]
+    \    ${value}    Get Text    ${item_xpath}
+    \    Append To List    ${Data_List}    ${value}
+    [Return]    ${Data_List}
+
+DestroyBrowsingEnv
+    Close Browser
+    Terminate PID    ${xvfbPID}
+    Remove Directory    /tmp/ffprofiles/${displayid}    recursive=True
+
+SetupBrowsingEnv
+    [Arguments]    ${width}=1280    ${height}=720    ${colordepth}=24
+    ${displayid}    ${xvfbpid}=    SetupXVFB    ${width}    ${height}    ${colordepth}
+    Set Environment Variable    DISPLAY    :${displayid}
+    #Create Directory    /tmp/ffprofiles/
+    #Copy Directory    /var/dt/tf/etc/browsers/ffblankprofile    /tmp/ffprofiles/${displayid}
+    Set Suite Variable    ${displayid}    ${displayid}
+    Set Suite Variable    ${xvfbpid}    ${xvfbpid}
+
+
+Scroll_Page_To_Location
+    [Arguments]    ${x_location}    ${y_location}
+    Execute JavaScript    window.scrollTo(${x_location},${y_location})
+
+SetupBrowsingEnv_Monitor
+    [Arguments]    ${pkg_name}    ${app_name}
+    #SetupBrowsingEnv
+    Connect_To_DT_Console    ${url}
+    #Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case

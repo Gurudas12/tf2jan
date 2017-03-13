@@ -1,0 +1,107 @@
+*** Settings ***
+Library           ../../lib/rest/DTREST.py
+Resource          ../CLI/cli_resources.txt
+
+*** Keywords ***
+Create Properties File
+    [Arguments]    ${pname}    ${pvalue}    ${new}=${True}    ${path}=${EMPTY}
+    ${R}=    Generate Random String
+    Run Keyword If    ${new}==${True}    Set Test Variable    ${path}    /tmp/properties_${R}.xml
+    Run Keyword If    ${new}==${True}    Create File    ${path}
+    Run Keyword If    ${new}==${True}    Append To File    ${path}    <configuration>${\n}
+    Run    sed -i 's#</configuration>##g' ${path}
+    Append To File    ${path}    ${SPACE * 2}<property>${\n}
+    Append To File    ${path}    ${SPACE * 4}<name>${pname}</name>${\n}
+    Append To File    ${path}    ${SPACE * 4}<value>${pvalue}</value>${\n}
+    Append To File    ${path}    ${SPACE * 2}</property>${\n}
+    Append To File    ${path}    </configuration>${\n}
+    [Return]    ${path}
+
+Create Properties File From Dict
+    [Arguments]    ${params}    ${new}=${True}    ${path}=${EMPTY}
+    ${R}=    Generate Random String
+    Run Keyword If    ${new}==${True}    Set Test Variable    ${path}    /tmp/properties_${R}.xml
+    Run Keyword If    ${new}==${True}    Create File    ${path}
+    Run Keyword If    ${new}==${True}    Append To File    ${path}    <configuration>${\n}
+    Run    sed -i 's#</configuration>##g' ${path}
+    @{items}=    Get Dictionary Items    ${params}
+    : FOR    ${pname}    ${pvalue}    IN    @{items}
+    \    ${pvalue}=    Escape For XML    ${pvalue}
+    \    Append To File    ${path}    ${SPACE * 2}<property>${\n}
+    \    Append To File    ${path}    ${SPACE * 4}<name>${pname}</name>${\n}
+    \    Append To File    ${path}    ${SPACE * 4}<value>${pvalue}</value>${\n}
+    \    Append To File    ${path}    ${SPACE * 2}</property>${\n}
+    Append To File    ${path}    </configuration>${\n}
+    Put File    ${path}    ${path}
+    [Return]    ${path}
+
+Escape For XML
+    [Arguments]    ${str}
+    ${str}=    Replace String    ${str}    <    &lt;
+    ${str}=    Replace String    ${str}    >    &gt;
+    [Return]    ${str}
+
+Launch App
+    [Arguments]    ${app-pkg}    ${conf}    ${APPLICATION_NAME}
+    [Documentation]    Shorter version of 'App Launch'
+    ${new_conf}    ${app_instance_name}=    Get Random App Name    ${conf}    ${APPLICATION_NAME}    ${TEST_NAME}
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    launch    ${app-pkg}    ${new_conf}
+    ${cmd_stdout}=    Write Read Prompt    ${cmd}    prompt=>
+    ${app_id}=    Get App Id From String    ${cmd_stdout}
+    Sleep    30s    Waiting for app to go to RUNNING state
+    [Return]    ${app_id}    ${cmd_stdout}
+
+Check App State
+    [Arguments]    ${appid}    ${expected}
+    ${cmd_out}=    Write Read Prompt    get-app-info ${appid}    prompt=>
+    ${state}=    Get Json Value From Key    ${cmd_out}    state
+    Should Be Equal    ${state}    ${expected}
+
+Kill Container Test
+    [Arguments]    ${appid}    ${opname}    ${wait}=1m
+    Sleep    1m    Wait for the app to process some data first.
+    ${old_cid}=    Kill Container Using OpName    ${appid}    ${opname}    ${wait}
+    Check App State    ${appid}    expected=RUNNING
+    ${new_cid}=    Get Container Id From Operator Name    ${base_get_url}    ${appid}    ${opname}
+    Should Not Be Equal    ${old_cid}    ${new_cid}
+    ${c_state}=    Get Container State    ${base_get_url}    ${appid}    ${new_cid}
+    Should Be Equal    ${c_state}    ACTIVE
+
+Kill Container Test All
+    [Arguments]    ${appid}    ${opname}    ${wait}=1m
+    Sleep    1m    Wait for the app to process some data first.
+    ${old_cid}=    Kill All Containers Using OpName    ${appid}    ${opname}    ${wait}
+    Check App State    ${appid}    expected=RUNNING
+    ${new_cid}=    Get Container Id From Operator Name    ${base_get_url}    ${appid}    ${opname}
+    Should Not Be Equal    ${old_cid}    ${new_cid}
+    ${c_state}=    Get Container State    ${base_get_url}    ${appid}    ${new_cid}
+    Should Be Equal    ${c_state}    ACTIVE
+
+Verify Tuples Count
+    [Arguments]    ${appid}    ${opname}    ${tupleCounter}    ${expectedValue}
+    ${op_details}=    Get Physical Operator Details    ${base_get_url}    ${appid}    ${opname}
+    Log    ${op_details}
+    ${actualValue}=    Get From Dictionary    ${op_details}    ${tupleCounter}
+    Should Be Equal    '${actualValue}'    '${expectedValue}'
+
+Check Dynamic Scalability
+    [Arguments]    ${appid}    ${opname}    ${input_op}    ${prop_name}    ${prop_value}    ${wait}=60
+    #Get initial partition count
+    ${partitions}=    Get Logical Operator Details    ${base_get_url}    ${appid}    ${opname}    key=partitions
+    ${num_partitions_old}=    Get Length    ${partitions}
+    #Change the throughput
+    ${api}=    Set Variable    applications${/}${appid}${/}logicalPlan${/}operators${/}${input_op}${/}properties
+    ${get_output}=    Get Api    ${base_get_url}    ${api}
+    Log    ${get_output}
+    ${payload}=    Set Variable    { "${prop_name}" : ${prop_value} }
+    ${api_response}=    post_api    ${base_get_url}    ${api}    payload=${payload}
+    ${get_output}=    Get Api    ${base_get_url}    ${api}
+    Log    ${get_output}
+    #Wait for partitioning to happen
+    Sleep    ${wait}
+    #Get changed partition count
+    ${partitions}=    Get Logical Operator Details    ${base_get_url}    ${appid}    ${opname}    key=partitions
+    ${num_partitions_new}=    Get Length    ${partitions}
+    #Compare the values
+    ${status}=    Set Variable If    ${num_partitions_new} > ${num_partitions_old}    PASSED    FAILED
+    Should Be Equal    ${status}    PASSED

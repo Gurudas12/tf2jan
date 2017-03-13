@@ -1,0 +1,225 @@
+*** Settings ***
+Suite Setup       Dtcli Setup
+Resource          JDBCPollInput_resources.txt
+
+*** Test Cases ***
+JPIPg_Poll_Static_Table
+    [Tags]    SANITY
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:postgresql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:postgresql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out    dt.operator.JdbcInput.prop.store.databaseDriver=org.postgresql.Driver
+    ...    dt.operator.JdbcOutput.prop.store.databaseDriver=org.postgresql.Driver
+    RUNit    ${params}    valChq=${False}
+
+XXXXXXXXXXXX Need To Update after fix for SPOI-9782 XXXXXXXXXXXXXXX
+
+JPIPg_Poll_Dynamic_Table_0
+    [Tags]    SANITY    FreshTableWithNoRecords
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000_fresh    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    timeout=1    kill=${False}    valChq=${False}    #Set to false because of SPOI-9611
+    Insert Data Into Table And Validate    ${params}    table=${tablein}    what=500    timeout=10
+    [Teardown]    Execute MySQL Query    DELETE FROM ${tablein}    ${dbname}
+
+JPIPg_Poll_Dynamic_Table_N
+    [Tags]    SANITY    ExistingTableWithSomeRecords
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    timeout=2    kill=${False}    valChq=${False}    #Set to false because of SPOI-9611
+    Insert Data Into Table And Validate    ${params}    table=${tablein}    what=500    timeout=10
+
+JPIPg_Delete_Data_From_Source_Table
+    [Tags]    SANITY
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    kill=${False}    valChq=${False}    #Set to false because of SPOI-9611
+    Run Keyword And Expect Error    *!=*    Delete Data From OutTable And Validate    ${params}    table=${tablein}    num=10    timeout=10
+    [Teardown]    Post Api    ${base_get_url}    applications/${app_id}/kill    payload=${empty}
+
+JPIPg_Delete_Data_From_Destination_Table
+    [Tags]    SANITY
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    kill=${False}    valChq=${False}    #Set to false because of SPOI-9611
+    Run Keyword And Expect Error    *!=*    Delete Data From OutTable And Validate    ${params}    table=${tableout}    num=10    timeout=10
+    [Teardown]    Post Api    ${base_get_url}    applications/${app_id}/kill    payload=${empty}
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+JPIPg_columnsExpression-sanity
+    [Tags]    SPOI-9743
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.columnsExpression=customerName,customerPhone,customerEmail,city,country,uid,accountNumber,txId,txAmount    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}
+
+JPIPg_columnsExpression-orderChange
+    [Tags]    SPOI-9743
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.columnsExpression=uid,customerPhone,city,customerEmail,txId,customerName,accountNumber,txAmount,country    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    timeout=1    valChq=${False}    #remove timeout once fixed
+
+JPIPg_columnsExpression-fewCols
+    [Tags]    SPOI-9744
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.columnsExpression=customerName,customerPhone,customerEmail    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    timeout=1    valChq=${False}    #remove timeout once fixed
+
+JPIPg_columnsExpression-fewColsWithoutPK
+    [Tags]    SPOI-9744
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.columnsExpression=customerEmail,country,txId    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    timeout=1    valChq=${False}    #remove timeout once fixed
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+JPIPg_whereCondition-matchAll
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.whereCondition=txDate LIKE '%-%'    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_whereCondition-matchFew
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.whereCondition=city LIKE '%a%'    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_whereCondition-matchNone
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.whereCondition=city LIKE '%Gotham%'    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    timeout=2    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_whereCondition-Arithmetic
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.whereCondition=txId >= 3120662    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_whereCondition-LogicGates
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.whereCondition=(country LIKE 'Krypton%' OR city LIKE '%k%') AND txId <= 5000000    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+JPIPg_Poll_Dynamic_Table_WithPollInterval
+    [Tags]    LONG
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000_fresh    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out    dt.operator.JdbcInput.prop.pollInterval=5000
+    RUNit    ${params}    timeout=1    kill=${False}    valChq=${False}    #Set to false because of SPOI-9611
+    Insert Data Into Table And Validate    ${params}    table=${tablein}    what=1000    timeout=10    kill=${False}
+    Insert Data Into Table And Validate    ${params}    table=${tablein}    what=100    timeout=5    kill=${False}
+    Insert Data Into Table And Validate    ${params}    table=${tablein}    what=5000    timeout=20
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+JPIPg_Test-For-Fault-Tolerance_staticData
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    testFaultT=${True}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_Test-For-Fault-Tolerance_dynamicData
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    kill=${False}    testFaultT=${True}    valChq=${False}    #Set to false because of SPOI-9611
+    Insert Data Into Table And Validate    ${params}    table=${tablein}    what=200    timeout=10
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+JPIPg_Test-For-Dynamic-Scalability
+    [Tags]    SPOI-9611
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    kill=${False}    testDynamicS=${True}    valChq=${False}    #Set to false because of SPOI-9611
+    Insert Data Into Table And Validate    ${params}    table=${tablein}    what=1000    timeout=20
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+JPIPg_PT_databaseDriver-negative
+    [Tags]    TBD    negative
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseDriver=com.mmysql.jdbc.Driver    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    Run Keyword And Expect Error    *FAILED != RUNNING*    RUNit    ${params}    validateData=${False}    valChq=${False}    #Set to false because of SPOI-9611
+    Dtcli Exit
+    ${yarn_logs}=    Get Yarn Logs    ${app_id}
+    Should Match    ${yarn_logs}    *ClassNotFoundException*com.mmysql.jdbc.Driver*
+
+JPIPg_PT_databaseUrl-negative
+    [Tags]    TBD    negative
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://localhostQ/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    Run Keyword And Expect Error    *FAILED != RUNNING*    RUNit    ${params}    validateData=${False}    valChq=${False}    #Set to false because of SPOI-9611
+    Dtcli Exit
+    ${yarn_logs}=    Get Yarn Logs    ${app_id}
+    Should Match    ${yarn_logs}    *java.net.UnknownHostException: localhostQ: Name or service not known*
+
+JPIPg_PT_userName-negative
+    [Tags]    TBD    negative    SPOI-9728
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.userName=ROOTX    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    Run Keyword And Expect Error    *FAILED != RUNNING*    RUNit    ${params}    kill=${False}    validateData=${False}    valChq=${False}
+    Dtcli Exit
+    ${yarn_logs}=    Get Yarn Logs    ${app_id}
+    Should Match    ${yarn_logs}    *java.net.UnknownHostException: localhostQ: Name or service not known*
+    #[Teardown]    Cleanup    ${tableout}
+
+JPIPg_PT_password-negative
+    [Tags]    TBD    negative
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.password=6787    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    Run Keyword And Expect Error    *FAILED != RUNNING*    RUNit    ${params}    kill=${False}    validateData=${False}    valChq=${False}
+    Dtcli Exit
+    ${yarn_logs}=    Get Yarn Logs    ${app_id}
+    Should Match    ${yarn_logs}    *Access denied for user*(using password: YES)*
+
+JPIPg_PT_table-negative-inTableName
+    [Tags]    TBD    negative
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=WRONG_TABLE    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    Run Keyword And Expect Error    *FAILED != RUNNING*    RUNit    ${params}    kill=${False}    validateData=${False}    valChq=${False}
+    Dtcli Exit
+    ${yarn_logs}=    Get Yarn Logs    ${app_id}
+    Should Match    ${yarn_logs}    *Table * doesn't exist*
+
+JPIPg_PT_columnsExpression
+    [Tags]    TBD    SPOI-9744
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.columnsExpression=customerName    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_columnsExpression-negative
+    [Tags]    TBD    SPOI-9744
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.columnsExpression=customerName,abc,city,klm    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_partitionCount-1
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.partitionCount=1    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_partitionCount-10
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.partitionCount=10    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_fetchSize-1
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.fetchSize=1    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_fetchSize-1000
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.fetchSize=1000    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_pollInterval-1
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.pollInterval=1    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_pollInterval-10000
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.pollInterval=10000    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_queueCapacity-1024
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.queueCapacity=1024    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_queueCapacity-10240
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.queueCapacity=10240    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_batchSize-1
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.batchSize=1    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_batchSize-10000
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.batchSize=10000    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+JPIPg_PT_whereCondition
+    [Tags]    TBD
+    ${params}=    Create Dictionary    dt.operator.JdbcInput.prop.whereCondition=(city LIKE '%CITY%' AND txId = 3120662) OR country LIKE '%a%'    dt.operator.JdbcInput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcInput.prop.tableName=txn1000    dt.operator.JdbcOutput.prop.store.databaseUrl=jdbc:mysql://node35.morado.com/jdbcpoll    dt.operator.JdbcOutput.prop.tablename=txn1000_out
+    RUNit    ${params}    valChq=${False}    #Set to false because of SPOI-9611
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+JPIPg_PT_columnsExpression-all
+    [Tags]    TBD    Update data to include all columns in all above TCs

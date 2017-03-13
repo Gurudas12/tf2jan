@@ -1,0 +1,17 @@
+*** Settings ***
+Suite Setup
+Library           SSHLibrary    30 seconds
+
+*** Variables ***
+${NODE_IP}        node30.morado.com
+${Username}       dttbc
+${User_Key}       /root/.ssh/node30_id_rsa
+${dtbin}          /home/hduser/datatorrent/current/bin/
+
+*** Test Cases ***
+TC_IAT_A0000
+    [Documentation]    Test run
+    Open Connection    ${NODE_IP}
+    Login With Public Key    ${USername}    ${User_Key}
+    Log    Hello, I am logged in!!!
+

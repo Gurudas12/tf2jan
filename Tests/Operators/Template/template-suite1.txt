@@ -1,0 +1,13 @@
+*** Settings ***
+Suite Setup       Dtcli Setup
+Resource          template-resources.txt
+
+*** Test Cases ***
+Test PiDemoAppData rand minvalue
+    [Template]    Run Parameter Test
+    dt.application.PiDemoAppData.operator.rand.minvalue    112
+    dt.application.PiDemoAppData.operator.rand.minvalue    121
+    dt.application.PiDemoAppData.operator.rand.minvalue    117
+
+Normal Testcase
+    Log    Hello there! Normal Testcase!!!

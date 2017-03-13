@@ -1,0 +1,14 @@
+*** Settings ***
+Library           String
+Library           SSHLibrary    120 seconds
+Library           OperatingSystem
+Resource          ../CLI/cli_resources.txt
+
+*** Variables ***
+
+*** Keywords ***
+Get Logs For App
+    [Arguments]    ${app_id}
+    Log    ${app_id}
+    ${stdout}=    Set Variable    ${app_id} # ${app_id}
+    [Return]    ${stdout}
