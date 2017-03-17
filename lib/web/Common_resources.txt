@@ -22,6 +22,7 @@ Go_To_PageM
     Wait Until Page Contains    ${str_on_page_to_verify}    timeout=10s
     Comment    Wait Until Page Contains    //t[text()="Application Packages"]/..    10s
     input text   xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[4]/input  RUN
+    input text   xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input  MobileDemo
 
 Connect_To_DT_Console
     [Arguments]    ${url}
@@ -94,7 +95,7 @@ SetupBrowsingEnv_Monitor
     [Arguments]    ${pkg_name}    ${app_name}
     SetupBrowsingEnv
     Connect_To_DT_Console    ${url}
-    Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
+    #Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
 
 Math_A
     [Arguments]    ${num1}    ${num2}

@@ -1,8 +1,8 @@
 *** Settings ***
 Suite Setup       SetupBrowsingEnv_Monitor  Mobile Demo  MobileDemo
 Suite Teardown    DestroyBrowsingEnv
-Resource          /Data/WebRoot/tf2jan/lib/web/WebLib.txt
-Resource          /Data/WebRoot/tf2jan/lib/web/Ingestion/Ingestion_Config_UI.txt
+Resource          ../../../lib/web/WebLib.txt
+Resource          ../../../lib/web/Ingestion/Ingestion_Config_UI.txt
 
 *** Variables ***
 ${username}       aditya
