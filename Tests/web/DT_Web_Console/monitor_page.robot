@@ -49,6 +49,7 @@ App Details - Logical Operator Details - Navigate to operator's Container 42
     click element  xpath=//a[contains(text(),"${operator_name}")]/../a
     wait until page contains  ACTIVE  timeout=20s
     Click Element   xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[2]/a
+    wait till page contains  ${operator_name}   timeout=20s
     page should contain  ${operator_name}
     Capture Page Screenshot
 
@@ -909,7 +910,6 @@ App Details - Containers - Search & Sort 70
     ${status}  convert to string  ACT
     #${process_id}  convert to string  1
     ${last heart beat}  convert to string  1
-    ${host}  convert to string  aditya
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
     click element  xpath=//a[contains(text(),"${app_name}")]/../a
@@ -928,6 +928,8 @@ App Details - Containers - Search & Sort 70
     ${free_mem}=   convert to string  1
     ${process_id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[3]/span
     ${process_id}=  convert to string  ${process_id}
+    ${host}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[4]/span
+    ${host_str}=  convert to string  ${host}
     ${count}=  get matching xpath count  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text()," ")]/../tr
     ${count_str}=  convert to string  ${count}
 
@@ -1247,11 +1249,12 @@ App Details - Physical Operators - Search & Sort 51
     ${cpu%}  convert to string  0
     ${failure}  convert to string  0
     ${last heart beat}  convert to string  1
-    ${host}  convert to string  aditya
     ${containers}  convert to string  05
     ${latency}  convert to string  0
     ${total processed}  convert to string  0
     ${total emitted}  convert to string  0
+    ${host}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[4]/span
+    ${host_str}=  convert to string  ${host}
 
 
     #Sort
@@ -1776,7 +1779,6 @@ App Details - Physical Operators - Search & Sort 51
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[16]/input
     capture page screenshot
 
-*** comment ***
 #36
 App Details - Logical Operators - Search & Sort
     ${app_name}=  convert to string  MobileDemo        #Make sure only two spaces after "string"
@@ -1896,7 +1898,7 @@ App Details - Logical Operators - Search & Sort
     ${ids}=  create list
     : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
     \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[8]
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[5]
     \    ${id_str}=  convert to string  ${id}
     \    append to list  ${ids}  ${id_str}
     ${ids_sorted} =  create list
@@ -1910,8 +1912,301 @@ App Details - Logical Operators - Search & Sort
     reverse list  ${ids_sorted}
     : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
     \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[8]
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[5]
     \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+
+    #recovery
+    log  recovery
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[6]/span[1]
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[6]
+    \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted} =  create list
+    ${ids_sorted} =  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[6]/span[1]
+    sleep  1s
+    reverse list  ${ids_sorted}
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[6]
+    \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+
+    #FAILURE
+    log  failure
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[7]/span[1]
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[7]
+    \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted} =  create list
+    ${ids_sorted} =  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[7]/span[1]
+    sleep  1s
+    reverse list  ${ids_sorted}
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[7]
+    \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+
+    #heartbeat
+    log  heartbeat
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[8]/span[1]
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[8]
+    \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted} =  create list
+    ${ids_sorted} =  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[8]/span[1]
+    sleep  1s
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[8]
+    \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+
+    #latency
+     #click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[3]
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[9]/span[1]
+    sleep  1s
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[9]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted} =  create list
+    ${ids_sorted} =  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[9]/span[1]
+    sleep  1s
+    reverse list  ${ids_sorted}
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[9]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+
+    #status
+    LOG  status
+    #click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[2]/span[1]
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[10]/span[1]
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[10]
+    \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[10]/span[1]
+    sleep  1s
+    reverse list  ${ids_sorted}
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[10]
+    \    ${id_str}=  convert to string  ${id}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+
+    #processed
+    log  processed
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[11]/span[1]
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[11]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}  remove string  ${id_str}  ,
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted} =  create list
+    ${ids_sorted} =  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[11]/span[1]
+    sleep  1s
+    reverse list  ${ids_sorted}
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[11]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}  remove string  ${id_str}  ,
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+    log  ${ids_sorted}
+    log  ${ids_reverse}
+    capture page screenshot
+
+    #emitted
+    log  emitted
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[12]/span[1]
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[12]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}  remove string  ${id_str}  ,
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted} =  create list
+    ${ids_sorted} =  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[12]/span[1]
+    sleep  1s
+    reverse list  ${ids_sorted}
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[12]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}  remove string  ${id_str}  ,
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+
+    #total processed
+    log  total processed
+    #click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[3]
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[13]/span[1]
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[13]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}  remove string  ${id_str}  ,
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted} =  create list
+    ${ids_sorted} =  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[13]/span[1]
+    sleep  1s
+    reverse list  ${ids_sorted}
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[13]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}  remove string  ${id_str}  ,
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids_reverse}  ${id_str}
+    ${ids_sorted}=  create list
+    ${ids_sorted}=  copy list   ${ids_reverse}
+    sort list  ${ids_sorted}
+    reverse list  ${ids_sorted}
+    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+
+    #total emitted
+    log  total emitted
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[14]/span[1]
+    sleep  1s
+    ${ids}=  create list
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[14]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}  remove string  ${id_str}  ,
+    \    ${id_str}=  evaluate  ${id_str}
+    \    append to list  ${ids}  ${id_str}
+    ${ids_sorted} =  create list
+    ${ids_sorted} =  copy list  ${ids}
+    sort list  ${ids_sorted}
+    LOG  SORTED
+    Lists Should Be Equal  ${ids_sorted}  ${ids}
+    ${ids_reverse}=  create list
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[14]/span[1]
+    sleep  1s
+    reverse list  ${ids_sorted}
+    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
+    \    Log    ${INDEX}
+    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[14]
+    \    ${id_str}=  convert to string  ${id}
+    \    ${id_str}  remove string  ${id_str}  ,
+    \    ${id_str}=  evaluate  ${id_str}
     \    append to list  ${ids_reverse}  ${id_str}
     ${ids_sorted}=  create list
     ${ids_sorted}=  copy list   ${ids_reverse}
