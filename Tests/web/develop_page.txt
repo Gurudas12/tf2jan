@@ -56,7 +56,7 @@ Launch_The_App
     Element Should Be Visible    xpath=${Launch_App_Alert_xpath}
     Select Checkbox    xpath=${Select_Use_Config_file_xpath}
     Click Element    xpath=${Launch_Success_Button_xpath}
-    Wait Until Element Is Visible    xpath=${App_Launch_Success_Msg}    timeout=10s
+    Wait Until Element Is Visible    xpath=${App_Launch_Success_Msg}    timeout=1000000s
 
 Import_New_App
     [Arguments]    ${File_To_Upload}
