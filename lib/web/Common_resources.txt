@@ -94,9 +94,9 @@ Scroll_Page_To_Location
 
 SetupBrowsingEnv_Monitor
     [Arguments]    ${pkg_name}    ${app_name}
-    SetupBrowsingEnv
+    #SetupBrowsingEnv
     Connect_To_DT_Console    ${url}
-    Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
+    #Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
 
 Math_A
     [Arguments]    ${num1}    ${num2}
