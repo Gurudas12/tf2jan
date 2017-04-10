@@ -11,7 +11,7 @@ Go_To_Page
     [Documentation]    Redirects to the page by given link display name and waits for the string " str_on_page_to_verify" \ to be displayed on the page
     ${Go_To_Page_Link}    Set Variable    //span[text()='${link_disp_name}']/..
     Click Element    xpath=${Go_To_Page_Link}
-    Wait Until Page Contains    ${str_on_page_to_verify}    timeout=10s
+    Wait Until Page Contains    ${str_on_page_to_verify}    timeout=100s
     Comment    Wait Until Page Contains    //t[text()="Application Packages"]/..    10s
 
 Go_To_PageM
@@ -28,17 +28,15 @@ Go_To_PageM
 Connect_To_DT_Console
     [Arguments]    ${url}
     [Documentation]    Connects to DT web console
-    Open Browser    ${url}  CHROME   #ff_profile_dir=/home/akki/.mozilla/firefox/x1zhunv2.Automation_DT_Console
+    Open Browser    ${url}    CHROME
     Maximize Browser Window
-    Wait Until Page Contains    Welcome to DataTorrent RTS
-    Wait Until Page Contains    Monitor
-    Wait Until Page Contains    Develop
+    Wait Until Page Contains    Welcome to DataTorrent RTS    timeout=100s
 
 Read_Table
     [Arguments]    ${table_locator}
     [Documentation]    Reads the given table containent. Returns dictonary having table containent and table headers in list
     Comment    Read and fetch table headers
-    ${Gw_Info_Header_List}=    Create List    #List for storing headers of the table
+    ${Gw_Info_Header_List}=     Create List    #List for storing headers of the table
     ${Table_Data_Dict}=    Create Dictionary    #Dictonary for storing values from the table
     ${tHeader_xpath}=    Catenate    ${table_locator}    /thead/tr/th    #Creating xpath for getting table headers
     ${tHeader}=    Get Webelements    ${tHeader_xpath}
@@ -75,29 +73,24 @@ Read_Table_Cells_Data_Inner_Loop
 
 DestroyBrowsingEnv
     Close Browser
-    #Terminate PID    ${xvfbPID}
-    #Remove Directory    /tmp/ffprofiles/${displayid}    recursive=True
+    Terminate PID    ${xvfbPID}
 
 SetupBrowsingEnv
     [Arguments]    ${width}=1280    ${height}=720    ${colordepth}=24
     ${displayid}    ${xvfbpid}=    SetupXVFB    ${width}    ${height}    ${colordepth}
     Set Environment Variable    DISPLAY    :${displayid}
-    #Create Directory    /tmp/ffprofiles/
-    #Copy Directory    /var/dt/tf/etc/browsers/ffblankprofile    /tmp/ffprofiles/${displayid}
     Set Suite Variable    ${displayid}    ${displayid}
     Set Suite Variable    ${xvfbpid}    ${xvfbpid}
 
+SetupBrowsingEnv_Monitor
+    [Arguments]    ${pkg_name1}    ${app_name1}    ${pkg_name2}    ${app_name2}
+    SetupBrowsingEnv
+    Connect_To_DT_Console    ${url}
+    Launch_The_App    ${pkg_name1}    ${app_name1}  #comment when running individual test case
+    sleep    10s
+    Launch_The_App    ${pkg_name2}    ${app_name2}  #comment when running individual test case
+    sleep    10s
 
 Scroll_Page_To_Location
     [Arguments]    ${x_location}    ${y_location}
     Execute JavaScript    window.scrollTo(${x_location},${y_location})
-
-SetupBrowsingEnv_Monitor
-    [Arguments]    ${pkg_name}    ${app_name}
-    #SetupBrowsingEnv
-    Connect_To_DT_Console    ${url}
-    #Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
-
-Math_A
-    [Arguments]    ${num1}    ${num2}
-    ${num1}=  evaluate  ${num1}*${num2}

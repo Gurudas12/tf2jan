@@ -1,12 +1,13 @@
 *** Settings ***
-Suite Setup       SetupBrowsingEnv_Monitor  Mobile Demo  MobileDemo
+Suite Setup       SetupBrowsingEnv_Monitor  Mobile Demo  MobileDemo  Pi Demo  PiDemo
 Suite Teardown    DestroyBrowsingEnv
 Resource          ../../../lib/web/WebLib.txt
 Resource          ../../../lib/web/Ingestion/Ingestion_Config_UI.txt
 Library           ../../../etc/environments/server.py
+
 *** Variables ***
 ${app_name}         MobileDemo
-${Inspect_Button}       //span[contains(text(),"inspect")]/../span
+${Inspect_Button}       //span[contains(text(),"inspect")]
 ${Shutdown_Button}      //button[contains(@class,'btn btn-warning ng-binding')]
 ${Kill_Button}          //button[contains(@class,'btn btn-danger ng-binding')]
 ${Ended_Apps_Button}    //button[contains(@class,'btn btn-default ng-scope')]
@@ -16,9 +17,9 @@ ${Alter_Pkg_Name}    Mobile Demo
 ${Alter_App_Name}    MobileDemo
 
 *** Test Cases ***
+
 Get_Monitor_Page_Stats_TC1
     Go_To_Page    Monitor    Cluster Overview
-    #Reload Page
     ${cores}     Get Text    xpath=/html/body/div[2]/div[1]/div/div/fieldset[1]/div[1]/div[1]
     ${cores}    Convert To String    ${cores}
     ${memalloc}     Get Text    xpath=/html/body/div[2]/div[1]/div/div/fieldset[1]/div[2]/div[1]
@@ -118,54 +119,52 @@ Monitor_Page_Table_Search_TC4
     # ID
 
     input text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[2]/input  ${id}
-    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[2]//a[contains(text(),"${id}")]/../a
+    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[2]//a[contains(text(),"${id}")]
     clear element text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[2]/input
 
     # APP NAME
 
     input text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input  ${App_Name}
-    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[3]//a[contains(text(),"${App_Name}")]/../a
+    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[3]//a[contains(text(),"${App_Name}")]
     clear element text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input
 
     # STATE
 
     input text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[4]/input  ${state}
-    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[4]/span//span[contains(text(),"${state}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[4]/span//span[contains(text(),"${state}")]
     clear element text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[4]/input
 
     # USER
 
     input text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[5]/input  ${user}
-    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[5]//span[contains(text(),"${user}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[5]//span[contains(text(),"${user}")]
     clear element text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[5]/input
 
     # QUEUE
 
     input text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[6]/input  ${queue}
-    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[6]//span[contains(text(),"${queue}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[6]//span[contains(text(),"${queue}")]
     clear element text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[6]/input
 
     # STARTED
 
     input text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[7]/input  ${started}
-    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[7]//span[contains(text(),*)]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[7]//span[contains(text(),*)]
     clear element text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[7]/input
 
     # LIFETIME
 
     input text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[8]/input  ${lifetime}
-    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[8]//span[contains(text(),*)]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[8]//span[contains(text(),*)]
     clear element text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[8]/input
 
     # MEMORY
 
     input text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[9]/input  ${memory}
-    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[9]//span[contains(text(),*)]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[contains(text(),*)]/td[9]//span[contains(text(),*)]
     clear element text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[9]/input
 
 Monitor_Page_Table_Sort_TC5
-    #Launch The app    ${Alter_Pkg_Name}    ${Alter_App_Name}
-    #sleep    10s
     Go_To_Page    Monitor    Cluster Overview
 
     #ID
@@ -419,17 +418,7 @@ Monitor_Page_Table_Sort_TC5
     reverse list  ${ids_sorted}
     Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
 
-    #Go To Page    Monitor    Cluster Overview
-    #Select_App_Monitor_Page   ${Alter_App_Name}
-    #Wait Until Page Contains    ${Alter_App_Name}
-    #Click Element    //span[text()='kill']/..    #Shutdown the launched app
-    #Wait Until Page Contains Element    //h3[text()="End this application?"]    #timeout=10s
-    #Click Element    //button[contains(@class,'btn-danger')]
-    #Wait Until Page Contains Element    //span[text()='KILLED']/..    timeout=20s
-
 Shutdown_Multiple_Apps_TC6
-    Launch The app    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
-    sleep    10s
     Go_To_Page    Monitor    Cluster Overview
     ${before}     Get Text    //*[contains(@class,'value status-finished ng-binding')]
     ${before}    Convert To String    ${before}
@@ -448,9 +437,9 @@ Shutdown_Multiple_Apps_TC6
     ${after}     Get Text    //*[contains(@class,'value status-finished ng-binding')]
     ${after}    Convert To String    ${after}
     Run Keyword Unless    '${before}'<'${after}'    Fail    Applications didn't Shutdown
-    Launch The app    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
+    Launch_The_App    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
     sleep    10s
-    Launch The app    ${Alter_Pkg_Name}    ${Alter_App_Name}
+    Launch_The_App    ${Alter_Pkg_Name}    ${Alter_App_Name}
     sleep    10s
 
 Kill_Multiple_Apps_TC7
@@ -473,9 +462,9 @@ Kill_Multiple_Apps_TC7
     ${after}     Get Text    //*[contains(@class,'value status-killed ng-binding')]
     ${after}    Convert To String    ${after}
     Run Keyword Unless    '${before}'<'${after}'    Fail    Applications didn't got Killed
-    Launch The app    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
+    Launch_The_App    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
     sleep    10s
-    Launch The app    ${Alter_Pkg_Name}    ${Alter_App_Name}
+    Launch_The_App    ${Alter_Pkg_Name}    ${Alter_App_Name}
     sleep    10s
 
 Open_App_Details_Page_TC8
@@ -483,7 +472,7 @@ Open_App_Details_Page_TC8
     Input Text   xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input  =${App_Name}
     Click Element    xpath=/html/body/div[2]/div[2]/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input     #First Checkbox
     clear element text   xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input
-    Click Element  xpath=//span[contains(text(),"inspect")]/../span    #${Inspect_Button}
+    Click Element  xpath=//span[contains(text(),"inspect")]    #${Inspect_Button}
     Wait Until Page Contains    ${App_Name}    timeout=30s
     Click Element    //*[contains(text(),'logical')]
     ${state}   Get Text    xpath=//span[@dt-status='data.state']/span
@@ -507,8 +496,6 @@ Open_App_Details_Page_TC8
 
 
 Search_And_Navigation_Apps_TC9
-    #Launch The app    ${Alter_Pkg_Name}    ${Alter_App_Name}
-    #sleep    10s
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page   ${Alter_App_Name}
     Wait Until Page Contains   ${Alter_App_Name}
@@ -523,13 +510,6 @@ Search_And_Navigation_Apps_TC9
     ${App_Name2}=    Remove String    ${App_Name2}      ' '
     ${App_Name}=    Remove String    ${App_Name}      ' '
     Run Keyword Unless    '${App_Name} '=='${App_Name2}'    Fail    Correct Application didn't Open
-    #Go To Page    Monitor    Cluster Overview
-    #Select_App_Monitor_Page   ${Alter_App_Name}
-    #Wait Until Page Contains    ${Alter_App_Name}
-    #Click Element    //span[text()='kill']/..    #Shutdown the launched app
-    #Wait Until Page Contains Element    //h3[text()="End this application?"]    #timeout=10s
-    #Click Element    //button[contains(@class,'btn-danger')]
-    #Wait Until Page Contains Element    //span[text()='KILLED']/..    timeout=20s
 
 
 Default_Tabs_In_App_Details_TC10
@@ -627,7 +607,7 @@ App_Details_Shutdown_TC13
     Wait Until Page Contains Element    //h3[text()="End this application?"]    #timeout=10s
     Click Element    //button[contains(@class,'btn-danger')]
     Wait Until Page Contains Element    //span[text()='FINISHED']/..    timeout=60s
-    Launch The app    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
+    Launch_The_App    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
     sleep    10s
 
 
@@ -640,7 +620,7 @@ App_Details_Kill_TC14
     Wait Until Page Contains Element    //h3[text()="End this application?"]    #timeout=10s
     Click Element    //button[contains(@class,'btn-danger')]
     Wait Until Page Contains Element    //span[text()='KILLED']/..     timeout=20s
-    Launch The app    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
+    Launch_The_App    ${Pkg_Name}    ${App_Name}  #comment when running individual test case
     sleep    10s
 
 Set_Logging_Levels_TC15
@@ -670,8 +650,6 @@ Set_Logging_Levels_TC15
 
 
 Load_Current_Log_Levels_TC16
-    #[Teardown]    Close Browser
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -685,8 +663,6 @@ Load_Current_Log_Levels_TC16
 
 
 Delete_Log_Levels_TC17
-    #[Teardown]    Close Browser
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -707,8 +683,6 @@ Delete_Log_Levels_TC17
 
 
 Set_Wrong_Log_Level_PackageName_TC18
-    #[Teardown]    Close Browser
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -724,8 +698,6 @@ Set_Wrong_Log_Level_PackageName_TC18
     Wait Until Page Contains    ${App_Name}    timeout=30s
 
 Set_Wrong_Log_Level_TC19
-    #[Teardown]    Close Browser
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -740,8 +712,6 @@ Set_Wrong_Log_Level_TC19
     Wait Until Page Contains    ${App_Name}    timeout=30s
 
 Search_Wrong_Log_Level_TC20
-    #[Teardown]    Close Browser
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -756,8 +726,6 @@ Search_Wrong_Log_Level_TC20
     Wait Until Page Contains    ${App_Name}    timeout=30s
 
 Search_Wrong_Log_Level_and_Set_Log_Level_TC21
-    #[Teardown]    Close Browser
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -772,8 +740,6 @@ Search_Wrong_Log_Level_and_Set_Log_Level_TC21
     Wait Until Page Contains    ${App_Name}    timeout=30s
 
 Search_Same_Package_Log_Level_TC22
-    #[Teardown]    Close Browser
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -791,8 +757,6 @@ Search_Same_Package_Log_Level_TC22
     Wait Until Page Contains    ${App_Name}    timeout=30s
 
 New_Dashboard_Visualise_TC23
-    #[Teardown]    Close Browser
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -803,7 +767,6 @@ New_Dashboard_Visualise_TC23
 
 
 Existing_Dashboard_Visualise_TC24
-    #Connect_To_DT_Console    ${url}
     Go To Page    Monitor    Cluster Overview
     Select_App_Monitor_Page  ${App_Name}
     Wait Until Page Contains     ${App_Name}    timeout=30s
@@ -1334,7 +1297,7 @@ Logical_Operators_Set_Loging_Level_TC38
     Wait Until Page Contains  Logical Operators  timeout=30s
     Click Element    xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[1]/span/input
     Click Element    //*[contains(@ng-disabled,'settingLogLevel')]
-    Click Element    //*[contains(text(),'ALL')]    #xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[1]/span[1]/ul/li[7]/a    #Loggin Level = ALL
+    Click Element    //*[contains(text(),'ALL')]    #Loggin Level = ALL
     Page Should Contain Element    //*[contains(@class,'alert ui-pnotify-container alert-success ui-pnotify-shadow')]
 
 Logical_Operators_Link_TC39
@@ -1388,27 +1351,7 @@ Logical_Operator_Details_TC41
     Page Should Contain Element    //*[contains(text(),'Operator Properties')]
     Page Should Contain Element    //*[contains(text(),'Logical Operator')]
 
-*** Keywords ***
-
-Time_To_Seconds
-    [Arguments]    ${list}    ${count}
-    reverse list    ${list}
-    ${multiples}=  create list
-    Append To List  ${multiples}  1  60  3600  86400
-    ${value}=   Set Variable   0
-    : FOR    ${i}    IN RANGE    0    ${count}
-    \    ${value}=   evaluate  ${value}+(${list[${i}]}*${multiples[${i}]})
-    \    Log   ${value}
-    [Return]  ${value}
-
-Select_App_Monitor_Page
-    [Arguments]    ${appname}
-    Input Text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input  =${appname}
-    Wait Until Page Contains    ${appname}    timeout=30s
-    Click Element    //*[contains(text(),'${appname}')]
-
 *** Test Cases ***
-
 #41 ${url}            http://aditya-ubuntu:9090/
 App Details - Logical Operator Details - Change operator properties 41
     ${operator_name}=  convert to string  Receiver     #Make sure only two spaces after "string"
@@ -1416,16 +1359,17 @@ App Details - Logical Operator Details - Change operator properties 41
     ${property}=   convert to string   tuplesBlastIntervalMillis
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//a[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
     wait until page contains  RUNNING  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
-    click element  xpath=//a[contains(text(),"${operator_name}")]/../a
+    click element  xpath=//span[contains(text(),"logical")]
+    scroll page to location  0  500
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]//a[contains(text(),"${operator_name}")]
     wait until page contains   State  timeout=20s
     Input Text     xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div/table/thead/tr[2]/td[1]/input  ${property}
-    Click element  xpath=//button[contains(text(),"change")]/../button
+    Click element  xpath=//*[contains(text(),"change")]
     Input text   xpath=/html/body/div[1]/div/div/div[2]/form/div/textarea   ${change_prop}    #text field
-    click element   xpath=//button[contains(text(),"Save")]/../button   #save
+    click element   xpath=//*[contains(text(),"Save")]/../button   #save
     page should contain  ${change_prop}
     #page should not contain  error
     Capture Page Screenshot
@@ -1436,11 +1380,11 @@ App Details - Logical Operator Details - Navigate to operator's Container 42
     ${operator_name}=  convert to string  Receiver     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
     wait until page contains  RUNNING  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
-    click element  xpath=//a[contains(text(),"${operator_name}")]/../a
+    click element  xpath=//span[contains(text(),"logical")]
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]//*[contains(text(),"${operator_name}")]
     wait until page contains  ACTIVE  timeout=20s
     Click Element   xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[2]/a
     wait until page contains  ${operator_name}   timeout=20s
@@ -1453,12 +1397,12 @@ App Details - Logical Operator Details - Navigate to Physical operator 43
     ${operator_name}=  convert to string  Receiver     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
     wait until page contains  RUNNING  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
+    click element  xpath=//span[contains(text(),"logical")]
     wait until page contains  ${operator_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${operator_name}")]/../a
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]//a[contains(text(),"${operator_name}")]
     wait until page contains  ACTIVE  timeout=20s
     Click Element   xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[2]/a
     page should contain  ${operator_name}
@@ -1470,17 +1414,18 @@ App Details - Logical Operator Details - Record sample 44
     ${operator_name}=  convert to string  Receiver      #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
     wait until page contains  RUNNING  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
-    click element  xpath=//a[contains(text(),"${operator_name}")]/../a
+    click element  xpath=//span[contains(text(),"logical")]
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]//a[contains(text(),"${operator_name}")]
     wait until page contains  ACTIVE  timeout=20s
     select checkbox   xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//t[contains(text(),"record a sample")]/../t
+    #click element  xpath=//*[contains(text(),"record a sample")]
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[1]/span[1]/span/button[1]
     wait until page contains  Sample Tuples   timeout=20s
     capture page screenshot
-    click element   xpath=//button[contains(text(),"Close")]/../button
+    click element   xpath=//*[contains(text(),"Close")]
     capture page screenshot
 
 
@@ -1499,12 +1444,12 @@ App Details - Streams details 45
     ${stream_sinks3}=  convert to string  phoneQuery
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
-    ${get_stream_name1}  get text  xpath=//span[contains(text(),"${stream_name1}")]/../span
+    click element  xpath=//span[contains(text(),"logical")]
+    ${get_stream_name1}  get text  xpath=//span[contains(text(),"${stream_name1}")]
     ${stream_name1_str}  convert to string  ${get_stream_name1}
-    ${get_stream_locality}  get text  xpath=//span[contains(text(),"${stream_locality}")]/../span
+    ${get_stream_locality}  get text  xpath=//span[contains(text(),"${stream_locality}")]
     ${stream_locality_str}  convert to string  ${get_stream_locality}
     log  ${stream_name1_str}
     log  ${stream_locality_str}
@@ -1516,18 +1461,18 @@ App Details - Streams details - operator links 46
     ${sink}=  convert to string  LocationFinder
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[5]//a[contains(text(),"${source}")]/../a
+    click element  xpath=//span[contains(text(),"logical")]
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[5]//*[contains(text(),"${source}")]
     page should contain  ${source}
     capture page screenshot
     GO TO PAGEM   Monitor   Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[5]//a[contains(text(),"${sink}")]/../a
+    click element  xpath=//span[contains(text(),"logical")]
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[5]//*[contains(text(),"${sink}")]
     page should contain  ${sink}
     capture page screenshot
 
@@ -1540,9 +1485,9 @@ App Details - Streams details - Search & Sort 47
     ${sinks_search}=  convert to string  data
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
+    click element  xpath=//span[contains(text(),"logical")]
     scroll page to location  0  700
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[5]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[2]/span[1]
     sleep  2s
@@ -1577,9 +1522,9 @@ App Details - Metric Chart details 48
     ${time}=  convert to string  last 30 seconds
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
+    click element  xpath=//span[contains(text(),"logical")]
     #click element   xpath=xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[6]/div/div[2]/div/div/select
     wait until page contains  last 5 minutes
     select from list  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[6]/div/div[2]/div/div/select   ${time}
@@ -1594,11 +1539,11 @@ App Details - Metric Chart details2 49
     ${toggle}=  convert to string  tuplesEmittedPSMA
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
+    click element  xpath=//span[contains(text(),"logical")]
     wait until page contains  ${toggle}  timeout=20s
-    #click element  xpath=//t[contains(text(),"${toggle}")]/../t
+    #click element  xpath=//t[contains(text(),"${toggle}")]
     #click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[6]/div/div[2]/div/nvd3-line-chart/svg/g/g/g[4]/g/g/g[1]/text
     ${Y}=  get vertical position  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[5]/div/div[1]
     ${Y_str}  convert to string  ${Y}
@@ -1615,9 +1560,9 @@ App Details - Physical Operators details 50
     ${toggle}=  convert to string  tuplesEmittedPSMA
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     ${num of operators}  get text   xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/fieldset[3]/div[1]/div[1]
     ${num of operators_str}  convert to string  ${num of operators}
     ${num of operators}  get text   xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/fieldset[3]/div[1]/div[1]
@@ -1632,11 +1577,11 @@ App Details - Physical Operators - Logical Operator Name link 52
     ${operator_name}=  convert to string  Receiver     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div//a[contains(text(),"${operator_name}")]/../a
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div//*[contains(text(),"${operator_name}")]
     capture page screenshot
 
 #53
@@ -1645,9 +1590,9 @@ App Details - Physical Operators - Container link 53
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${operator_name}
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[2]/a
     capture page screenshot
@@ -1659,16 +1604,16 @@ App Details - Physical Operators - Record a Sample (default) 54
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${operator_name}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//t[contains(text(),"record a sample")]/../t
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[1]/span[1]/span/button[1]
     wait until page contains  Sample Tuples   timeout=20s
     capture page screenshot
-    click element   xpath=//button[contains(text(),"Close")]/../button
+    click element   xpath=//*[contains(text(),"Close")]
     sleep  2s
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input
     capture page screenshot
@@ -1681,18 +1626,18 @@ App Details - Physical Operators - Record a Sample (1 window)
     ${window_size}=  convert to string  record 1 window
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${operator_name}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[1]/span[1]/span/button[2]
     wait until page contains  ${window_size}   timeout=10s
-    click element  xpath=//a[contains(text(),"${window_size}")]/../a
+    click element  xpath=//*[contains(text(),"${window_size}")]
     wait until page contains  Sample Tuples  timeout=20s
     capture page screenshot
-    click element   xpath=//button[contains(text(),"Close")]/../button
+    click element   xpath=//*[contains(text(),"Close")]/../button
     sleep  2s
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input
     capture page screenshot
@@ -1705,18 +1650,18 @@ App Details - Physical Operators - Record a Sample (1000 window)
     ${window_size}=  convert to string  record 1000 window
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${operator_name}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[1]/span[1]/span/button[2]
     wait until page contains  ${window_size}   timeout=10s
-    click element  xpath=//a[contains(text(),"${window_size}")]/../a
+    click element  xpath=//*[contains(text(),"${window_size}")]
     wait until page contains  Sample Tuples  timeout=20s
     capture page screenshot
-    click element   xpath=//button[contains(text(),"Close")]/../button
+    click element   xpath=//*[contains(text(),"Close")]
     sleep  2s
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input
     capture page screenshot
@@ -1728,13 +1673,13 @@ App Details - Physical Operators - Record Sample modal details
     ${operator_name}=  convert to string  LocationFinder     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${operator_name}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//t[contains(text(),"record a sample")]/../t
+    click element  xpath=//*[contains(text(),"record a sample")]
     wait until page contains  Sample Tuples   timeout=20s
     ${total tuples}=  get text  xpath=/html/body/div[1]/div/div/div[2]/div[2]/div/div[1]/div[1]/fieldset/div/div[1]/span
     ${total tuples_str}=  convert to string  ${total tuples}
@@ -1746,7 +1691,7 @@ App Details - Physical Operators - Record Sample modal details
     log  ${loaded tuples_str}
     log  ${total tuples_str}
     capture page screenshot
-    click element   xpath=//button[contains(text(),"Close")]/../button
+    click element   xpath=//*[contains(text(),"Close")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input
 
 
@@ -1755,13 +1700,13 @@ App Details - Physical Operators - Record Sample modal details -input operator
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${operator_name}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//t[contains(text(),"record a sample")]/../t
+    click element  xpath=//*[contains(text(),"record a sample")]
     wait until page contains  Sample Tuples   timeout=20s
     ${total tuples}=  get text  xpath=/html/body/div[1]/div/div/div[2]/div[2]/div/div[1]/div[1]/fieldset/div/div[1]/span
     ${total tuples_str}=  convert to string  ${total tuples}
@@ -1772,7 +1717,7 @@ App Details - Physical Operators - Record Sample modal details -input operator
     log  ${loaded tuples_str}
     log  ${total tuples_str}
     capture page screenshot
-    click element   xpath=//button[contains(text(),"Close")]/../button
+    click element   xpath=//*[contains(text(),"Close")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input
 
 App Details - Physical Operators - Record Sample modal details -output operator
@@ -1780,13 +1725,13 @@ App Details - Physical Operators - Record Sample modal details -output operator
     ${operator_name}=  convert to string  LocationResult     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${operator_name}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//t[contains(text(),"record a sample")]/../t
+    click element  xpath=//*[contains(text(),"record a sample")]
     wait until page contains  Sample Tuples   timeout=20s
     ${total tuples}=  get text  xpath=/html/body/div[1]/div/div/div[2]/div[2]/div/div[1]/div[1]/fieldset/div/div[1]/span
     ${total tuples_str}=  convert to string  ${total tuples}
@@ -1797,7 +1742,7 @@ App Details - Physical Operators - Record Sample modal details -output operator
     log  ${loaded tuples_str}
     log  ${total tuples_str}
     capture page screenshot
-    click element   xpath=//button[contains(text(),"Close")]/../button
+    click element   xpath=//*[contains(text(),"Close")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input
 
 *** Test Cases ***
@@ -1808,16 +1753,16 @@ App Details - Physical Operator Details - Breadcrumb 59
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[2]/a
     wait until page contains  physical operators
-    click element  xpath=//button[contains(text(),"physical operators")]/../button
+    click element  xpath=//*[contains(text(),"physical operators")]
     wait until page contains  ${operator_name}
     input text  xpath=//*[@id="breadcrumbs-top"]/li[4]/span/span/ul/li[2]/form/input  ${operator_name}
-    click element  xpath=//a[contains(text(),"${operator_name}")]/../a
+    click element  xpath=//*[contains(text(),"${operator_name}")]
     capture page screenshot
 
 #60
@@ -1826,9 +1771,9 @@ App Details - Physical Operator Details 60
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[2]/a
     wait until page contains  Operator Properties
@@ -1844,11 +1789,11 @@ App Details - Physical Operator Details - Navigate to Logical operator details 6
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
-    click element  xpath=//a[contains(text(),"${operator_name}")]/../a
+    click element  xpath=//*[contains(text(),"${operator_name}")]
     page should contain  ${operator_name}
     page should contain  Logical Operator
     capture page screenshot
@@ -1859,9 +1804,9 @@ App Details - Physical Operator Details - Navigate to container details 62
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     ${state}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[4]/span/span
     ${state_str}=  convert to string  ${state}
@@ -1880,9 +1825,9 @@ App Details - Physical Operator Details - Container logs 63
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     ${state}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[4]/span/span
     ${state_str}=  convert to string  ${state}
@@ -1891,16 +1836,16 @@ App Details - Physical Operator Details - Container logs 63
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[2]/a
     wait until page contains  Ports  timeout=10s
     ${current_url}  get location
-    click element  xpath=//t[contains(text(),"logs")]/../t
-    click element  xpath=//a[contains(text(),"dt.log")]/../a
+    click element  xpath=//*[contains(text(),"logs")]
+    click element  xpath=//*[contains(text(),"dt.log")]
     page should contain  dt.log
     go to  ${current_url}
-    click element  xpath=//t[contains(text(),"logs")]/../t
-    click element  xpath=//a[contains(text(),"stderr")]/../a
+    click element  xpath=//*[contains(text(),"logs")]
+    click element  xpath=//*[contains(text(),"stderr")]
     page should contain  stderr
     go to  ${current_url}
-    click element  xpath=//t[contains(text(),"logs")]/../t
-    click element  xpath=//a[contains(text(),"stdout")]/../a
+    click element  xpath=//*[contains(text(),"logs")]
+    click element  xpath=//*[contains(text(),"stdout")]
     page should contain  stdout
     capture page screenshot
 
@@ -1909,9 +1854,9 @@ App Details - Physical Operator Details - Port details 64
          #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     ${state}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[4]/span/span
     ${state_str}=  convert to string  ${state}
@@ -1922,12 +1867,12 @@ App Details - Physical Operator Details - Port details 64
     ${current_url}  get location
     ${port_name}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[2]/a
     ${port_name}=  convert to string  ${port_name}
-    click element  xpath=//a[contains(text(),"${port_name}")]/../a
+    click element  xpath=//*[contains(text(),"${port_name}")]
     wait until page contains  ${port_name}   timeout=10s
     capture page screenshot
     go to  ${current_url}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//span[contains(text(),"inspect")]/../span
+    click element  xpath=//span[contains(text(),"inspect")]
     wait until page contains  ${port_name}   timeout=10s
     capture page screenshot
 
@@ -1937,16 +1882,16 @@ App Details - Physical Operator Details - Container History - ID 65
    #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     #Run keyword unless  '${state_str}'=='${status}'  click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[4]
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[2]/a
     wait until page contains  Ports  timeout=10s
     ${cont_id}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/fieldset[1]/div[1]/div[1]/a
     ${cont_id_str}=  convert to string  ${cont_id}
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div//a[contains(text(),"01_")]/../a
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div//*[contains(text(),"01_")]
     ${status}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/fieldset/div[1]/div[1]/span/span
     ${status_str}=  convert to string  ${status}
     run keyword if  '${status_str}'=='ACTIVE'  page should contain  ${cont_id_str}
@@ -1959,28 +1904,28 @@ App Details - Physical Operator Details - Container History - logs 66
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[2]/a
     wait until page contains  Ports  timeout=10s
     ${current_url}  get location
-    ${y}  get vertical position  xpath=//t[contains(text(),"logs")]/../t
+    ${y}  get vertical position  xpath=//*[contains(text(),"logs")]
     ${y_str}=  convert to string  ${y}
     scroll page to location  0   ${y_str}
     capture page screenshot
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]//t[contains(text(),"logs")]/../t
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]//*[contains(text(),"logs")]
     wait until page contains  dt.log
     click element  xpath=/html/body/ul/li[1]/a
     page should contain  dt.log
     go to  ${current_url}
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]//t[contains(text(),"logs")]/../t
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]//*[contains(text(),"logs")]
     wait until page contains  stderr
     click element  xpath=/html/body/ul/li[2]/a
     page should contain  stderr
     go to  ${current_url}
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]//t[contains(text(),"logs")]/../t
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]//*[contains(text(),"logs")]
     wait until page contains  stdout
     click element  xpath=/html/body/ul/li[3]/a
     page should contain  stdout
@@ -1994,9 +1939,9 @@ App Details - Physical Operator Details - Search operator properties 67
     ${input}=  convert to string  class
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[2]/a
     wait until page contains  Ports  timeout=10s
@@ -2015,9 +1960,9 @@ App Details - Containers - Details 68
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[9]/input  act
     ${count}=  get matching xpath count  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text()," ")]/../tr
@@ -2037,9 +1982,9 @@ App Details - Containers - AppMaster
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input  0001
     page should contain  ACTIVE
@@ -2054,11 +1999,11 @@ App Details - Containers - operators link 71
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]//a[contains(text(),"${operator_name}")]/../a
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]//*[contains(text(),"${operator_name}")]
     page should contain  ${operator_name}
     page should contain  Physical
     capture page screenshot
@@ -2069,9 +2014,9 @@ App Details - Containers - Single Container options 72
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
     page should contain  inspect
@@ -2090,9 +2035,9 @@ App Details - Containers - Multiple Container options 73
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[3]/td[1]/input
@@ -2113,16 +2058,16 @@ App Details - Containers - select active 74
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
-    click element  xpath=//t[contains(text(),"retrieve killed")]/../t
+    click element  xpath=//*[contains(text(),"retrieve killed")]
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[9]/input  act
-    click element  xpath=//t[contains(text(),"select active")]/../t
+    click element  xpath=//*[contains(text(),"select active")]
     checkbox should be selected   xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
     capture page screen shot
-    click element  xpath=//t[contains(text(),"deselect all")]/../t
+    click element  xpath=//*[contains(text(),"deselect all")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[9]/input
 
 #75
@@ -2131,11 +2076,11 @@ App Details - Containers - select all active but app master 75
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
-    click element  xpath=//t[contains(text(),"select all active but app master")]/../t
+    click element  xpath=//*[contains(text(),"select all active but app master")]
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[9]/input  act
     checkbox should be selected  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[2]/td[1]/input
     capture page screenshot
@@ -2144,7 +2089,7 @@ App Details - Containers - select all active but app master 75
     capture page screenshot
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[9]/input
-    click element  xpath=//t[contains(text(),"deselect all")]/../t
+    click element  xpath=//*[contains(text(),"deselect all")]
 
 
 #76
@@ -2153,11 +2098,11 @@ App Details - Containers - retrieve killed 76
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
-    click element  xpath=//t[contains(text(),"retrieve killed")]/../t
+    click element  xpath=//*[contains(text(),"retrieve killed")]
 
 #77
 App Details - Containers - AppMaster logs 77
@@ -2165,24 +2110,24 @@ App Details - Containers - AppMaster logs 77
     ${operator_name}=  convert to string  QueryLocation     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
-    click element  xpath=//a[contains(text(),"0001")]/../a
+    click element  xpath=//*[contains(text(),"0001")]
     wait until page contains  ACTIVE
     ${current_url}  get location
-    click element  xpath=//t[contains(text(),"logs")]/../t
+    click element  xpath=//*[contains(text(),"logs")]
     wait until page contains  dt.log
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/div/h2/span/ul/li[1]/a
     page should contain  AppMaster.stderr
     go to  ${current_url}
-    click element  xpath=//t[contains(text(),"logs")]/../t
+    click element  xpath=//*[contains(text(),"logs")]
     wait until page contains  stderr
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/div/h2/span/ul/li[2]/a
     page should contain  AppMaster.stdout
     go to  ${current_url}
-    click element  xpath=//t[contains(text(),"logs")]/../t
+    click element  xpath=//*[contains(text(),"logs")]
     wait until page contains  stdout
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/div/h2/span/ul/li[3]/a
     page should contain  dt.log
@@ -2194,26 +2139,26 @@ App Details - Containers - logs 78
     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     wait until page contains  AppMaster
     ${operator_id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[2]/td[2]/a
     ${operator_id}=  convert to string   ${operator_id}
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]//a[contains(text(),"${operator_id}")]/../a
+    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]//*[contains(text(),"${operator_id}")]
     ${current_url}  get location
-    click element  xpath=//t[contains(text(),"logs")]/../t
+    click element  xpath=//*[contains(text(),"logs")]
     wait until page contains  dt.log
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/div/h2/span/ul/li[1]/a
     page should contain  dt.log
     go to  ${current_url}
-    click element  xpath=//t[contains(text(),"logs")]/../t
+    click element  xpath=//*[contains(text(),"logs")]
     wait until page contains  stderr
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/div/h2/span/ul/li[2]/a
     page should contain  stderr
     go to  ${current_url}
-    click element  xpath=//t[contains(text(),"logs")]/../t
+    click element  xpath=//*[contains(text(),"logs")]
     wait until page contains  stdout
     click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/div/h2/span/ul/li[3]/a
     page should contain  stdout
@@ -2225,21 +2170,21 @@ App Details - Containers - AppMaster stackTrace 79
     ${operator_id}=  convert to string  00001     #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input  ${operator_id}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//span[contains(text(),"stackTrace")]/../span
+    click element  xpath=//span[contains(text(),"stackTrace")]
     page should contain  Stack Trace
     page should contain  ${operator_id}
     capture page screenshot
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input
 
@@ -2248,24 +2193,24 @@ App Details - Containers - stackTrace 80
          #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     wait until page contains  AppMaster
     ${operator_id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[2]/td[2]/a
     ${operator_id}=  convert to string   ${operator_id}
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input  ${operator_id}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//span[contains(text(),"stackTrace")]/../span
+    click element  xpath=//span[contains(text(),"stackTrace")]
     page should contain  Stack Trace
     page should contain  ${operator_id}
     capture page screenshot
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input
 
@@ -2275,23 +2220,23 @@ App Details - Physical Operators - inspect 58
          #Make sure only two spaces after "string"
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     wait until page contains  AppMaster
     ${operator_id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[2]/td[2]/a
     ${operator_id}=  convert to string  ${operator_id}     #Make sure only two spaces after "string"
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input  ${operator_id}
     select checkbox  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr/td[1]/input
-    click element  xpath=//span[contains(text(),"inspect")]/../span
+    click element  xpath=//span[contains(text(),"inspect")]
     page should contain  ${operator_id}
     capture page screenshot
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input
     capture page screenshot
@@ -2306,9 +2251,9 @@ App Details - Containers - Search & Sort 70
     ${last heart beat}  convert to string  1
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     ${alloc_mem}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[6]/span
     ${alloc_mem}=  remove string  ${alloc_mem}  MB
@@ -2592,31 +2537,31 @@ App Details - Containers - Search & Sort 70
     #search
 
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input  ${id-1}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[2]//a[contains(text(),"${id-1}")]/../a
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[2]//*[contains(text(),"${id-1}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input
 
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${process_id}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[3]//span[contains(text(),"${process_id}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[3]//span[contains(text(),"${process_id}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input
 
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[4]/input  ${host}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[4]//span[contains(text(),"${host}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[4]//span[contains(text(),"${host}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[4]/input
 
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[6]/input  ${alloc_mem}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[6]//span[contains(text(),"${alloc_mem}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[6]//span[contains(text(),"${alloc_mem}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[6]/input
 
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[7]/input  ${free_mem}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[7]//span[contains(text(),"${free_mem}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[7]//span[contains(text(),"${free_mem}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[7]/input
 
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[8]/input  ${operator_name}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[8]//a[contains(text(),"${operator_name}")]/../a
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[8]//*[contains(text(),"${operator_name}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[8]/input
 
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[9]/input  ${status}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[9]//span[contains(text(),"${status}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[9]//span[contains(text(),"${status}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[9]/input
 
 
@@ -2626,9 +2571,9 @@ App Details - Physical Operators - Search & Sort 51
     ${id-1}  convert to string  2
     GO TO PAGEM  Monitor  Cluster Overview
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
+    click element  xpath=//*[contains(text(),"${app_name}")]
     wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//span[contains(text(),"physical")]/../span
+    click element  xpath=//span[contains(text(),"physical")]
     wait until page contains  ACTIVE  timeout=20s
     ${name}  convert to string  Receiver
     ${status}  convert to string  ACT
@@ -3136,270 +3081,58 @@ App Details - Physical Operators - Search & Sort 51
 
     #Search
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input  ${id-1}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//a[contains(text(),"${id-1}")]/../a
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//*[contains(text(),"${id-1}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[2]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input  ${name}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[3]//a[contains(text(),"${name}")]/../a
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[3]//*[contains(text(),"${name}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[3]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[4]/input  ${status}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[4]//span[contains(text(),"${status}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[4]//span[contains(text(),"${status}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[4]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[5]/input  ${processed/s}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[5]//span[contains(text(),"${processed/s}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[5]//span[contains(text(),"${processed/s}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[5]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[6]/input  ${emitted/s}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[6]//span[contains(text(),"${emitted/s}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[6]//span[contains(text(),"${emitted/s}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[6]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[7]/input  ${cpu%}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[7]//span[contains(text(),"${cpu%}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[7]//span[contains(text(),"${cpu%}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[7]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[10]/input  ${failure}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[10]//span[contains(text(),"${failure}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[10]//span[contains(text(),"${failure}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[10]/input
     #input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[11]/input  ${last heart beat}
-    #${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[11]//span[contains(text(),"${last heart beat}")]/../span
+    #${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[11]//span[contains(text(),"${last heart beat}")]
     #clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[11]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[12]/input  ${host}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[12]//span[contains(text(),"${host}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[12]//span[contains(text(),"${host}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[12]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[14]/input  ${latency}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[14]//span[contains(text(),"${latency}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[14]//span[contains(text(),"${latency}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[14]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[15]/input  ${total processed}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[15]//span[contains(text(),"${total processed}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[15]//span[contains(text(),"${total processed}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[15]/input
     input text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[16]/input  ${total emitted}
-    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[16]//span[contains(text(),"${total emitted}")]/../span
+    ${x}  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/div/table/tbody[3]//tr[contains(text(),*)]/td[16]//span[contains(text(),"${total emitted}")]
     clear element text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div/div[2]/div/div/div[2]/table/thead/tr[2]/td[16]/input
     capture page screenshot
 
-#36
-App Details - Logical Operators - Search & Sort
-         #Make sure only two spaces after "string"
-    ${operator_name}=  convert to string  Receiver     #Make sure only two spaces after "string"
-    GO TO PAGEM  Monitor  Cluster Overview
-    wait until page contains   ${app_name}  timeout=20s
-    click element  xpath=//a[contains(text(),"${app_name}")]/../a
-    wait until page contains   ${app_name}  timeout=20s
-    wait until page contains  RUNNING  timeout=20s
-    click element  xpath=//span[contains(text(),"logical")]/../span
-    wait until page contains   ${operator_name}  timeout=20s
-    ${count}=  get matching xpath count  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[contains(text()," ")]/../tr
-    ${count_str}=  convert to string  ${count}
+*** Keywords ***
 
-    #name
-    LOG  NAME
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[2]/span[1]
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[2]/span[1]
-    sleep  1s
-    ${ids}=  create list
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[2]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list  ${ids}
-    sort list  ${ids_sorted}
-    LOG  SORTED
-    Lists Should Be Equal  ${ids_sorted}  ${ids}
-    ${ids_reverse}=  create list
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[2]/span[1]
-    sleep  1s
-    reverse list  ${ids_sorted}
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[2]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids_reverse}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list   ${ids_reverse}
-    sort list  ${ids_sorted}
-    reverse list  ${ids_sorted}
-    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+Time_To_Seconds
+    [Arguments]    ${list}    ${count}
+    reverse list    ${list}
+    ${multiples}=  create list
+    Append To List  ${multiples}  1  60  3600  86400
+    ${value}=   Set Variable   0
+    : FOR    ${i}    IN RANGE    0    ${count}
+    \    ${value}=   evaluate  ${value}+(${list[${i}]}*${multiples[${i}]})
+    \    Log   ${value}
+    [Return]  ${value}
 
-
-    #class
-    LOG  class
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[3]/span[1]
-    #click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[3]/span[1]
-    sleep  1s
-    ${ids}=  create list
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[3]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list  ${ids}
-    sort list  ${ids_sorted}
-    LOG  SORTED
-    Lists Should Be Equal  ${ids_sorted}  ${ids}
-    ${ids_reverse}=  create list
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[3]/span[1]
-    sleep  1s
-    reverse list  ${ids_sorted}
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[3]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids_reverse}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list   ${ids_reverse}
-    sort list  ${ids_sorted}
-    reverse list  ${ids_sorted}
-    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
-
-
-    #cpu
-    log  cpu
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[4]/span[1]
-    sleep  1s
-    ${ids}=  create list
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[4]
-    \    ${id_str}=  convert to string  ${id}
-    \    ${id_str}=  fetch from left  ${id_str}  .
-    \    ${id_str}=  evaluate  ${id_str}
-    \    append to list  ${ids}  ${id_str}
-    ${ids_sorted} =  create list
-    ${ids_sorted} =  copy list  ${ids}
-    sort list  ${ids_sorted}
-    LOG  SORTED
-    Lists Should Be Equal  ${ids_sorted}  ${ids}
-    ${ids_reverse}=  create list
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[4]/span[1]
-    sleep  1s
-    reverse list  ${ids_sorted}
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[4]
-    \    ${id_str}=  convert to string  ${id}
-    \    ${id_str}=  fetch from left  ${id_str}  .
-    \    ${id_str}=  evaluate  ${id_str}
-    \    append to list  ${ids_reverse}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list   ${ids_reverse}
-    sort list  ${ids_sorted}
-    reverse list  ${ids_sorted}
-    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
-
-    #wid
-    log  wid
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[5]/span[1]
-    sleep  1s
-    ${ids}=  create list
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[5]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids}  ${id_str}
-    ${ids_sorted} =  create list
-    ${ids_sorted} =  copy list  ${ids}
-    sort list  ${ids_sorted}
-    LOG  SORTED
-    Lists Should Be Equal  ${ids_sorted}  ${ids}
-    ${ids_reverse}=  create list
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[5]/span[1]
-    sleep  1s
-    reverse list  ${ids_sorted}
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[5]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids_reverse}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list   ${ids_reverse}
-    sort list  ${ids_sorted}
-    reverse list  ${ids_sorted}
-    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
-
-    #recovery
-    log  recovery
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[6]/span[1]
-    sleep  1s
-    ${ids}=  create list
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[6]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids}  ${id_str}
-    ${ids_sorted} =  create list
-    ${ids_sorted} =  copy list  ${ids}
-    sort list  ${ids_sorted}
-    LOG  SORTED
-    Lists Should Be Equal  ${ids_sorted}  ${ids}
-    ${ids_reverse}=  create list
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[6]/span[1]
-    sleep  1s
-    reverse list  ${ids_sorted}
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[6]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids_reverse}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list   ${ids_reverse}
-    sort list  ${ids_sorted}
-    reverse list  ${ids_sorted}
-    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
-
-    #FAILURE
-    log  failure
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[7]/span[1]
-    sleep  1s
-    ${ids}=  create list
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[7]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids}  ${id_str}
-    ${ids_sorted} =  create list
-    ${ids_sorted} =  copy list  ${ids}
-    sort list  ${ids_sorted}
-    LOG  SORTED
-    Lists Should Be Equal  ${ids_sorted}  ${ids}
-    ${ids_reverse}=  create list
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[7]/span[1]
-    sleep  1s
-    reverse list  ${ids_sorted}
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[7]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids_reverse}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list   ${ids_reverse}
-    sort list  ${ids_sorted}
-    reverse list  ${ids_sorted}
-    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
-
-    #heartbeat
-    log  heartbeat
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[8]/span[1]
-    sleep  1s
-    ${ids}=  create list
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[8]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids}  ${id_str}
-    ${ids_sorted} =  create list
-    ${ids_sorted} =  copy list  ${ids}
-    sort list  ${ids_sorted}
-    LOG  SORTED
-    Lists Should Be Equal  ${ids_sorted}  ${ids}
-    ${ids_reverse}=  create list
-    click element  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/table/thead/tr[1]/th[8]/span[1]
-    sleep  1s
-    : FOR    ${INDEX}    IN RANGE    1    ${count_str}+1
-    \    Log    ${INDEX}
-    \    ${id}=  get text  xpath=/html/body/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[${INDEX}]/td[8]
-    \    ${id_str}=  convert to string  ${id}
-    \    append to list  ${ids_reverse}  ${id_str}
-    ${ids_sorted}=  create list
-    ${ids_sorted}=  copy list   ${ids_reverse}
-    sort list  ${ids_sorted}
-    reverse list  ${ids_sorted}
-    Lists Should Be Equal  ${ids_sorted}  ${ids_reverse}
+Select_App_Monitor_Page
+    [Arguments]    ${appname}
+    Input Text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input  =${appname}
+    Wait Until Page Contains    ${appname}    timeout=30s
+    Click Element    //*[contains(text(),'${appname}')]
