@@ -14,17 +14,6 @@ Go_To_Page
     Wait Until Page Contains    ${str_on_page_to_verify}    timeout=100s
     Comment    Wait Until Page Contains    //t[text()="Application Packages"]/..    10s
 
-Go_To_PageM
-    [Arguments]    ${link_disp_name}    ${str_on_page_to_verify}
-    [Documentation]    Redirects to the page by given link display name and waits for the string " str_on_page_to_verify" \ to be displayed on the page
-    ${Go_To_Page_Link}    Set Variable    //span[text()='${link_disp_name}']/..
-    Click Element    xpath=${Go_To_Page_Link}
-    Wait Until Page Contains    ${str_on_page_to_verify}    timeout=10s
-    Comment    Wait Until Page Contains    //t[text()="Application Packages"]/..    10s
-    input text   xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[4]/input  RUN
-    input text   xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input  MobileDemo
-    wait until page contains  MobileDemo  timeout=10000000s
-
 Connect_To_DT_Console
     [Arguments]    ${url}
     [Documentation]    Connects to DT web console
@@ -74,11 +63,14 @@ Read_Table_Cells_Data_Inner_Loop
 DestroyBrowsingEnv
     Close Browser
     Terminate PID    ${xvfbPID}
+    Remove Directory    /tmp/ffprofiles/${displayid}    recursive=True
 
 SetupBrowsingEnv
     [Arguments]    ${width}=1280    ${height}=720    ${colordepth}=24
     ${displayid}    ${xvfbpid}=    SetupXVFB    ${width}    ${height}    ${colordepth}
     Set Environment Variable    DISPLAY    :${displayid}
+    Create Directory    /tmp/ffprofiles/
+    Copy Directory    /home/ameya/tf2jan/etc/browsers/ffblankprofile    /tmp/ffprofiles/${displayid}
     Set Suite Variable    ${displayid}    ${displayid}
     Set Suite Variable    ${xvfbpid}    ${xvfbpid}
 
@@ -87,10 +79,6 @@ SetupBrowsingEnv_Monitor
     SetupBrowsingEnv
     Connect_To_DT_Console    ${url}
     Launch_The_App    ${pkg_name1}    ${app_name1}  #comment when running individual test case
-    sleep    10s
+    sleep    60s
     Launch_The_App    ${pkg_name2}    ${app_name2}  #comment when running individual test case
-    sleep    10s
-
-Scroll_Page_To_Location
-    [Arguments]    ${x_location}    ${y_location}
-    Execute JavaScript    window.scrollTo(${x_location},${y_location})
+    sleep    60s

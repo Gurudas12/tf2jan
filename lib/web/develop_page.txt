@@ -33,6 +33,8 @@ Develop_The_App
     Page Should Not Contain   Cluster
     Go_To_Page    AppHub   AppHub
     sleep  12s    #Takes time to list packages
+    Click Element      xpath=/html/body/div[2]/div/div[1]/label[2]
+    sleep      1s
     ${Select_Demo_App_xpath}=    Set Variable    //span[text()='${app_name}']/../..//input[@type='checkbox']
     log   ${Select_Demo_App_xpath}
     Run Keyword If    '${app_type}'=='Demo'    Import_Demo_App    ${app_name}
@@ -43,7 +45,6 @@ Import_Demo_App
     #Click Element    xpath=${Import_Demos_xpath}    #For 2.0.0 Console, xpath=//span[text()='import demos']/..    #For 2.1.0 Console,xpath=//t[text()='import demos']/..
     ${Select_Demo_App_xpath}=    Set Variable     //*[contains(text(),'${app_name}')]
     log   ${Select_Demo_App_xpath}
-    Click Element   xpath=/html/body/div[2]/div/div[1]/label[2]
     Wait Until Element Is Visible    xpath=${Select_Demo_App_xpath}
     Click Element    xpath=${Select_Demo_App_xpath}
     sleep   10s
@@ -57,16 +58,13 @@ Import_Demo_App
 Launch_The_App
     [Arguments]    ${pkg_name}    ${app_name}
     Select_App_From_Given_Pkg_List    ${pkg_name}    ${app_name}
-    ${Launch_App_Alert_xpath}    Set Variable    //h3//span[contains(text(),'Launch ${app_name}')]
-    #Element Should Be Visible    xpath=${Launch_App_Alert_xpath}    timeout=10s
-    #Select Checkbox    xpath=${Select_Use_Config_file_xpath}
-    #Click Element    xpath=${Launch_Success_Button_xpath}
-    #${Select_Demo_App_xpath}=    Set Variable     //*[contains(text(),'${app_name}')]
-    #log   ${Select_Demo_App_xpath}
-    #Wait Until Element Is Visible    xpath=${Select_Demo_App_xpath}
-    #Click Element    xpath=${Select_Demo_App_xpath}
+    ${Launch_App_Alert_xpath}    Set Variable    //h3//span[contains(text(),'${app_name}')]
     sleep    5s
-    Capture Page Screenshot
+    Click Button      xpath=/html/body/div[2]/div/h1/span[2]/button[1]
+    sleep      5s
+    Wait Until Element Is Enabled    xpath=/html/body/div[1]/div/div/form/div[3]/button[1]    timeout=30s
+    Click Button      xpath=/html/body/div[1]/div/div/form/div[3]/button[1]
+    Wait Until Element Is Not Visible    xpath=/html/body/div[1]/div/div/form/div[3]/button[1]     timeout=60s
 
 Import_New_App
     [Arguments]    ${File_To_Upload}
@@ -79,29 +77,127 @@ Import_New_App
 Select_App_From_Given_Pkg_List
     [Arguments]    ${pkg_name}    ${app_name}    # To select package from the list
     Go_To_Page    Develop    Development
-    Click Element   xpath=/html/body/div[2]/div/div[1]/h2/a
-    Click Element   xpath=/html/body/div[2]/div/h1/div/label[1]
-    wait until page contains   Develop
-    ${Select_Demo_App_xpath}=    Set Variable     //*[contains(text(),'${app_name}')]
-    log   ${Select_Demo_App_xpath}
-    Wait Until Element Is Visible    xpath=${Select_Demo_App_xpath}
-    Click Element    xpath=${Select_Demo_App_xpath}
-    #Comment    Click Element    xpath=${Goto_Application_Packages_Link}
-    Wait Until Element Is Visible    xpath=/html/body/div[2]/div/h1/span[2]/button
-    Click Element   xpath=/html/body/div[2]/div/h1/span[2]/button
+    sleep      2s
+    Click Element       xpath=/html/body/div[2]/div/div[1]/h2/a
+    sleep      2s
+    Comment    Click Element    xpath=${Goto_Application_Packages_Link}
     Comment    Wait Until Page Contains    Ingestion    timeout=20s
     Comment    Click Element    xpath=//table//a[text()='${app_name}']/../../td[3]//button[1]
-    sleep  1s
-    ${Launch_The_App_xpath}    Set Variable    /html/body/div[1]/div/div/form/div[3]/button[1]     # for version 3.6.0  //table//a[text()='${app_name}']/../../td[3]//button[1]    #//table//a[contains(text(),'${app_name}')]/../../td[5]//button    #For 2.0.0 Console : //table//a[contains(text(),'${app_name}')]/../../td[4]/button    For 2.1.0 Console: //table//a[contains(text(),'${app_name}')]/../../td[5]//button
+    Wait Until Page Contains    ${app_name}    timeout=10s
+    Click Element      xpath=/html/body/div[2]/div/h1/div/label[1]
+    sleep      1s
+    ${Launch_The_App_xpath}    Set Variable    //table//a[contains(text(),'${app_name}')]     #/../../td[3]//button[1]    #//table//a[contains(text(),'${app_name}')]/../../td[5]//button    #For 2.0.0 Console : //table//a[contains(text(),'${app_name}')]/../../td[4]/button    For 2.1.0 Console: //table//a[contains(text(),'${app_name}')]/../../td[5]//button
     Click Element    xpath=${Launch_The_App_xpath}
     sleep    2s
+
+###   CUSTOM ###
 
 Delete_App_From_Develop_Page
     [Arguments]    ${pkg_name}    ${app_name}    ${version}  # To select package from the list
     Go to  ${url}static/#/dev/packages/${username}/${pkg_name}/${version}/  #set your username in variables  in tf2jan/Tests/web/DT_Web_Console/DT_web_console.txt
     ${delete}  Set Variable   /html/body/div[2]/div/div[2]/button[2]
-    Wait Until Page Contains   ${app_name}
     Click Button  xpath=${delete}
     sleep  2s
     Click Button  xpath=/html/body/div[1]/div/div/div[3]/button[1]
     Capture Page Screenshot
+
+Launch_The_App_New
+    [Arguments]    ${pkg_name}    ${app_name}    ${version}
+    Select_App_From_Given_Pkg_List_New    ${pkg_name}    ${app_name}    ${version}
+    ${Launch_App_Alert_xpath}    Set Variable    //h3//span[contains(text(),'Launch ${app_name}')]
+
+
+
+Select_App_From_Given_Pkg_List_New
+    [Arguments]    ${pkg_name}    ${app_name}    ${version}   # To select package from the list
+    log    ${pkg_name}
+    Go_To_Page    Develop     Application Packages
+    Wait Until Page Contains     Application Packages
+    Click Element    xpath=/html/body/div[2]/div/div[1]/h2/a
+    Click Element   xpath=/html/body/div[2]/div/h1/div/label[1]
+    #Click Element   xpath=/html/body/div[2]/div/div[4]/div[1]/div[2]/h2/a
+    #Click Element    xpath=/html/body/div[4]/div/div[4]/a
+    #${Select_Demo_App_xpath}=    Set Variable     //*[contains(text(),'${app_name}')]
+    log   ${Select_Demo_App_xpath}
+    sleep    5s
+    Go to  ${url}static/#/dev/packages/${username}/${pkg_name}/${version}
+    sleep     5s
+    Wait Until Page Contains     Applications
+    Go to  ${url}static/#/dev/packages/${username}/${pkg_name}/${version}/applications/${app_name}
+    sleep    5s
+    Click Element    xpath=/html/body/div[2]/div/h1/span[2]/button
+    Click Element    xpath=/html/body/div[1]/div/div/form/div[3]/button[1]
+
+Search_Box_Testing                      #Searches in tables
+    [Arguments]    ${locator}    ${keyword}     ${opr}=False
+    ${result}=    Fetch From Left     ${locator}      /input
+    ${length}=      Get Length      ${result}
+    ${a}        Evaluate       ${length}-6
+    ${b}        Evaluate       ${length}-12
+    ${td}=      Get Substring       ${result}       ${a}       ${length}
+    ${tr}=      Get Substring       ${result}       ${b}       ${a}
+    ${result}=    Fetch From Left      ${result}        ${td}
+    ${result}=    Fetch From Left      ${result}        ${tr}
+    ${result}=      Replace String        ${result}       thead      tbody[3]/
+    ${r}    Set Variable    ${result}
+    ${result}=    Catenate     ${result}${td}
+    Log     ${result}
+    ${value1}=   Get Matching Xpath Count       ${result}
+    Log     Value 1 is ${value1}
+    Input Text      xpath=${locator}    ${keyword}
+    Wait Until Page Contains    ${keyword}
+    ${value2}=   Get Matching Xpath Count        ${result}       #/html/body//table//td[1]   #//div//table/thead/tr[2]//input
+    Log    Value 2 is ${value2}
+    Log     ${opr}
+    ${i}    Set Variable    1
+    ${txt}    Set Variable    text
+    ${result}=    Fetch From Left      ${result}    ${td}
+    ${result}=    Fetch From Left      ${result}    //
+    Capture Page Screenshot
+    : FOR    ${i}    IN RANGE    1      ${value2}+1
+    \    ${tr}      Set Variable    tr[${i}]
+    \    ${s}=      Catenate    ${r}${tr}${td}
+    \    Log    ${s}
+    \    ${txt}   Get Text     ${s}
+    \    Convert To String     ${txt}
+    \    Should Contain   ${txt}      ${keyword}
+    Clear Element Text  xpath=${locator}
+    Capture Page Screenshot
+
+
+
+
+
+Search_Box_Testing_Negative          #Searches in tables
+    [Arguments]    ${locator}    ${keyword}     ${opr}=False
+    ${result}=    Fetch From Left     ${locator}      /input
+    ${length}=      Get Length      ${result}
+    ${a}        Evaluate       ${length}-6
+    ${b}        Evaluate       ${length}-12
+    ${td}=      Get Substring       ${result}       ${a}       ${length}
+    ${tr}=      Get Substring       ${result}       ${b}       ${a}
+    ${result}=    Fetch From Left      ${result}        ${td}
+    ${result}=    Fetch From Left      ${result}        ${tr}
+    ${result}=      Replace String        ${result}       thead      tbody[3]/
+    ${r}    Set Variable    ${result}
+    ${result}=    Catenate     ${result}${td}
+    Log     ${result}
+    ${value1}=   Get Matching Xpath Count       ${result}
+    Log     Value 1 is ${value1}
+    Input Text      xpath=${locator}    ${keyword}
+    ${value2}=   Get Matching Xpath Count        ${result}       #/html/body//table//td[1]   #//div//table/thead/tr[2]//input
+    Log    Value 2 is ${value2}
+    Should Be Equal     ${value2}   0
+
+Search_List_Testing
+    [Arguments]    ${locator}    ${keyword}     ${opr}=False
+    ${value1}=   Get Matching Xpath Count        ${locator}         #/html/body//table/tbody[3]//td[1]
+    Log     Value 1 is ${value1}
+    Input Text      xpath=${locator}    ${keyword}
+    Wait Until Page Contains    ${keyword}
+    ${value2}=   Get Matching Xpath Count        ${locator}     #/html/body//table/tbody[3]//td[1]   #//div//table/thead/tr[2]//input
+    Log    Value 2 is ${value2}
+    Log     ${opr}
+    Run Keyword If      "${opr}" == "true"     Should Be True   ${value1}>=${value2}
+    Run Keyword If      "${opr}" == "False"    Should Be True   ${value1}>${value2}
+
