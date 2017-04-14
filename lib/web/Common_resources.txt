@@ -74,14 +74,11 @@ Read_Table_Cells_Data_Inner_Loop
 DestroyBrowsingEnv
     Close Browser
     Terminate PID    ${xvfbPID}
-    Remove Directory    /tmp/ffprofiles/${displayid}    recursive=True
 
 SetupBrowsingEnv
     [Arguments]    ${width}=1280    ${height}=720    ${colordepth}=24
     ${displayid}    ${xvfbpid}=    SetupXVFB    ${width}    ${height}    ${colordepth}
     Set Environment Variable    DISPLAY    :${displayid}
-    Create Directory    /tmp/ffprofiles/
-    Copy Directory    /home/ameya/tf2jan/etc/browsers/ffblankprofile    /tmp/ffprofiles/${displayid}
     Set Suite Variable    ${displayid}    ${displayid}
     Set Suite Variable    ${xvfbpid}    ${xvfbpid}
 
