@@ -1,0 +1,294 @@
+*** Settings ***
+Library           Selenium2Library
+Library           Collections
+Library           String
+Library           ../helpers.py
+Library           OperatingSystem
+
+
+*** Keywords ***
+
+
+Read_Table_Search_Type
+    [Arguments]    ${table_locator}
+    [Documentation]    Reads the given table which has search functinality. Returns dictonary having table and table headers in list
+    Comment    Read and fetch table headers
+    ${Gw_Info_Header_List}=    Create List    #List for storing headers of the table
+    ${Table_Data_Dict}=    Create Dictionary    #Dictonary for storing values from the table
+    ${tHeader_xpath}=    Catenate    ${table_locator}    /thead/tr/th    #Creating xpath for getting table headers
+    ${tHeader}=    Get Webelements    ${tHeader_xpath}
+    ${hList_len}=    Get Length    ${tHeader}    #Get the number of headers in the table
+    Comment    Loop which retrives of headers and add into the list
+    : FOR    ${i}    IN RANGE    0    ${hList_len}
+    \    ${h}=    Catenate    ${tHeader_xpath}    [${i}]
+    \    Append To List    ${Gw_Info_Header_List}    ${h}
+    Log List    ${Gw_Info_Header_List}
+    Comment    Read and fetch table cells
+    ${tTr_xpath}    Catenate    ${table_locator}    /tbody/tr    #Creating xpath for getting table tr to get number of rows
+    ${list_web_ele}=    Get Webelements    ${tTr_xpath}
+    ${list_len}=    Get Length    ${list_web_ele}
+    : FOR    ${i}    IN RANGE    0    ${${list_len}-2}
+    \    Log    ${i}
+    \    ${j}=    Set Variable    ${${i}+1}
+    \    Comment    Read the table cells
+    \    ${item_xpath}=    Catenate    ${table_locator}    /tbody/tr[${j}]/td[1]    #Read first cell and add it as key in dictionary
+    \    ${item}    Get Text    ${item_xpath}
+    \    ${Dict_Values_List}    Create List    #List For stroring columns of the table except first
+    \    ${Dict_Values_List}=    Read_Table_Cells_Data_Inner_Loop    ${j}    ${table_locator}    ${hList_len}    #Read data from remaining data cells and creates one list
+    \    Set To Dictionary    ${Table_Data_Dict}    ${item}    ${Dict_Values_List}
+    Log Dictionary    ${Table_Data_Dict}
+    [Return]    ${Gw_Info_Header_List}    ${Table_Data_Dict}
+
+
+Read_Table_Column_Sort      #For Search Type Tables
+    [Arguments]     ${table_locator}    ${column_no}        ${Status_Sort}
+    [Documentation]     Gets the table elements and sorts the lists in ascending, descending or leaves th order of the list elements as it is.
+    ${Data_List}    Create List     #List for storing column values
+    ${Gw_Info_Header_List}=    Create List    #List for storing headers of the table
+    ${Table_Data_Dict}=    Create Dictionary    #Dictonary for storing values from the table
+    ${tHeader_xpath}=    Catenate    ${table_locator}    /thead/tr/th    #Creating xpath for getting table headers
+    ${tHeader}=    Get Webelements    ${tHeader_xpath}
+    ${hList_len}=    Get Length    ${tHeader}    #Get the number of headers in the table
+    Comment    Loop which retrives of headers and add into the list
+    : FOR    ${i}    IN RANGE    0    ${hList_len}
+    \    ${h}=    Catenate    ${tHeader_xpath}    [${i}]
+    \    Append To List    ${Gw_Info_Header_List}    ${h}
+    Log List    ${Gw_Info_Header_List}
+    Comment    Read and fetch table cells
+    ${tTr_xpath}    Catenate    ${table_locator}    /tbody/tr    #Creating xpath for getting table tr to get number of rows
+    ${list_web_ele}=    Get Webelements    ${tTr_xpath}
+    ${list_len}=    Get Length    ${list_web_ele}
+    ${Result}=  Run Keyword And Return Status   Page Should Contain Element      xpath=(//TD[@ng-repeat='column in columns track by column.id'])[1]
+    ${Property_element}=   Run Keyword If      '${RESULT}'=='True'       Get Text   xpath=(//TD[@ng-repeat='column in columns track by column.id'])[1]
+    ${Empty_Check}      Check Empty List Search     ${table_locator}
+    : FOR    ${i}    IN RANGE    0    ${${list_len}-2}
+    \    Log    ${i}
+    \    Exit For Loop If       '${Empty_Check}'=='True'
+    \    Comment    Read the table cells
+    \    ${item_xpath}=    Catenate     ${table_locator}     /tbody/tr[${i+1}]/td[${column_no}]    #Read first cell since required
+    \    ${item}    Get Text    ${item_xpath}
+    \    Run Keyword If  ${column_no}==1 and ${i}==0        Append To List     ${Data_List}        ${Property_element}
+    \    Run Keyword If  ${column_no}==1 and ${i}!=0        Append To List     ${Data_List}        ${item}
+    \    Run Keyword If  ${column_no}!=1        Append To List     ${Data_List}        ${item}
+    \
+    Log List        ${Data_List}
+    Run Keyword If      '${Status_Sort}'=='Sorted'    Sort List       ${Data_List}
+    Run Keyword If      '${Status_Sort}'=='Reverse Sorted'    Sort List       ${Data_List}
+    Run Keyword If      '${Status_Sort}'=='Reverse Sorted'    Reverse List       ${Data_List}
+    Log List        ${Data_List}
+    [Return]        ${Data_List}
+
+Check_Empty_List_Search            #For Search Type Tables
+    [Arguments]     ${table_locator}
+    [Documentation]     Checks For Empty Lists
+    ${Check_Empty_Row_Type_1}=     Run Keyword And Return Status   Page Should Contain      no rows
+    ${Check_Empty_Row_Type_2}=     Run Keyword And Return Status   Page Should Contain      no alerts found             #Element      xpath=//DIV[@ng-if='!options.loading && !options.noRowsTemplateUrl'][text()='no alerts found']
+    ${Check_Empty_Row}=     Set Variable If  '${Check_Empty_Row_Type_1}'=='True' or '${Check_Empty_Row_Type_2}'=='True'
+                            ...     True        False
+    [Return]        ${Check_Empty_Row}
+
+
+Read_Table_Get_Column_Count_And_List            #For Search Type Tables
+    [Arguments]     ${table_locator}    ${column_no}
+    [Documentation]    Reads the given table which has search functinality. Returns list having count and the list of cloumns.
+    ${Data_List}    Create List     #List for storing column values
+    ${Gw_Info_Header_List}=    Create List    #List for storing headers of the table
+    ${Table_Data_Dict}=    Create Dictionary    #Dictonary for storing values from the table
+    ${tHeader_xpath}=    Catenate    ${table_locator}    /thead/tr/th    #Creating xpath for getting table headers
+    ${tHeader}=    Get Webelements    ${tHeader_xpath}
+    ${hList_len}=    Get Length    ${tHeader}    #Get the number of headers in the table
+    Comment    Loop which retrives of headers and add into the list
+    : FOR    ${i}    IN RANGE    0    ${hList_len}
+    \    ${h}=    Catenate    ${tHeader_xpath}    [${i}]
+    \    Append To List    ${Gw_Info_Header_List}    ${h}
+    Log List    ${Gw_Info_Header_List}
+    Comment    Read and fetch table cells
+    ${tTr_xpath}    Catenate    ${table_locator}    /tbody/tr    #Creating xpath for getting table tr to get number of rows
+    ${list_web_ele}=    Get Webelements    ${tTr_xpath}
+    ${list_len}=    Get Length    ${list_web_ele}
+    ${Result}=  Run Keyword And Return Status   Page Should Contain Element      xpath=(//TD[@ng-repeat='column in columns track by column.id'])[1]
+    ${Property_element}=   Run Keyword If      '${RESULT}'=='True'       Get Text   xpath=(//TD[@ng-repeat='column in columns track by column.id'])[1]
+    ${Empty_Check}      Check Empty List Search     ${table_locator}
+    ${Count}=        Set Variable        0
+    : FOR    ${i}    IN RANGE    0    ${${list_len}-2}
+    \    Log    ${i}
+    \    Exit For Loop If       '${Empty_Check}'=='True'
+    \    Comment    Read the table cells
+    \    ${item_xpath}=    Catenate     ${table_locator}     /tbody/tr[${i+1}]/td[${column_no}]    #Read first cell since required
+    \    ${item}=    Get Text    ${item_xpath}
+    \    Run Keyword If  ${column_no}==1 and ${i}==0 and '${RESULT}'=='True'     Append To List     ${Data_List}        ${Property_element}
+    \    Run Keyword If  ${column_no}==1 and ${i}!=0   Append To List     ${Data_List}       ${item}
+    \    Run Keyword If  ${column_no}!=1      Append To List     ${Data_List}        ${item}
+    \    ${Count}=      Evaluate        ${Count}+1
+    Log     ${list_len}
+    Log List        ${Data_List}
+    [Return]        ${Count}       ${Data_List}
+
+
+Connect_To_DT_Console_After_Setting_Password
+    [Arguments]     ${Login}        ${Password}
+    [Documentation]     Login into RTS after setting password.
+    Open Browser    ${url}     CHROME                                            #Open Chrome in new window
+    Wait Until Page Contains        Login
+    Element Should Be Disabled      xpath=//BUTTON[@type='submit'][text()='Login']
+    Input Text      xpath=//INPUT[@type='text']     ${Login}
+    Input Password      xpath=//INPUT[@type='password']     ${Password}
+    Click Button        xpath=//BUTTON[@type='submit'][text()='Login']
+    Wait Until Page Contains        Operations
+    Click Element       xpath=//A[@class='navbar-brand'][text()='DataTorrent']
+    Maximize Browser Window
+    Wait Until Page Contains    Welcome to DataTorrent RTS
+    Wait Until Page Contains    Monitor
+
+
+Add_Alerts_For_Suite_Setup_RTS_3.7.0-3.8.0-SNAPSHOT
+    [Arguments]    ${Test_name}      ${Email}       ${Threshold}    ${Condition}    ${Message}
+    [Documentation]         Add alerts before hand via Suite Setup
+    Click Button        xpath=//BUTTON[@ng-click='createAlert(users, roles)']    #Click on 'create new alert'
+    Wait Until Page Contains        Required fields                              #Confirmation that 'New Alert' popup window is encountered
+    Input Text      xpath=(//INPUT[@type='text'])[1]        ${Test_name}
+    Sleep   1s
+    Input Text      xpath=(//INPUT[@type='text'])[2]        ${Email}
+    Sleep   1s
+    Input Text      xpath=//INPUT[@type='number']           ${Threshold}
+    Sleep   1s
+    Input Text      xpath=//TEXTAREA[@ng-model='theAlert.data.condition']       ${Condition}
+    Sleep   1s
+    Input Text      xpath=//TEXTAREA[@ng-model='theAlert.data.description']     ${Message}
+    Sleep   1s
+    Element Should Be Enabled       xpath=//BUTTON[@class='btn btn-success']
+    Capture Page Screenshot
+    Click Element       xpath=//BUTTON[@class='btn btn-success']
+    Capture Page Screenshot
+    Wait Until Page Does Not Contain       Required fields
+    #Page Should Contain     ${Test_name}
+
+Add_Alerts_For_Suite_Setup_RTS_3.8.0
+    [Arguments]    ${Test_name}      ${Email}       ${Threshold}    ${Condition}    ${Message}
+    [Documentation]         Add alerts before hand via Suite Setup for RTS 3.8.0
+    Click Button        xpath=//BUTTON[@ng-click='createAlert(users, roles)']    #Click on 'create new alert'
+    Wait Until Page Contains        Required fields                              #Confirmation that 'New Alert' popup window is encountered
+    Input Text      xpath=(//INPUT[@type='text'])[1]        ${Test_name}
+    Sleep   1s
+    Input Text      xpath=(//INPUT[@type='text'])[2]        ${Email}
+    Sleep   1s
+    Input Text      xpath=//INPUT[@type='number']           ${Threshold}
+    Sleep   1s
+    Click Element       xpath=//A[@href=''][text()='Predefined Conditions']         #Click On Predefined Conditions
+    Click Element       xpath=//SPAN[@tabindex='-1']                                #Click On Drop Dowm Menu
+    Run Keyword If      '${Condition}'=='Cluster Memory Usage'      Cluster Memory Usage            4096
+    Run Keyword If      '${Condition}'=='Cluster CPU Usage'         Cluster CPU Usage               65
+    Run Keyword If      '${Condition}'=='Application Container Killed'         Application Container Killed     PiDemo
+    Run Keyword If      '${Condition}'=='Application Memory Usage'      Application Memory Usage        PiDemo      3000
+    Run Keyword If      '${Condition}'=='Application Execution Time'      Application Execution Time        PiDemo      20
+    Sleep   1s
+    Input Text      xpath=//TEXTAREA[@ng-model='theAlert.data.description']     ${Message}
+    Sleep   1s
+    Element Should Be Enabled       xpath=//BUTTON[@class='btn btn-success']
+    Capture Page Screenshot
+    Click Element       xpath=//BUTTON[@class='btn btn-success']
+    Capture Page Screenshot
+    Wait Until Page Does Not Contain       Required fields
+
+Cluster_Memory_Usage
+    [Arguments]      ${Memory_MB}
+    [Documentation]     Simulates input for predefined condition  Cluster Memory Usage in Create New Alert
+    Click Element       xpath=(//A[@href='javascript:void(0)'])[1]
+    Input Text      xpath=//INPUT[@ng-if='!param.values']      ${Memory_MB}
+
+
+Cluster_CPU_Usage
+    [Arguments]      ${CPU_Percent}
+    [Documentation]     Simulates input for predefined condition  Cluster CPU Usage in Create New Alert
+    Click Element       xpath=(//A[@href='javascript:void(0)'])[2]
+    Input Text      xpath=//INPUT[@ng-if='!param.values']      ${CPU_Percent}
+
+
+Application_Container_Killed
+    [Arguments]     ${Application_Name}
+    [Documentation]     Simulates input for predefined condition  Application Container Killed in Create New Alert
+    Click Element       xpath=(//A[@href='javascript:void(0)'])[7]
+    Input Text      xpath=//INPUT[@ng-if='!param.values']      ${Application_Name}
+
+
+Application_Memory_Usage
+    [Arguments]     ${Application_Name}     ${Memory_MB}
+    [Documentation]     Simulates input for predefined condition  Application Memory Usage in Create New Alert
+    Click Element       xpath=(//A[@href='javascript:void(0)'])[3]
+    Input Text      xpath=(//INPUT[@ng-if='!param.values'])[1]      ${Application_Name}
+    Input Text      xpath=(//INPUT[@ng-if='!param.values'])[2]      ${Memory_MB}
+
+
+Application_Execution_Time
+    [Arguments]     ${Application_Name}     ${Time_Minutes}
+    [Documentation]     Simulates input for predefined condition  Application Execution Time in Create New Alert
+    Click Element       xpath=(//A[@href='javascript:void(0)'])[4]
+    Input Text      xpath=(//INPUT[@ng-if='!param.values'])[1]      ${Application_Name}
+    Input Text      xpath=(//INPUT[@ng-if='!param.values'])[2]      ${Time_Minutes}
+
+
+Disable_App_Data_Tracker
+    [Documentation]     Disables App Data Tracker during Suite Teardown
+    Sleep           10s
+    Click Element       xpath=//T[text()='Disable App Data Tracker']             #Click on 'Disable App Data Tracker' to enable it and a popup should be displayed for confirmation
+    Page Should Contain     Disable App Data Tracker?                            #Check/Verify if  Popup is displayed or not
+    Click Button        xpath=//BUTTON[@ng-click='$close()'][text()='Disable']   #Confirmation for disabling App Data Tracker
+    #Wait Until Page Contains        App Data Tracker is disabled.     timeout=20s    #Confirmaton that App Data Tracker is Disabled Now
+    Reload Page                                                                  #Refreshes the page for checking if App Data Tracker is Disabled or Not
+    Wait Until Page Contains        App Data Tracker      timeout=10s
+    Page Should Contain     Enable App Data Tracker                              #Final confirmation that App Data Tracker is Disabled
+
+DestroyBrowsingEnv_DT_Configure
+    #Open Chrome in new window
+    Connect_To_DT_Console    ${url}
+    Go_To_Page      Configure       System Alerts                                #goto home -> Configure
+    Click Element       xpath=//SPAN[@class='ng-scope'][text()='System Alerts']         #(//T[text()='System Alerts'][text()='System Alerts'])[1]-Old RTS      #Click On System Alerts
+    Page Should Contain        System Alerts Management                          #Confirmation of successful navigation to System Alerts Page
+    Select Checkbox     xpath=//INPUT[@ng-if='column.selector']
+    Wait Until Element Is Visible   xpath=//BUTTON[@ng-click='removeAlerts()']
+    Click Button   xpath=//BUTTON[@ng-click='removeAlerts()']
+    ${Alert_Presence_1}    Run Keyword And Return Status         Page Should Contain    Are you sure you want to delete the selected alert?      timeout=10s
+    ${Alert_Presence_2}    Run Keyword And Return Status         Page Should Contain    Are you sure you want to delete the selected alerts?      timeout=10s
+    Run Keyword If      '${Alert_Presence_1}'=='True' or '${Alert_Presence_2}'=='True'        Click Button    xpath=//BUTTON[@ng-click='$close()'][text()='Delete']
+    Wait Until Page Contains    no alerts found     timeout=10s
+    Close All Browsers
+
+    Open Browser    ${url}     CHROME
+    Connect_To_DT_Console    ${url}
+    Go_To_Page      Configure       System Configuration                         #goto home -> Configure
+    Click Element       xpath=//SPAN[@class='ng-scope'][text()='System Configuration']               #goto Configure -> System Configuration
+    #Wait Until Page Contains      App Data Tracker                                #Check if App data tracker is present
+    ${App_Data_Tracker_Status}=     Run Keyword And Return Status       Page Should Contain         Disable App Data Tracker
+    Run Keyword If      '${App_Data_Tracker_Status}'=='True'             Disable App Data Tracker
+    Close Browser
+
+    Terminate PID    ${xvfbPID}
+
+
+
+SetupBrowsingEnv_DT_Configure
+    [Arguments]    ${width}=1280    ${height}=720    ${colordepth}=24
+    ${displayid}    ${xvfbpid}=    SetupXVFB    ${width}    ${height}    ${colordepth}
+    Set Environment Variable    DISPLAY    :${displayid}
+    Set Suite Variable    ${displayid}    ${displayid}
+    Set Suite Variable    ${xvfbpid}    ${xvfbpid}
+
+    Open Browser    ${url}     CHROME                                            #Open Chrome in new window
+    Connect_To_DT_Console    ${url}
+    Go_To_Page      Configure       System Alerts                                #goto home -> Configure
+    Click Element       xpath=//SPAN[@class='ng-scope'][text()='System Alerts']    #xpath=(//T[text()='System Alerts'][text()='System Alerts'])[1] - old     #Click On System Alerts
+    Page Should Contain        System Alerts Management                          #Confirmation of successful navigation to System Alerts Page
+
+    Add Alerts For Suite Setup RTS 3.8.0      Test_Case_1     abc@datatorrent.com     4000    Cluster Memory Usage       Created_New_Alert_Test_Case_Running_Test_1
+    Add Alerts For Suite Setup RTS 3.8.0      Test_Case_2     abc@datatorrent.com     5000    Cluster CPU Usage       Created_New_Alert_Test_Case_Running_Test_2
+    Add Alerts For Suite Setup RTS 3.8.0      Test_Case_3     xyz@datatorrent.com     4000    Application Container Killed       Created_New_Alert_Test_Case_Running_Test_3
+    Add Alerts For Suite Setup RTS 3.8.0      Test_Case_4     xyz@datatorrent.com     5000    Application Memory Usage       Created_New_Alert_Test_Case_Running_Test_4
+    Add Alerts For Suite Setup RTS 3.8.0      Test_Case_5     test_1@datatorrent.com     6000    Application Execution Time       Created_New_Alert_Test_Case_Running_Test_5
+    ##Below Cases Work Only for RTS versions 3.8.0-SNAPSHOT and below
+    #Add Alerts For Suite Setup RTS 3.7.0-3.8.0-SNAPSHOT       Test_Case_6     test_2@datatorrent.com     4500    Test_Case_6       Created_New_Alert_Test_Case_Running_Test_6
+    #Add Alerts For Suite Setup RTS 3.7.0-3.8.0-SNAPSHOT       Test_Case_7     test_2@datatorrent.com     7000    Test_Case_7       Created_New_Alert_Test_Case_Running_Test_7
+    #Add Alerts For Suite Setup RTS 3.7.0-3.8.0-SNAPSHOT       Test_Case_8     test_3@datatorrent.com     3000    Test_Case_8       Created_New_Alert_Test_Case_Running_Test_8
+    #Add Alerts For Suite Setup RTS 3.7.0-3.8.0-SNAPSHOT       Test_Case_9     test_3@datatorrent.com     8000    Test_Case_9       Created_New_Alert_Test_Case_Running_Test_9
+    #Add Alerts For Suite Setup RTS 3.7.0-3.8.0-SNAPSHOT       Test_Case_10     test_3@datatorrent.com     3000    Test_Case_10       Created_New_Alert_Test_Case_Running_Test_10
+
+
