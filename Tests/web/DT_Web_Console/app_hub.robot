@@ -10,6 +10,7 @@ ${url}           ${baseurl}        # http://localhost:9090
 ${app_pkg_loc}    /home/aishwarya/tf2jan/apa/pi-demo-3.4.0.apa
 ${dt_version}    3.7.0
 ${apex_version}    3.6.0
+
 *** Test Cases ***
 #######AISHWARYAZ TCS###########
 Apphub_download             #pass

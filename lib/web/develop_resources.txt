@@ -216,7 +216,6 @@ Search_Box_Testing_Update
     Run Keyword If      "${opr}" == "true"     Should Be True   ${value1}>=${value2}
     Run Keyword If      "${opr}" == "False"    Should Be True   ${value1}>${value2}
 
-##########this is needed to be added in Common_resorces.txt###########
 Read_Table_Hard_Coded
     [Arguments]    ${table_locator}
     [Documentation]    Reads the given table containent. Returns dictonary having table containent and table headers in list

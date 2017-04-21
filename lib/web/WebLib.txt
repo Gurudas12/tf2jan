@@ -1,6 +1,6 @@
 *** Settings ***
-Resource          develop_page.txt
-Resource          configure_page.txt
+Resource          develop_resources.txt
+Resource          configure_resources.txt
 Resource          Common_resources.txt
 Resource          configure_resources.txt
 Resource          monitor_resources.txt
