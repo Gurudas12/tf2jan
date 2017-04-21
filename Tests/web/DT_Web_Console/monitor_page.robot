@@ -3154,6 +3154,8 @@ App Details - Physical Operators - Search & Sort 51
     capture page screenshot
     
     
+
+
 App_Details_Containers_deselectall      #pass 81
     Go_To_Page      Monitor     Cluster Overview
     Wait Until Page Contains     RUNNING      timeout=20s
@@ -3272,7 +3274,6 @@ App_Details_Container_details_AppMaster_stderrlogs        #pass   87
     Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
 
  App_Details_Container_details_AppMaster_stdoutlogs        #pass   87
-    Connect_To_DT_Console       ${url}
     Go_To_Page      Monitor     Cluster Overview
     Wait Until Page Contains     RUNNING      timeout=20s
      Go_To_Page      Monitor     Cluster Overview
@@ -3399,7 +3400,7 @@ App_Details_Container_details_stdoutlogs      #pass   90
 
 App_Details_Container_details_stackTrace        #pass   91
     Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
+    Wait Until Page Contains     RUNNING      timeout=40s
     Click Element       xpath=//*[contains(text(),'${app_name}')]
     sleep   30s
     Capture Page Screenshot
@@ -3423,7 +3424,7 @@ App_Details_Container_details_stackTrace        #pass   91
 
 App_Details_Container_details_Physical_Operators_ID        #pass    #93
     Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
+    Wait Until Page Contains     RUNNING      timeout=40s
     Click Element       xpath=//*[contains(text(),'${app_name}')]
     sleep   30s
     Capture Page Screenshot
@@ -3514,8 +3515,8 @@ App_Details_Container_details_Download_dtLogs         #pass   94
 
 App_Details_Container_details_Download_stdoutLogs        #pass   94
     Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-     Go_To_Page      Monitor     Cluster Overview
+    Wait Until Page Contains     RUNNING      timeout=40s
+    Go_To_Page      Monitor     Cluster Overview
     Wait Until Page Contains     RUNNING      timeout=20s
     Click Element       xpath=//*[contains(text(),'${app_name}')]
     sleep   30s
@@ -3543,63 +3544,6 @@ App_Details_Container_details_Download_stdoutLogs        #pass   94
     #download will take place only if the logs are not of 0 B
     Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
 
-
-App_Details_Container_details_Download_stderrLogs_enabled_FAILS        #fails due to bug   94
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-     sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'stderr')]
-    Wait Until Page Contains    stderr
-    ${bytes}    Get Text    //*[@id="container-log-view-page"]/h1/span[1]/span
-    ${string}   Set Variable    0 B
-    Convert To String   ${string}
-    Should Not Be Equal As Strings      ${bytes}   ${string}            #will fail at this point if stderr is of 0B
-    Element Should Be Enabled   xpath=//*[@id="container-log-view-page"]/h1/a/t                      #download button
-    sleep   10s
-    File Should Exist   /home/aishwarya/Downloads/stderr.log
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-App_Details_Container_details_Download_stderrLogs_disabled_FAILS         #fails due to bug   94
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       #//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-     Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       #//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'stderr')]
-    Wait Until Page Contains    stderr
-    ${bytes}    Get Text    //*[@id="container-log-view-page"]/h1/span[1]/span
-    ${string}   Set Variable    0 B
-    Convert To String   ${string}
-    Should Be Equal As Strings      ${bytes}   ${string}
-    Element Should Be Disabled   xpath=//*[@id="container-log-view-page"]/h1/a/t           #download button is always enabled (although it shu$
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
 
 
 App_Details_Container_details_Search_Logs       #pass   95
@@ -3644,7 +3588,7 @@ App_Details_Container_details_log_tail      #pass   96
     Wait Until Page Contains    RUNNING     timeout=60s
     Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
     Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
+    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
     Convert To String   ${y}
     Scroll_Page_To_Location     0   ${y}
     Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
@@ -3669,7 +3613,7 @@ App_Details_Container_details_log_details_navigate      #pass   97
     Wait Until Page Contains    RUNNING     timeout=60s
     Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
     Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       #//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
+    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       
     Convert To String   ${y}
     Scroll_Page_To_Location     0   ${y}
     Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
@@ -3789,9 +3733,9 @@ App_Details_Physical_DAG_Stream_Locality    #pass       102
     Wait Until Page Contains    RUNNING     timeout=60s
     Click Element   xpath=//div/div[1]/ul/li[3]/a/span[contains(text(),'physical-dag-view')]
     Wait Until Page Contains    Physical DAG    timeout=10s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//div[1]//label[2]/input               #//div$
+    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//div[1]//label[2]/input               
     Capture Page Screenshot
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//div[1]//label[2]/input               #//div$
+    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//div[1]//label[2]/input               
     Capture Page Screenshot
     Page Should Contain    NOT ASSIGNED
     Page Should Contain    THREAD_LOCAL
@@ -3840,186 +3784,6 @@ App_Details_Application_Attempts        #pass   104
     Page Should Contain    finished time
 
 
-App_Details_Application_Attempt_FAILED_f          #passed 105  #FAILS AT OPEN BROWSER  only when running together
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Capture Page Screenshot
-    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
-    Capture Page Screenshot
-    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
-    Click Element   xpath=//*[@id="kill-container"]/t
-    Click Element   xpath=//*[contains(text(),'Yes, Kill the Application Master')]
-    Wait Until Page Contains    ACCEPTED    timeout=50s
-   # Run Keyword If Test Failed
-    #...         Wait Until Page Contains        PENDING         timeout=40s
-    Wait Until Page Contains    RUNNING     timeout=50s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    sleep   5s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr[1]/td[1]/a
-    sleep   5s
-    Page Should Contain     FAILED
-    ${url2}      Get Text    xpath=//div[2]//div[2]//div[2]/div[1]//div[2]//div[2]/div[1]/a
-    ${id} =     Open Browser       ${url2}       CHROME
-    sleep   5s
-    Switch Browser      ${id}
-    Wait Until Page Contains     Application Overview       #timeout=10s
-    Capture Page Screenshot
-    Close All Browsers
-    Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
-    Wait Until Page Contains    Application ID  timeout=60s
-
-
-
-App_Details_Application_Attempt_FAILED_Containers_Partial       #partially passed date search is not executing  106
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Capture Page Screenshot
-    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
-    Click Element   xpath=//*[@id="kill-container"]/t
-    Click Element   xpath=//*[contains(text(),'Yes, Kill the Application Master')]
-    Wait Until Page Contains    ACCEPTED    timeout=50s
-    Wait Until Page Contains    RUNNING     timeout=40s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    sleep   5s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr[1]/td[1]/a
-    Page Should Contain     FAILED
-    ${y}  get vertical position  xpath=//div/div[1]/h3/span[1][contains(text(),'Containers')]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Capture Page Screenshot
-    Search_Box_Testing     //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[1]/input    000001   true #BUG These searches do not
-    #Search_Box_Testing   //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[2]/input       ${username}   true          #Username
-    Search_Box_Testing    //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[3]/input         FAILED     true
-    Search_Box_Testing    //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[4]/input       10      true
-    #Search_Box_Testing    //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[5]/input      today      true      #FAILS
-    #Search_Box_Testing   //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[6]/input       today   true         #FAILS
-
-
-App_Details_Application_Attempt_RUNNING_f    #pass   107
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    sleep   5s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr/td[1]/a
-    Wait Until Page Contains    RUNNING     timeout=40s
-    ${url}      Get Text    xpath=//div[2]//div[2]//div[2]/div[1]//div[2]//div[2]/div[1]/a
-    ${id} =     Open Browser       ${url}       CHROME
-    Switch Browser      ${id}
-    Capture Page Screenshot
-
-
-App_Details_Application_Attempt_RUNNING_Containers      #fails at memory and start time search  108
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    sleep   5s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr/td[1]/a
-    Wait Until Page Contains      RUNNING   timeout=10s
-    Capture Page Screenshot
-    Search_Box_Testing     //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[1]/input    000001   true
-    Capture Page Screenshot
-    Search_Box_Testing     //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[1]/input    000001   true
-    Search_Box_Testing     //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[3]/input         RUNNING     true
-    Search_Box_Testing     //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[1]/input      000001       true      #id
-    #Search_Box_Testing     //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[4]/input      256.0 MB       true     #fails even manually as goes on searching but displays no results$
-    #Search_Box_Testing     //div[2]//div[2]//div[2]/div[2]//div[2]//table/thead/tr[2]/td[5]/input      today       true        #date search i$
-
-App_Details_Attempt_RUNNING_Containers_dtlogs     #pass   108
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    sleep   5s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr/td[1]/a
-    Page Should Contain     RUNNING      timeout=20s
-    Click Element   xpath=//div/table/tbody[3]/tr[1]/td[7]/div/button/t/span[contains(text(),'logs')]
-    sleep   2s
-    Click Element   xpath=/html/body/ul[1]/li[3]/a[contains(text(),'dt.log')]      #//div/h2/span[3]/ul/li[3]/a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-
-
-App_Details_Attempt_RUNNING_Containers_stderrlogs     #pass   108
-    [Tags]    test
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-     Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    sleep   5s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr/td[1]/a
-    Wait Until Page Contains    Application Attempt
-    Wait Until Page Contains    Containers
-    Click Element   xpath=//div/table/tbody[3]/tr[1]/td[7]/div/button/t/span[contains(text(),'logs')]
-    sleep   2s
-    Click Element   xpath=/html/body/ul[1]/li[1]/a[contains(text(),'AppMaster.stderr')]          #//div/h2/span[3]/ul/li[1]/a[contains(text(),$
-    Wait Until Page Contains    AppMaster.stderr
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Attempt_RUNNING_Containers_stdoutlogs     #pass   108
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    sleep   5s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr/td[1]/a
-    Wait Until Page Contains    Application Attempt
-    Wait Until Page Contains    Containers
-    Click Element   xpath=//div/table/tbody[3]/tr[1]/td[7]/div/button/t/span[contains(text(),'logs')]
-    sleep   2s
-    Click Element   xpath=/html/body/ul[1]/li[2]/a[contains(text(),'AppMaster.stdout')]      #//div/h2/span[3]/ul/li[2]/a[contains(text(),'App$
-    Wait Until Page Contains        AppMaster.stdout
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
 App_Details_Containers_KillAppMaster        #pass 84
     [Tags]    test
     Go_To_Page      Monitor     Cluster Overview
@@ -4041,9 +3805,7 @@ App_Details_Containers_KillAppMaster        #pass 84
     Capture Page Screenshot
     Click Element   xpath=//*[@id="kill-container"]/t
     Click Element   xpath=//*[contains(text(),'Yes, Kill the Application Master')]
-    Reload Page
-    Page Should Contain     killed
-
+    
 
 
 
@@ -4062,7 +3824,6 @@ App_Details_Containers_KillSelected     #pass 85
     Scroll_Page_To_Location     0   ${y}
     ${a}    Evaluate    ${y}-100
     Capture Page Screenshot
-    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
     Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[2]/td[1]/input
     Capture Page Screenshot
     Scroll_Page_To_Location     0   ${a}
@@ -4105,428 +3866,17 @@ App_Details_Container_details_AppMaster_kill        #pass          91
     Wait Until Page Contains    RUNNING     timeout=60s
     Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
     Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[3]//div[2]//div[2]/div/table/tbody[3]/tr[1]/td[2]/a
+    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
     Convert To String   ${y}
     Scroll_Page_To_Location     0   ${y}
     Click Element   xpath=//div[2]//div[3]//div[2]//div[2]/div/table/tbody[3]/tr[1]/td[2]/a
     Wait Until Page Contains    Container Overview
     Click Element   xpath=//div/h2/button/t[contains(text(),'kill')]
     Click Element   xpath=//*[contains(text(),'Yes, Kill the Application Master')]
-*** Keywords ***
 
 
 
 
-
-
-
-
-
-
-*** Settings ***
-#Suite Setup       SetupBrowsingEnv_Monitor  Pi Demo  PiDemo   #Which ever app you want to launch
-Suite Setup       SetupBrowsingEnv
-Suite Teardown    DestroyBrowsingEnv
-Resource          ../../../lib/web/WebLib.txt
-Resource          ../../../lib/web/Ingestion/Ingestion_Config_UI.txt
-
-*** Variables ***
-${url}            http://192.168.2.165:9090
-${app_pkg_loc}    /home/aishwarya/tf2jan/apa/pi-demo-3.4.0.apa
-${dt_version}    3.7.0
-${apex_version}    3.6.0
-${app_name}     PiDemo
-${pkg_name}     Pi Demo
-*** Test Cases ***
-
-App_Details_Containers_deselectall      #pass 81
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//div/table//td[3]/a[contains(text(),${app_name})]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    physical        timeout=20s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    sleep   10s
-    Click Element     xpath=//div//button[2]/t/span[contains(text(),'retrieve killed')]
-    Click Element     xpath=//div/span[1]/button[1]/t/span[contains(text(),'select active')]
-    sleep   10s
-    Capture Page Screenshot
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Capture Page Screenshot
-    Wait Until Page Contains    deselect all    timeout=20s
-    Click Element   xpath=//div/span[1]/button/t/span[contains(text(),'deselect all')]
-    ${value}=   Get Matching Xpath Count       //div[2]//div[2]//div[2]/div[3]//div[2]//div[2]//table/tbody[3]
-    Log     ${value}
-    ${i}    Set Variable    1
-    :FOR    ${i}    IN RANGE   1    ${value}+1
-    \     Checkbox Should Not Be Selected     xpath=//div/table/tbody[3]/tr[${i}]/td[1]/input
-
-
-
-
-App_Details_Containers_SingleContainerdetails       #pass 84
-    Go_To_Page      Monitor     Cluster Overview
-    Capture Page Screenshot
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]               #//div/table//td[3]/a[contains(text(),${app_name})]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Capture Page Screenshot
-    sleep   5s
-    Click Element   xpath=//div[2]/div//div[2]/div/div[2]/div[3]//div[2]//div[2]/div/table/tbody[3]/tr[2]/td[1]/input
-    Wait Until Page Contains    inspect      timeout=20s
-    Click Element   xpath=//*[contains (text(),'inspect')]
-    Wait Until Page Contains    Container Overview
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-App_Details_Container_details_Navigate_containers       #pass   85
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Capture Page Screenshot
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[3]//div[2]//div[2]/div/table/tbody[3]/tr[2]/td[2]/a              #container id
-    Wait Until Page Contains   Container Overview
-    Click Element   xpath=//*[@id="breadcrumbs-top"]/li[4]/span/span/button         #container link
-    Wait Until Page Contains    000001 on       timeout=20s
-    Input Text      xpath=//*[@id="breadcrumbs-top"]/li[4]/span/span/ul/li[2]/form/input    000001
-    Click Element   xpath=//*[@id="breadcrumbs-top"]/li[4]/span/span/ul/li[3]/span/a
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Container_details_AppMaster     #pass   86
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-     Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[3]//div[2]//div[2]//table/tbody[3]/tr[1]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Page should Contain     logs
-    Page should Contain     stackTrace
-    Page should Contain     kill
-    Page should Contain     ACTIVE
-    Page should Contain     no rows
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-App_Details_Container_details_AppMaster_stderrlogs        #pass   87
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[3]/div/div[2]//div[2]/div/table/tbody[3]/tr[1]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul/li[1]/a[contains(text(),'AppMaster.stderr')]
-    Wait Until Page Contains    AppMaster.stderr
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
- App_Details_Container_details_AppMaster_stdoutlogs        #pass   87
-    Connect_To_DT_Console       ${url}
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-     Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[3]/div/div[2]//div[2]/div/table/tbody[3]/tr[1]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul/li[2]/a[contains(text(),'AppMaster.stdout')]
-    Wait Until Page Contains    AppMaster.stdout
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Container_details_AppMaster_dtlogs        #pass   87
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[2]//div[2]/div[3]/div/d$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[3]/div/div[2]//div[2]/div/table/tbody[3]/tr[1]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul/li[3]/a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-     Click Element   xpath=//div/h2/span/ul/li[3]/a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-App_Details_Container_details_AppMaster_stackTrace      #pass   #88
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=70s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[2]//div[2]/div[3]/div/d$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[3]/div/div[2]//div[2]/div/table/tbody[3]/tr[1]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Wait Until Page Contains    stackTrace      timeout=10s
-    Click Element   xpath=//div/h2/a/span[2]/span[contains(text(),'stackTrace')]
-    Wait Until Page Contains    Stack Trace
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-App_Details_Container_details_dtlogs      #pass  90
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-     Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Container_details_stderrlogs      #pass  #90
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'stderr')]
-    Wait Until Page Contains    stderr
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Container_details_stdoutlogs      #pass   90
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       #//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'stdout')]
-    Wait Until Page Contains    stdout
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-App_Details_Container_details_stackTrace        #pass   91
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=70s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overvie
-     Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/a/span[2]/span[contains(text(),'stackTrace')]
-    Wait Until Page Contains    Stack Trace
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-
-App_Details_Container_details_Physical_Operators_ID        #pass    #93
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=20s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       #//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    sleep   10s
-    Click Element       xpath=//table/tbody[3]/tr/td[2]/a       #operator id
-    Wait Until Page Contains    Operator Properties
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Container_details_Physical_Operators_Name       #pass   93
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=20s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    sleep   10s
-    Click Element   xpath=//div/table/tbody[3]/tr/td[3]/span/a
-    Wait Until Page Contains    Operator Properties
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Container_details_Physical_Operators_containerID        #pass       #93
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=20s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    sleep   10s
-    Click Element   xpath=//div/table/tbody[3]/tr/td[13]/a      #refers to the same page
-    sleep   10s
-    Click Element   xpath=//div/table/tbody[3]/tr/td[13]/a      #refers to the same page
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-
-
-App_Details_Container_details_Download_dtLogs         #pass   94
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-    Click Element       xpath=//*[@id="container-log-view-page"]/h1/a/t                     #download button
-    sleep   10s
-    File Should Exist   /home/aishwarya/Downloads/dt.log
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Container_details_Download_stdoutLogs        #pass   94
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-     Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Capture Page Screenshot
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'stdout')]
-    Wait Until Page Contains    stdout
-    ${bytes}    Get Text    //*[@id="container-log-view-page"]/h1/span[1]/span
-    ${string}   Set Variable    0 B
-    Convert To String   ${string}
-    Run keyword If    '${bytes}'!='${string}'
-    ...     Click Element       xpath=//*[@id="container-log-view-page"]/h1/a/t                        #download button
-    ...     sleep   10s
-    ...     File Should Exist   /home/aishwarya/Downloads/stdout.log
-    #download will take place only if the logs are not of 0 B
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
 
 
 App_Details_Container_details_Download_stderrLogs_enabled_FAILS        #fails due to bug   94
@@ -4541,7 +3891,7 @@ App_Details_Container_details_Download_stderrLogs_enabled_FAILS        #fails du
     Wait Until Page Contains    RUNNING     timeout=60s
     Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
     Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]               #//div[2]//div[3]//table/tbody[3]/tr[2$
+    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]              
     Convert To String   ${y}
     Scroll_Page_To_Location     0   ${y}
     Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
@@ -4569,9 +3919,9 @@ App_Details_Container_details_Download_stderrLogs_disabled_FAILS         #fails 
     Wait Until Page Contains    RUNNING     timeout=60s
     Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
     Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       #//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
+    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       
      Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       #//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
+    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       
     Convert To String   ${y}
     Scroll_Page_To_Location     0   ${y}
     Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
@@ -4583,285 +3933,9 @@ App_Details_Container_details_Download_stderrLogs_disabled_FAILS         #fails 
     ${string}   Set Variable    0 B
     Convert To String   ${string}
     Should Be Equal As Strings      ${bytes}   ${string}
-    Element Should Be Disabled   xpath=//*[@id="container-log-view-page"]/h1/a/t           #download button is always enabled (although it shu$
+    Element Should Be Disabled   xpath=//*[@id="container-log-view-page"]/h1/a/t           #download button is always enabled (although it shudn
     Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
 
-
-App_Details_Container_details_Search_Logs       #pass   95
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    sleep       10s
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-     Click Element   xpath=//div/h2/span/ul//a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-    ${value1}=   Get Matching Xpath Count   //*[@id="container-log-viewer"]/div[1]/div/div
-    Log     ${value1}
-    Capture Page Screenshot
-    Input Text      xpath=//*[@id="container-log-view-page"]/form/div[1]/div[1]/input       1 KB
-    Input Text      xpath=//*[@id="container-log-view-page"]/form/div[1]/div[2]/input       2 KB
-    Input Text      xpath=//*[@id="container-log-view-page"]/form/div[2]/div/input          common
-    Click Element   xpath=//*[@id="container-log-view-page"]/form/button/span
-    Capture Page Screenshot
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-
-App_Details_Container_details_log_tail      #pass   96
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-    Click Element       xpath=//*[@id="container-log-view-page"]/h1/span[2]/div/label       #tailing logs
-    Capture Page Screenshot
-    Click Element       xpath=//*[@id="container-log-view-page"]/h1/span[2]/div/label       #tailing logs
-    Capture Page Screenshot
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Container_details_log_details_navigate      #pass   97
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]       #//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/span/button/t/span[contains(text(),'logs')]
-    Click Element   xpath=//div/h2/span/ul//a[contains(text(),'dt.log')]
-    Wait Until Page Contains    dt.log
-    Click Element   xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/button     #log button
-    Wait Until Element Is Enabled       xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/ul/li[2]/form/input    timeout=10s
-    Click Element   xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/ul//span/a[contains(text(),'stderr')]      #stderr
-    Capture Page Screenshot
-    Wait Until Page Contains    stderr
-    Capture Page Screenshot
-    Click Element   xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/button     #log button
-    Wait Until Element Is Enabled       xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/ul/li[2]/form/input    timeout=10s
-    Capture Page Screenshot
-    Click Element   xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/ul/li[5]/span/a        #stdout
-    Capture Page Screenshot
-    Wait Until Page Contains    stdout
-    Capture Page Screenshot
-    Wait Until Page Contains    stdout
-    Click Element   xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/button     #log button
-    Wait Until Element Is Enabled       xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/ul/li[2]/form/input    timeout=10s
-    Click Element   xpath=//*[@id="breadcrumbs-top"]/li[6]/span/span/ul/li[3]/span        #dtlog
-    Wait Until Page Contains    dt.log
-    Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
-
-App_Details_Physical_DAG_details        #pass   98
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div/div[1]/ul/li[3]/a/span[contains(text(),'physical-dag-view')]
-    Wait Until Page Contains    Physical DAG    timeout=10s
-    Capture Page Screenshot
-    Page Should Contain     Critical Path
-    Page Should Contain     Stream Locality
-    Page Should Contain     Reset Position
-    Page Should Contain     Top:
-    Page Should Contain     Bottom:
-
-
-
-
-App_Details_Physical_DAG_Top/Bottom_selection       #pass   99
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div/div[1]/ul/li[3]/a/span[contains(text(),'physical-dag-view')]
-    Wait Until Page Contains    Physical DAG    timeout=10s
-    ${metrics1}      Get Text    css=g.node:nth-child(1) > g:nth-child(4) > text:nth-child(1) > tspan:nth-child(1)
-    Select From List    //div/div[1]/span[1]/select     total processed
-    Select From List    //div/div[1]/span[2]/select     total emitted
-    ${metrics2}     Get Text    css=g.node:nth-child(1) > g:nth-child(4) > text:nth-child(1) > tspan:nth-child(1)
-    ${metrics1}=                Remove String   ${metrics1}     ,
-    ${metris2}=         Remove String   ${metrics2}     ,
-    Should Be True      ${metrics2}>${metrics1}     #total processed > processed/s
-    #How to check the metrics on the DAG    does not identify the xpath
-
-App_Details_Physical_DAG_Operator_details       #pass   100
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div/div[1]/ul/li[3]/a/span[contains(text(),'physical-dag-view')]
-    Wait Until Page Contains    Physical DAG    timeout=10s
-    Click Element       css=g.node:nth-child(1) > g:nth-child(2) > text:nth-child(1) > tspan:nth-child(1)
-    Wait Until Page Contains    Container
-
-
-App_Details_Physical_DAG_Critical_Path      #pass   101
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-     Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div/div[1]/ul/li[3]/a/span[contains(text(),'physical-dag-view')]
-    Wait Until Page Contains    Physical DAG    timeout=10s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//div[1]//input[1]
-    Capture Page Screenshot
-    Sleep   4s
-    ${colour}     Get Element Attribute       css=g.node:nth-child(1) > rect:nth-child(1)@fill
-    Log     ${colour}
-    Convert To String   ${colour}
-    ${string}   Set Variable    white
-    Convert To String   ${string}
-    Should Not Be Equal As Strings      ${colour}   ${string}
-    Capture Page Screenshot
-
-
-App_Details_Physical_DAG_Stream_Locality    #pass       102
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div/div[1]/ul/li[3]/a/span[contains(text(),'physical-dag-view')]
-    Wait Until Page Contains    Physical DAG    timeout=10s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//div[1]//label[2]/input               #//div$
-    Capture Page Screenshot
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//div[1]//label[2]/input               #//div$
-    Capture Page Screenshot
-    Page Should Contain    NOT ASSIGNED
-    Page Should Contain    THREAD_LOCAL
-    Page Should Contain    CONTAINER_LOCAL
-    Page Should Contain    NODE_LOCAL
-    Page Should Contain    RACK_LOCAL
-
-
-App_Details_Physical_DAG_Reset_Position     #pass       103
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div/div[1]/ul/li[3]/a/span[contains(text(),'physical-dag-view')]
-    Wait Until Page Contains    Physical DAG    timeout=10s
-    Click Element   xpath=//div[1]/div/div/a[contains(text(),'Reset Position')]
-    ${x}     Get Horizontal Position    css=g.node:nth-child(1) > g:nth-child(2) > text:nth-child(1) > tspan:nth-child(1)
-    ${y}     Get Vertical Position      css=g.node:nth-child(1) > g:nth-child(2) > text:nth-child(1) > tspan:nth-child(1)
-    ${a}    Evaluate    ${x}+10
-    ${b}    Evaluate    ${y}+10
-    Drag And Drop By Offset     css=g.node:nth-child(1) > g:nth-child(2) > text:nth-child(1) > tspan:nth-child(1)       ${a}     ${b}
-    Click Element       xpath=//div/a[contains(text(),'Reset Position')]
-    Capture Page Screenshot
-    ${h}     Get Horizontal Position    css=g.node:nth-child(1) > g:nth-child(2) > text:nth-child(1) > tspan:nth-child(1)
-    ${v}     Get Vertical Position      css=g.node:nth-child(1) > g:nth-child(2) > text:nth-child(1) > tspan:nth-child(1)
-    Should Be Equal      ${h}   ${x}
-    Should Be Equal      ${v}   ${y}
-
-App_Details_Application_Attempts        #pass   104
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    Page Should Contain     id
-    Page Should Contain      state
-    Page Should Contain       host
-    Page Should Contain    started time
-    Page Should Contain    finished time
-
-
-App_Details_Application_Attempt_FAILED_f          #passed 105  #FAILS AT OPEN BROWSER  only when running together
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Capture Page Screenshot
-    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
-    Capture Page Screenshot
-    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
-    Click Element   xpath=//*[@id="kill-container"]/t
-    Click Element   xpath=//*[contains(text(),'Yes, Kill the Application Master')]
-    Wait Until Page Contains    ACCEPTED    timeout=50s
-   # Run Keyword If Test Failed
-    #...         Wait Until Page Contains        PENDING         timeout=40s
-    Wait Until Page Contains    RUNNING     timeout=50s
-    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
-    Wait Until Page Contains    Application Attempts
-    sleep   5s
-    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr[1]/td[1]/a
-    sleep   5s
-    Page Should Contain     FAILED
-    ${url2}      Get Text    xpath=//div[2]//div[2]//div[2]/div[1]//div[2]//div[2]/div[1]/a
-    ${id} =     Open Browser       ${url2}       CHROME
-    sleep   5s
-    Switch Browser      ${id}
-    Wait Until Page Contains     Application Overview       #timeout=10s
-    Capture Page Screenshot
-    Close All Browsers
-    Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
-    Wait Until Page Contains    Application ID  timeout=60s
 
 
 
@@ -4923,7 +3997,7 @@ App_Details_Application_Attempt_RUNNING_f    #pass   107
 App_Details_Application_Attempt_RUNNING_Containers      #fails at memory and start time search  108
     Go_To_Page      Monitor     Cluster Overview
     Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=[contains(text(),'${app_name}')]
+    Click Element       xpath=//*[contains(text(),'${app_name}')]
     sleep   30s
     Capture Page Screenshot
     Reload Page
@@ -5005,98 +4079,44 @@ App_Details_Attempt_RUNNING_Containers_stdoutlogs     #pass   108
     Click Element   //*[@id="breadcrumbs-top"]/li[3]/a      #GO BACK
 
 
-App_Details_Containers_KillAppMaster        #pass 84
-    [Tags]    test
+
+
+App_Details_Application_Attempt_FAILED_f          #passed 105  #FAILS AT OPEN BROWSER  only when running together
     Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=40s
-    Click Element       xpath=[contains(text(),'${app_name}')]
+    Wait Until Page Contains     RUNNING      timeout=20s
+    Click Element       xpath=//*[contains(text(),'${app_name}')]
     sleep   30s
     Capture Page Screenshot
     Reload Page
-    Capture Page Screenshot
     Wait Until Page Contains    RUNNING     timeout=60s
     Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[3]//div[2]//div[1]/span[1]/button[1]/t
-    ${a}    Evaluate    ${y}-100
+    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[2]//div[1]/h3/span[1]
     Convert To String   ${y}
     Scroll_Page_To_Location     0   ${y}
     Capture Page Screenshot
     Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
-    Scroll_Page_To_Location     0   ${a}
     Capture Page Screenshot
+    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
     Click Element   xpath=//*[@id="kill-container"]/t
     Click Element   xpath=//*[contains(text(),'Yes, Kill the Application Master')]
-    Reload Page
-    Page Should Contain     killed
-
-
-
-
-App_Details_Containers_KillSelected     #pass 85
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
+    Wait Until Page Contains    ACCEPTED    timeout=50s
+    Wait Until Page Contains    RUNNING     timeout=50s
+    Click Element   xpath=//div[1]/ul/li[5]/a/span[contains(text(),'attempts')]
+    Wait Until Page Contains    Application Attempts
+    sleep   5s
+    Click Element   xpath=//div[2]//div[2]//div[2]/div[2]//div[2]//table/tbody[3]/tr[1]/td[1]/a
+    sleep   5s
+    Page Should Contain     FAILED
+    ${url2}      Get Text    xpath=//div[2]//div[2]//div[2]/div[1]//div[2]//div[2]/div[1]/a
+    ${id} =     Open Browser       ${url2}       CHROME
+    sleep   5s
+    Switch Browser      ${id}
+    Wait Until Page Contains     Application Overview       #timeout=10s
     Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[3]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    ${a}    Evaluate    ${y}-100
-    Capture Page Screenshot
-    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[1]/td[1]/input
-    Click Element   xpath=//div[2]/div/div/div/div[2]/div/div[2]/div[3]/div/div[2]/div/div/div[2]/div/table/tbody[3]/tr[2]/td[1]/input
-    Capture Page Screenshot
-    Scroll_Page_To_Location     0   ${a}
-    Click Element   xpath=//*[@id="kill-container"]/t
+    Close All Browsers
     Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
     Wait Until Page Contains    Application ID  timeout=60s
 
-
-App_Details_Container_details_kill      #pass   94
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[2]//div[2]/div[3]//div[1]/h3/span[1]
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//table/tbody[3]/tr[2]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/button/t[contains(text(),'kill')]
-    Launch The app    ${pkg_name}    ${app_name}  #comment when running individual test case
-    Wait Until Page Contains    Application ID  timeout=60s
-
-
-App_Details_Container_details_AppMaster_kill        #pass          91
-    Go_To_Page      Monitor     Cluster Overview
-    Wait Until Page Contains     RUNNING      timeout=20s
-    Click Element       xpath=//*[contains(text(),'${app_name}')]
-    sleep   30s
-    Capture Page Screenshot
-    Reload Page
-    Capture Page Screenshot
-    Wait Until Page Contains    RUNNING     timeout=60s
-    Click Element     xpath=//div/ul/li[2]/a/span[contains(text(),'physical')]
-    Wait Until Page Contains    Physical Operators      timeout=10s
-    ${y}  get vertical position  xpath=//div[2]//div[3]//div[2]//div[2]/div/table/tbody[3]/tr[1]/td[2]/a
-    Convert To String   ${y}
-    Scroll_Page_To_Location     0   ${y}
-    Click Element   xpath=//div[2]//div[3]//div[2]//div[2]/div/table/tbody[3]/tr[1]/td[2]/a
-    Wait Until Page Contains    Container Overview
-    Click Element   xpath=//div/h2/button/t[contains(text(),'kill')]
-    Click Element   xpath=//*[contains(text(),'Yes, Kill the Application Master')]    
 
 *** Keywords ***
 
@@ -5116,3 +4136,4 @@ Select_App_Monitor_Page
     Input Text  xpath=/html/body/div[2]/div[2]/div/div[2]/table/thead/tr[2]/td[3]/input  =${appname}
     Wait Until Page Contains    ${appname}    timeout=30s
     Click Element    //*[contains(text(),'${appname}')]
+

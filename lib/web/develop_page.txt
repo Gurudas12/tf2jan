@@ -201,3 +201,42 @@ Search_List_Testing
     Run Keyword If      "${opr}" == "true"     Should Be True   ${value1}>=${value2}
     Run Keyword If      "${opr}" == "False"    Should Be True   ${value1}>${value2}
 
+
+######SH Keywords##########
+
+Search_Box_Testing_Update
+    [Arguments]    ${locator}    ${keyword}     ${opr}=False
+    ${value1}=   Get Matching Xpath Count       /html/body//table/tbody[3]//td[1]
+    Log     Value 1 is ${value1}
+    Input Text      xpath=${locator}    ${keyword}
+    Wait Until Page Contains    ${keyword}
+    ${value2}=   Get Matching Xpath Count       /html/body//table/tbody[3]//td[1]   #//div//table/thead/tr[2]//input
+    Log    Value 2 is ${value2}
+    Log     ${opr}
+    Run Keyword If      "${opr}" == "true"     Should Be True   ${value1}>=${value2}
+    Run Keyword If      "${opr}" == "False"    Should Be True   ${value1}>${value2}
+
+##########this is needed to be added in Common_resorces.txt###########
+Read_Table_Hard_Coded
+    [Arguments]    ${table_locator}
+    [Documentation]    Reads the given table containent. Returns dictonary having table containent and table headers in list
+    Comment    Read and fetch table headers
+    ${Gw_Info_Header_List}=    Create List    #List for storing headers of the table
+    ${Table_Data_Dict}=    Create Dictionary    #Dictonary for storing values from the table
+    Comment    Loop which retrives of headers and add into the list
+    Comment    Read and fetch table cells
+    ${tTr_xpath}    Catenate    ${table_locator}    /tbody/tr    #Creating xpath for getting table tr to get number of rows
+    ${list_web_ele}=    Get Webelements    ${tTr_xpath}
+    ${list_len}=    Get Length    ${list_web_ele}
+    : FOR    ${i}    IN RANGE    0    ${list_len}
+    \    Log    ${i}
+    \    ${j}=    Set Variable    ${${i}+1}
+    \    Comment    Read the table cells
+    \    ${item_xpath}=    Catenate    ${table_locator}    /tbody/tr[${j}]/td[1]    #Read first cell and add it as key in dictionary
+    \    ${item}    Get Text    ${item_xpath}
+    \    ${Dict_Values_List}    Create List    #List For stroring columns of the table except first
+    \    ${Dict_Values_List}=    Read_Table_Cells_Data_Inner_Loop    ${j}    ${table_locator}    2      #Read data from remaining data cells and creates one list
+    \    Set To Dictionary    ${Table_Data_Dict}    ${item}    ${Dict_Values_List}
+    Log Dictionary    ${Table_Data_Dict}
+    [Return]    ${Gw_Info_Header_List}    ${Table_Data_Dict}
+
