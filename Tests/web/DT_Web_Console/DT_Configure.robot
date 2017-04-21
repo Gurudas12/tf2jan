@@ -1513,11 +1513,3 @@ Wrong_InstWiz_Test    #partial pass    #bug in gui, does not shows error when we
     Capture Page Screenshot
     #---------------------------THE - END-----------------------------
     #--------------------------------------------------------------------------------------------------------------------------------------------
-
-
-Connect_To_SIT_Captive_Portal
-    Open Browser    10.10.216.2:8090        CHROME
-    Wait Until Page Contains        SYMBIOSIS HILL BASE CAMPUS
-    Input Text      xpath=//INPUT[@type='text']         14070121140
-    Input Password      xpath=//INPUT[@type='password']     coffeebee
-    [Teardown]  Close Browser
